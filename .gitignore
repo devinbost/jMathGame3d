@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 # Compiled source #
 ###################
 *.com
@@ -49,3 +50,10 @@ Thumbs.db
 =======
 /build/
 >>>>>>> Added a JUnit test suite package to the project.
+||||||| merged common ancestors
+/build/
+=======
+/build/
+/src/Exp4j/exp4j-master/target/
+/dist/
+>>>>>>> Added a ton of classes and unit tests. Almost finished initial design of Question.java, QandABot.java, Gamer.java, QuestionQueue.java, and QuestionTypeEnum.java.

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -79,3 +80,62 @@ public class QandABot {
        return _totalQuestionsAsked;
    }
 }
+||||||| merged common ancestors
+=======
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+package mathgame;
+
+import java.util.*;
+
+/**
+ *
+ * @author devinbost
+ */
+public class QandABot {
+    // The QandABot constructs a QuestionQueue of Question objects.
+    private Gamer _gamer = null;
+    private QuestionQueue _questionQueue = null;
+    int questionsPerLevel = 10;
+    
+    public QandABot(Gamer gamer){
+        if(gamer == null){
+            throw new IllegalArgumentException("Error: The QandABot construction method cannot have a null valued Gamer!");
+        } // This is a Dependency Injection (DI) technique. We are forcing QandABot to use a valid gamer class.
+        _gamer = gamer;
+        _questionQueue = GenerateQuestions();
+        
+    }
+   private QuestionQueue GenerateQuestions(){
+       // Here, we will use the Gamer's level and digits to generate the questions.
+       // First, we must construct our queue.
+       
+       QuestionQueue questionQueue = new QuestionQueue();
+       for(int i=0; i < questionsPerLevel; i++){
+           Question myQuestion = new Question(_gamer._level, 3);
+           // use the gamer's level for the QuestionQueue constructor.
+           questionQueue.add(myQuestion);
+       }
+       // If level == 0, we create an addition question.
+       // If level == 1, we create a subtraction question.
+       // If level == 2, we create a multiplication question.
+       // If level == 3, we create a division question.
+       // After populating the list of questions, we then return the questions.
+       
+       // foreach number from 1 to questionsPerLevel, generate a new question and add to the queue.
+       // The Question class should take the required parameters during construction.
+       
+       
+       return questionQueue;
+   }
+//   public Question NextQuestion(){
+//       // This method is intended to be invoked by a gamer.
+//       // This method simply returns the next question in the queue.
+//   }
+    
+}
+>>>>>>> Added a ton of classes and unit tests. Almost finished initial design of Question.java, QandABot.java, Gamer.java, QuestionQueue.java, and QuestionTypeEnum.java.
