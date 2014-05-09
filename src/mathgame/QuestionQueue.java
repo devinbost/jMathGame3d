@@ -29,29 +29,29 @@ public class QuestionQueue extends AbstractQueue<Question>{
     public int size() {
         System.out.println(_questions.size());
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        return 0;
+        return _questions.size();
     }
 
     @Override
     public boolean offer(Question e) {
         _questions.offer(e);
-        return true;
+        return _questions.offer(e);
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public Question poll() {
-        Object nextQuestion = _questions.poll();
+        Question nextQuestion = (Question)_questions.poll();
         System.out.println(nextQuestion);
-        return null;
+        return nextQuestion;
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public Question peek() {
-        Object nextQuestion = _questions.peek();
+        Question nextQuestion = (Question)_questions.peek();
         System.out.println(nextQuestion);
-        return null;
+        return nextQuestion;
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
    
