@@ -11,7 +11,8 @@ import mathgame.*;
  * @author devinbost
  */
 public class GameUI extends javax.swing.JFrame {
-
+    Gamer _Gamer = null;
+    QandABot _QandABot = null;
     /**
      * Creates new form GameUI
      */
@@ -30,6 +31,15 @@ public class GameUI extends javax.swing.JFrame {
 
         jLabel1 = new javax.swing.JLabel();
         jDifficultySpinner = new javax.swing.JSpinner();
+        jAnswer = new javax.swing.JTextField();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jQuestion = new javax.swing.JLabel();
+        jCheckAnswer = new javax.swing.JButton();
+        jNextQuestion = new javax.swing.JButton();
+        jCorrect = new javax.swing.JLabel();
+        jScore = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
         jMainMenuBar = new javax.swing.JMenuBar();
         jMainMenu = new javax.swing.JMenu();
         jStartGame = new javax.swing.JMenuItem();
@@ -39,6 +49,41 @@ public class GameUI extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jLabel1.setText("Difficulty Level:");
+
+        jAnswer.setText("Math Question Answer");
+        jAnswer.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jAnswerActionPerformed(evt);
+            }
+        });
+
+        jLabel2.setText("Enter your answer here:");
+
+        jLabel3.setText("Question:");
+
+        jQuestion.setText("Question for you to answer");
+
+        jCheckAnswer.setEnabled(false);
+        jCheckAnswer.setLabel("Check Answer");
+        jCheckAnswer.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckAnswerActionPerformed(evt);
+            }
+        });
+
+        jNextQuestion.setText("Next Question");
+        jNextQuestion.setEnabled(false);
+        jNextQuestion.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jNextQuestionActionPerformed(evt);
+            }
+        });
+
+        jCorrect.setText("Correct?");
+
+        jScore.setText("Current Score");
+
+        jLabel4.setText("Score:");
 
         jMainMenu.setText("Main");
 
@@ -67,19 +112,55 @@ public class GameUI extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(47, 47, 47)
-                .addComponent(jLabel1)
-                .addGap(18, 18, 18)
-                .addComponent(jDifficultySpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(232, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addGap(18, 18, 18)
+                        .addComponent(jDifficultySpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel3)
+                            .addComponent(jNextQuestion))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jQuestion)
+                            .addComponent(jAnswer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jCheckAnswer)
+                                .addGap(18, 18, 18)
+                                .addComponent(jCorrect)))))
+                .addContainerGap(57, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(jLabel4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScore))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(49, 49, 49)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jScore)
+                    .addComponent(jLabel4))
+                .addGap(35, 35, 35)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jDifficultySpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1))
-                .addContainerGap(210, Short.MAX_VALUE))
+                .addGap(17, 17, 17)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(jQuestion))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jAnswer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jCheckAnswer)
+                    .addComponent(jNextQuestion)
+                    .addComponent(jCorrect))
+                .addContainerGap(112, Short.MAX_VALUE))
         );
 
         pack();
@@ -92,8 +173,42 @@ public class GameUI extends javax.swing.JFrame {
         if(difficulty > 3 || difficulty < 0){
             throw new IllegalArgumentException("Error: The difficulty level cannot be set below 0 or above 3!");
         }
-        Gamer myGamer = new Gamer(difficulty, 3);
+        _Gamer = new Gamer(difficulty, 3);
+        _QandABot = new QandABot(_Gamer);
+        // set gamer and bot to properties
+        // enable answer button when the game is started
+        jCheckAnswer.setEnabled(true);
+        jNextQuestion.setEnabled(true);
+        
+        // When button is clicked, update 
+        // jQuestion is where the question appears
+        // jAnswer is where the user enters their answer
+        
     }//GEN-LAST:event_jStartGameActionPerformed
+
+    private void jAnswerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jAnswerActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jAnswerActionPerformed
+
+    private void jCheckAnswerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckAnswerActionPerformed
+        // TODO add your handling code here:
+        double userAnswer = Double.parseDouble(jAnswer.getText());
+        Question currentQuestion = _QandABot.GetCurrentQuestion();
+        if(currentQuestion.CheckAnswer(userAnswer) == true){
+            _Gamer.ScoreUp();
+            jCorrect.setText("Correct!!!");
+            jScore.setText(Integer.toString(_Gamer.GetScore()));
+        }
+        
+        
+    }//GEN-LAST:event_jCheckAnswerActionPerformed
+
+    private void jNextQuestionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jNextQuestionActionPerformed
+        // TODO add your handling code here:
+        jQuestion.setText("What is " + _QandABot.GetNextQuestion() + " ?");
+        // Gets the next question.
+        jCorrect.setText("Correct?");
+    }//GEN-LAST:event_jNextQuestionActionPerformed
 
     /**
      * @param args the command line arguments
@@ -131,12 +246,21 @@ public class GameUI extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextField jAnswer;
+    private javax.swing.JButton jCheckAnswer;
+    private javax.swing.JLabel jCorrect;
     private javax.swing.JSpinner jDifficultySpinner;
     private javax.swing.JMenu jHelpMenu;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JMenu jMainMenu;
     private javax.swing.JMenuBar jMainMenuBar;
+    private javax.swing.JButton jNextQuestion;
     private javax.swing.JMenu jPauseMenu;
+    private javax.swing.JLabel jQuestion;
+    private javax.swing.JLabel jScore;
     private javax.swing.JMenuItem jStartGame;
     // End of variables declaration//GEN-END:variables
 }

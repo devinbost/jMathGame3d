@@ -13,7 +13,7 @@ import java.util.*;
  */
 public class Gamer {
     int _level = 0;
-    int _points = 0;
+    int _score = 0;
     int _correctAnswerStreak = 0;
     int _totalCorrect = 0;
     int _totalWrong = 0;
@@ -26,6 +26,15 @@ public class Gamer {
     public Gamer(int level, int digits){
         _level = level;
         _digits = digits;
+    }
+    public void LevelUp(){
+        _level++;
+    }
+    public void ScoreUp(){
+        _score++;
+    }
+    public int GetScore(){
+        return _score;
     }
     // User input will be passed through the UI to the gamer class. 
     
