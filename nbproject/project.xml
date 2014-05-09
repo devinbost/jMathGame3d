@@ -16,5 +16,6 @@
                 <root id="test.Tests.dir"/>
             </test-roots>
         </data>
+		
     </configuration>
 </project>
