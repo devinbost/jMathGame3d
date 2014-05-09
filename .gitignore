@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Compiled source #
 ###################
 *.com
@@ -44,3 +45,7 @@ ehthumbs.db
 Thumbs.db
 /nbproject/private/
 /build/
+||||||| merged common ancestors
+=======
+/build/
+>>>>>>> Added a JUnit test suite package to the project.
