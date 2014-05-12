@@ -8,8 +8,14 @@ package mathgame;
 
 /**
  *
- * @author devinbost
+ * @author jessewhite
  */
 public class PauseMenu {
-    
+    String command = "q";
+    public void displayHelp() {
+        //Get input from the user and place it in command.
+        //use the variable in command to display a pop up 
+        //box with the help menu inside it.
+        System.out.println("The value inside command is " + command);
+}
 }

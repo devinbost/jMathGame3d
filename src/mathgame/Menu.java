@@ -8,8 +8,8 @@ package mathgame;
 
 /**
  *
- * @author devinbost
+ * @author jessewhite
  */
 public abstract class Menu {
-    
+      //I'm not sure how to use an abstract class in java.
 }
