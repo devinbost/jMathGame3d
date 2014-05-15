@@ -6,14 +6,17 @@
 
 package MathGame.Tests;
 
+import java.util.*;
+import mathgame.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.not;
 import org.junit.AfterClass;
+import static org.junit.Assert.*;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
-import java.util.*;
-import static org.junit.Assert.*;
-import mathgame.*;
 /**
  *
  * @author devinbost
@@ -33,7 +36,7 @@ public class MathGameTest {
         
     }
     @Test
-    public void QandABot_IsGetNextFunctionWorking_ReturnsTrue() {
+    public void QandABot_IsGetNextQuestionFunctionWorking_ReturnsTrue() {
         Gamer gamer = new Gamer(1, 3);
         QandABot qAndABot= new QandABot(gamer);
         Question question = qAndABot.GetNextQuestion();
@@ -44,6 +47,22 @@ public class MathGameTest {
         Gamer gamer = new Gamer(1, 3);
         QandABot qAndABot= new QandABot(gamer);
         assertTrue(qAndABot instanceof QandABot);
+    }
+    @Test
+    public void QandABot_IsGetTotalQuestionsAskedReturningGreaterThan0_ReturnsTrue(){
+        Gamer gamer = new Gamer(1, 3);
+        QandABot qAndABot= new QandABot(gamer);
+        //gamer.
+        assertTrue(false);
+    }
+    @Test
+    public void QandABot_IsGetTotalQuestionsAskedReturningAnything_ReturnsTrue(){
+        Gamer gamer = new Gamer(1, 3);
+        QandABot qAndABot = new QandABot(gamer);
+        int returnValue = -1;
+        returnValue = qAndABot.GetTotalQuestionsAsked();
+        System.out.println("qAndABot.GetTotalQuestionsAsked() returns " + returnValue);
+        assertThat(returnValue, is(not(-1)));
     }
     // We need some tests for the QuestionQueue;
     

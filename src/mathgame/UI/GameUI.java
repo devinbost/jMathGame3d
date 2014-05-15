@@ -45,6 +45,7 @@ public class GameUI extends javax.swing.JFrame {
         jStartGame = new javax.swing.JMenuItem();
         jPauseMenu = new javax.swing.JMenu();
         jHelpMenu = new javax.swing.JMenu();
+        jDisplayHelp = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -102,6 +103,15 @@ public class GameUI extends javax.swing.JFrame {
         jMainMenuBar.add(jPauseMenu);
 
         jHelpMenu.setText("Help");
+
+        jDisplayHelp.setText("Display Help");
+        jDisplayHelp.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jDisplayHelpActionPerformed(evt);
+            }
+        });
+        jHelpMenu.add(jDisplayHelp);
+
         jMainMenuBar.add(jHelpMenu);
 
         setJMenuBar(jMainMenuBar);
@@ -210,6 +220,13 @@ public class GameUI extends javax.swing.JFrame {
         jCorrect.setText("Correct?");
     }//GEN-LAST:event_jNextQuestionActionPerformed
 
+    private void jDisplayHelpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jDisplayHelpActionPerformed
+        // TODO add your handling code here:
+        displayHelp();
+    }//GEN-LAST:event_jDisplayHelpActionPerformed
+    private void displayHelp(){
+        System.out.println("Display help");
+    }
     /**
      * @param args the command line arguments
      */
@@ -250,6 +267,7 @@ public class GameUI extends javax.swing.JFrame {
     private javax.swing.JButton jCheckAnswer;
     private javax.swing.JLabel jCorrect;
     private javax.swing.JSpinner jDifficultySpinner;
+    private javax.swing.JMenuItem jDisplayHelp;
     private javax.swing.JMenu jHelpMenu;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
