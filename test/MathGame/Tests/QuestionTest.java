@@ -5,15 +5,10 @@
  */
 
 package MathGame.Tests;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.junit.*;
+import org.junit.runner.*;
 import java.util.*;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
+import javax.script.*;
 import static org.junit.Assert.*;
 import mathgame.*;
 import org.junit.runners.Parameterized;
@@ -71,30 +66,31 @@ public class QuestionTest {
         System.out.println("Question myQuestion = new Question(this._gamerLevel, this._digits) for " + this._gamerLevel + " and " + this._digits);
         assertTrue(myQuestion instanceof Question);
     }
-    @Test
-    public void Question_IsToStringNotEmpty_ReturnsNotEmpty(){
-        Question myQuestion = new Question(this._gamerLevel, this._digits);
-        String myQuestionString = myQuestion.toString();
-        System.out.println("myQuestionString for " + this._gamerLevel + " and " + this._digits + " is: " + myQuestionString);
-        assertNotSame(myQuestionString, "");
-    }
-    @Test
-    public void Question_IsCheckAnswerValid_ReturnsTrue() throws ScriptException{
-        Question myQuestion = new Question(this._gamerLevel, this._digits);
-        String myQuestionString = myQuestion.toString();
-        double testedAnswer = myQuestion.GetAnswer();
-        
-        ScriptEngineManager mgr = new ScriptEngineManager(); // We are using the JavaScript engine to process the dynamic string. It's a somewhat ugly hack, but it is much cleaner than the other possible options that Java offers. 
-        ScriptEngine engine = mgr.getEngineByName("JavaScript"); // (C# is much more powerful for clean solutions to problems like this.)
-        double answer = Math.round((double)engine.eval(myQuestionString) * 1000.0)/1000.0; // The multiplication and division by 100.0 is to round to two decimal places. Yes, it's a hack; but this is how Java does things.
-        //return (double)engine.eval(questionString);
-        
-        
-        System.out.println("myQuestionString for " + this._gamerLevel + " and " + this._digits + " is: " + myQuestionString + 
-                ". The Question class computed " + myQuestionString + "=" + testedAnswer + " whereas the test runner" + 
-                " expected " + answer);
-        assertEquals(answer, testedAnswer, 0);
-    }
+   
+//    @Test
+//    public void Question_IsToStringNotEmpty_ReturnsNotEmpty(){
+//        Question myQuestion = new Question(this._gamerLevel, this._digits);
+//        String myQuestionString = myQuestion.toString();
+//        System.out.println("myQuestionString for " + this._gamerLevel + " and " + this._digits + " is: " + myQuestionString);
+//        assertNotSame(myQuestionString, "");
+//    }
+//    @Test
+//    public void Question_IsCheckAnswerValid_ReturnsTrue() throws ScriptException{
+//        Question myQuestion = new Question(this._gamerLevel, this._digits);
+//        String myQuestionString = myQuestion.toString();
+//        double testedAnswer = myQuestion.GetAnswer();
+//        
+//        ScriptEngineManager mgr = new ScriptEngineManager(); // We are using the JavaScript engine to process the dynamic string. It's a somewhat ugly hack, but it is much cleaner than the other possible options that Java offers. 
+//        ScriptEngine engine = mgr.getEngineByName("JavaScript"); // (C# is much more powerful for clean solutions to problems like this.)
+//        double answer = Math.round((double)engine.eval(myQuestionString) * 1000.0)/1000.0; // The multiplication and division by 100.0 is to round to two decimal places. Yes, it's a hack; but this is how Java does things.
+//        //return (double)engine.eval(questionString);
+//        
+//        
+//        System.out.println("myQuestionString for " + this._gamerLevel + " and " + this._digits + " is: " + myQuestionString + 
+//                ". The Question class computed " + myQuestionString + "=" + testedAnswer + " whereas the test runner" + 
+//                " expected " + answer);
+//        assertEquals(answer, testedAnswer, 0);
+//    }
     //// Test SetOperator
     
     // Test SetMaxValue

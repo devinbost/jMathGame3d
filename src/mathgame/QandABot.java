@@ -18,6 +18,7 @@ public class QandABot {
     private QuestionQueue _questionQueue = null;
     private Question _currentQuestion = null;
     int questionsPerLevel = 10;
+    int _totalQuestionsAsked = 0;
     
     public QandABot(Gamer gamer){
         if(gamer == null){
@@ -53,12 +54,13 @@ public class QandABot {
    }
    public Question GetNextQuestion(){
        if(_questionQueue.size() > 0){
+           _totalQuestionsAsked++;
            _currentQuestion = _questionQueue.poll();
            return _currentQuestion;
        }
        else{
            // if _questionQueue is empty
-           
+            _totalQuestionsAsked++;
             _gamer.LevelUp(); // level up.
             _questionQueue = GenerateQuestions();
             _currentQuestion = _questionQueue.remove();
@@ -71,5 +73,8 @@ public class QandABot {
    }
    public Question GetCurrentQuestion(){
        return _currentQuestion;
+   }
+   public int GetTotalQuestionsAsked(){
+       return _totalQuestionsAsked;
    }
 }

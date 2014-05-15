@@ -18,7 +18,7 @@ public class Gamer {
     int _totalCorrect = 0;
     int _totalWrong = 0;
     int _digits = 0;
-    private String _username;
+    private String _username = "";
     private String _password;
     private QandABot _qAndABot;
     
@@ -36,6 +36,20 @@ public class Gamer {
     public int GetScore(){
         return _score;
     }
+    public String GetName(){
+        return _username;
+    }
+    public int GetLevel(){
+        return _level;
+    }
+    
+    // public function that returns high score.
+    // high score should be returned as a double. The function should divide total
+    // correct answers by the total questions answered.
+    // // Gamer tracks the _score, which is the total number of correct answers.
+    // // We need to be able to get the total questions asked. (This is tracked by the 
+    // // this._qAndABot.GetTotalQuestionsAsked().)
+    
     // User input will be passed through the UI to the gamer class. 
     
 // The Login and Logout functions have been removed to reduce complexity of application.
