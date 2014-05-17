@@ -73,4 +73,10 @@ public class MathGameTest {
 //       
 //    }
 //    
+    @Test
+    public void Question_IsGetMaximumDifficultyLevelReturningCorrectNumberOfValues_ReturnsTrue(){
+        int enumTypes = Question.GetMaximumDifficultyLevel();
+        assertEquals(4, enumTypes);
+    }
+
 }

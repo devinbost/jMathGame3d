@@ -36,6 +36,7 @@ public class Question {
         SetQuestionValues(digits);
         
     }
+
     private int SetMaxValue(int digits){
         return (int)Math.pow(10, digits);
     }
@@ -137,5 +138,10 @@ public class Question {
     }
     public double GetAnswer(){
         return ComputeAnswer();
+    }
+    public static int GetMaximumDifficultyLevel(){
+        QuestionTypeEnum[] questionTypeEnumValues = QuestionTypeEnum.values();
+        int numberOfEnumValues = questionTypeEnumValues.length;
+        return numberOfEnumValues;
     }
 }
