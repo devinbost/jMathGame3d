@@ -7,6 +7,7 @@
 package mathgame;
 import java.lang.*;
 import java.util.*;
+import javax.swing.JOptionPane;
 /**
  *
  * @author devinbost
@@ -24,11 +25,17 @@ public class Gamer {
     
     // When the game starts, the user will be prompted for the level. That level will be used to construct the Gamer object.
     public Gamer(int level, int digits){
-        _level = level;
+        // determine if the gamer's level is set to a legitimate level.
+        _level = this.ValidateLevel(level);
         _digits = digits;
     }
     public void LevelUp(){
         _level++;
+        if (_level >= Question.GetMaximumDifficultyLevel() - 1) {
+            this.GamerWins();
+        }
+        // This is where we need to check if the next level actually exists. If not, then the 
+        // gamer has won the game.
     }
     public void ScoreUp(){
         _score++;
@@ -42,7 +49,40 @@ public class Gamer {
     public int GetLevel(){
         return _level;
     }
-    
+    private void GamerWins(){
+        JOptionPane.showMessageDialog(null, 
+                "Congratulations! You have won the game!", 
+                "InfoBox: ", JOptionPane.INFORMATION_MESSAGE);
+        // Do something about score here. (Check with singleton if high score.)
+    }
+    private int ValidateLevel(int level){
+        if (level % 1 == 0) { // if level somehow becomes a float instead.
+            level = (int)level; // cast back to int
+        }
+        int adjustedLevel = 1;
+        if (level < 0 || level > Question.GetMaximumDifficultyLevel() - 1) {
+             JOptionPane.showMessageDialog(null, 
+                "Error: \t " + "You have entered: " + level
+                        + "Please enter a level between 0 and 3. "
+                        + "\n You will need to start the game again.", 
+                "Error: ", JOptionPane.INFORMATION_MESSAGE);
+             // This is a very ugly hack designed to comply with the class assignment requirements.
+             // The best practice is to throw an exception here.
+            if (level > Question.GetMaximumDifficultyLevel() - 1) {
+                adjustedLevel =  Question.GetMaximumDifficultyLevel() - 1;
+            }
+            if (level < 0) {
+                adjustedLevel = 0;
+            }
+        }
+        else{
+            adjustedLevel = level;
+            
+        }
+        return adjustedLevel;
+                
+        
+    }
     // public function that returns high score.
     // high score should be returned as a double. The function should divide total
     // correct answers by the total questions answered.
