@@ -55,6 +55,7 @@ public class Gamer {
     public int GetLevel(){
         return _level;
     }
+<<<<<<< HEAD
     public double HighScore(){
         double totalasked = this._qAndABot.GetTotalQuestionsAsked();
         float percentilescore = (float)_score/(float)totalasked;
@@ -67,6 +68,10 @@ public class Gamer {
         percentilescore *= 100;
         return percentilescore;
     }
+||||||| merged common ancestors
+=======
+<<<<<<< HEAD
+>>>>>>> Made the high score function in Gamer.java
     private void GamerWins(){
         JOptionPane.showMessageDialog(null, 
                 "Congratulations! You have won the game!", 
@@ -109,12 +114,21 @@ public class Gamer {
                 
         
     }
+||||||| parent of 7bb142c... Made the high score function in Gamer.java
+    
+=======
+    public double HighScore(){
+        double totalasked = this._qAndABot.GetTotalQuestionsAsked();
+        double percentilescore = _score/totalasked;
+        return percentilescore;
+>>>>>>> 7bb142c... Made the high score function in Gamer.java
     // public function that returns high score.
     // high score should be returned as a double. The function should divide total
     // correct answers by the total questions answered.
     // // Gamer tracks the _score, which is the total number of correct answers.
     // // We need to be able to get the total questions asked. (This is tracked by the 
     // // this._qAndABot.GetTotalQuestionsAsked().)
+<<<<<<< HEAD
 }
     // User input will be passed through the UI to the gamer class. 
     
@@ -170,6 +184,11 @@ public class Gamer {
         _level = level;
         _digits = digits;
     }
+||||||| merged common ancestors
+    
+=======
+    }
+>>>>>>> Made the high score function in Gamer.java
     // User input will be passed through the UI to the gamer class. 
     
 // The Login and Logout functions have been removed to reduce complexity of application.
