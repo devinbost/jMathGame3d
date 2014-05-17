@@ -49,6 +49,10 @@ public class Gamer {
     public int GetLevel(){
         return _level;
     }
+    public double HighScore(){
+        double totalasked = this._qAndABot.GetTotalQuestionsAsked();
+        double percentilescore = _score/totalasked;
+        return percentilescore;
     private void GamerWins(){
         JOptionPane.showMessageDialog(null, 
                 "Congratulations! You have won the game!", 
@@ -89,7 +93,7 @@ public class Gamer {
     // // Gamer tracks the _score, which is the total number of correct answers.
     // // We need to be able to get the total questions asked. (This is tracked by the 
     // // this._qAndABot.GetTotalQuestionsAsked().)
-    
+    }
     // User input will be passed through the UI to the gamer class. 
     
 // The Login and Logout functions have been removed to reduce complexity of application.
