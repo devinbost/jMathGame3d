@@ -42,14 +42,17 @@ public class Gamer {
     public int GetLevel(){
         return _level;
     }
-    
+    public double HighScore(){
+        double totalasked = this._qAndABot.GetTotalQuestionsAsked();
+        double percentilescore = _score/totalasked;
+        return percentilescore;
     // public function that returns high score.
     // high score should be returned as a double. The function should divide total
     // correct answers by the total questions answered.
     // // Gamer tracks the _score, which is the total number of correct answers.
     // // We need to be able to get the total questions asked. (This is tracked by the 
     // // this._qAndABot.GetTotalQuestionsAsked().)
-    
+    }
     // User input will be passed through the UI to the gamer class. 
     
 // The Login and Logout functions have been removed to reduce complexity of application.
