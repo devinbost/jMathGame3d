@@ -65,8 +65,13 @@ public class Gamer {
         double totalasked = this._qAndABot.GetTotalQuestionsAsked();
         double percentilescore = _score/totalasked;
         return percentilescore;
+<<<<<<< HEAD
     }
 >>>>>>> 856359a... Built all of the infrastructure for the HallOfFame singleton. Added a bunch of unit tests and new classes. Also added the new code that will be used for replacing the Question class with an interface, abstract class, and polymorphism (plus a Factory Method design pattern). This will help our code move toward sustainable design and best practices.
+||||||| parent of 89d6b94... Corrected a merging error
+=======
+    }
+>>>>>>> 89d6b94... Corrected a merging error
     private void GamerWins(){
         JOptionPane.showMessageDialog(null, 
                 "Congratulations! You have won the game!", 
@@ -152,3 +157,9 @@ public class Gamer {
 //    }
 //}
 // QandABot needs to be a singleton
+<<<<<<< HEAD
+||||||| parent of 89d6b94... Corrected a merging error
+}
+=======
+
+>>>>>>> 89d6b94... Corrected a merging error
