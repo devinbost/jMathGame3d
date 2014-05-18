@@ -328,6 +328,7 @@ public class GameUI extends javax.swing.JFrame {
     private javax.swing.JLabel jQuestion;
     private javax.swing.JLabel jScore;
     private javax.swing.JMenuItem jStartGame;
+<<<<<<< HEAD
     private javax.swing.JTextField jUsername;
     // End of variables declaration//GEN-END:variables
 }
@@ -473,6 +474,10 @@ public class GameUI extends javax.swing.JFrame {
     private javax.swing.JMenuBar jMainMenuBar;
     private javax.swing.JMenu jPauseMenu;
     private javax.swing.JMenuItem jStartGame;
+||||||| merged common ancestors
+=======
+    private javax.swing.JTextField jUsername;
+>>>>>>> Built all of the infrastructure for the HallOfFame singleton. Added a bunch of unit tests and new classes. Also added the new code that will be used for replacing the Question class with an interface, abstract class, and polymorphism (plus a Factory Method design pattern). This will help our code move toward sustainable design and best practices.
     // End of variables declaration//GEN-END:variables
 }
 >>>>>>> Added a ton of classes and unit tests. Almost finished initial design of Question.java, QandABot.java, Gamer.java, QuestionQueue.java, and QuestionTypeEnum.java.

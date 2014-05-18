@@ -6,15 +6,21 @@
 
 package MathGame.Tests;
 
+<<<<<<< HEAD
 import de.congrace.exp4j.Calculable;
 import de.congrace.exp4j.ExpressionBuilder;
 import java.io.File;
+||||||| merged common ancestors
+=======
+import java.io.File;
+>>>>>>> Built all of the infrastructure for the HallOfFame singleton. Added a bunch of unit tests and new classes. Also added the new code that will be used for replacing the Question class with an interface, abstract class, and polymorphism (plus a Factory Method design pattern). This will help our code move toward sustainable design and best practices.
 import java.util.*;
 import mathgame.*;
 import mathgame.Questions.Question;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.not;
+<<<<<<< HEAD
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.not;
@@ -24,6 +30,10 @@ import static org.hamcrest.CoreMatchers.not;
 import org.jscience.mathematics.function.Polynomial;
 import org.jscience.mathematics.function.Variable;
 import org.jscience.mathematics.number.Real;
+||||||| merged common ancestors
+=======
+import static org.hamcrest.CoreMatchers.not;
+>>>>>>> Built all of the infrastructure for the HallOfFame singleton. Added a bunch of unit tests and new classes. Also added the new code that will be used for replacing the Question class with an interface, abstract class, and polymorphism (plus a Factory Method design pattern). This will help our code move toward sustainable design and best practices.
 import org.junit.AfterClass;
 import static org.junit.Assert.*;
 import org.junit.BeforeClass;
@@ -126,6 +136,7 @@ public class MathGameTest {
         int enumTypes = Question.GetMaximumDifficultyLevel();
         assertEquals(4, enumTypes);
     }
+<<<<<<< HEAD
     @Test
     public void Score_IsConstructorWorking_ReturnsInstance(){
         Score score = new Score(10, "Devin");
@@ -194,5 +205,50 @@ public class MathGameTest {
         // the best practice would be to use an interface to create a seam to make it easier to unit test the HallOfFame class.
     }
     
+||||||| merged common ancestors
+=======
+    @Test
+    public void Score_IsConstructorWorking_ReturnsInstance(){
+        Score score = new Score(10, "Devin");
+        assertTrue(score instanceof Score);
+    }
+    @Test
+    public void HallOfFame_UpdateScoreFileCreatesFile_ReturnsTrue(){
+        HallOfFame hallOfFame = HallOfFame.getInstance();
+        hallOfFame.updateScoreFile();
+        File f = new File("C:\\Users\\devinbost.BOSTINFORMATION\\Documents\\NetBeansProjects\\MathGame\\src\\mathgame\\scores.dat");
+        assertTrue(f.exists());
+        // the best practice would be to use an interface to create a seam to make it easier to unit test the HallOfFame class.
+    }
+    @Test
+    public void HallOfFame_GetHighScoresActuallyReturnsScores_ReturnsTrue(){
+        HallOfFame hallOfFame = HallOfFame.getInstance();
+        double score = 10;
+        hallOfFame.addScore(score, "Devin");
+        ArrayList<Score> scores = hallOfFame.GetHighScores();
+        System.out.println("scores should not be empty. scores has a size of: " + scores.size());
+        assertTrue(scores.isEmpty() == false);
+        // the best practice would be to use an interface to create a seam to make it easier to unit test the HallOfFame class.
+    }
+    @Test
+    public void HallOfFame_IsGetInstanceWorking_ReturnsInstance(){
+        HallOfFame hallOfFame = HallOfFame.getInstance();
+        assertTrue(hallOfFame instanceof HallOfFame);
+        // the best practice would be to use an interface to create a seam to make it easier to unit test the HallOfFame class.
+    }
+    @Test
+    public void Gamer_IsScoreRecordedWhenGamerWinsGame_ReturnsNotEmptyString(){
+        Gamer gamer = new Gamer(1, 3, "Devin");
+        gamer.SetScore(10);
+        gamer.LevelUp();
+        HallOfFame hallOfFame = HallOfFame.getInstance();
+        String scores = "";
+        scores = hallOfFame.getHighscoreString();
+        System.out.println("hallOfFame.getHighscoreString() returns: " + scores);
+        assertThat(scores, is(not("")));
+        // the best practice would be to use an interface to create a seam to make it easier to unit test the HallOfFame class.
+    }
+    
+>>>>>>> Built all of the infrastructure for the HallOfFame singleton. Added a bunch of unit tests and new classes. Also added the new code that will be used for replacing the Question class with an interface, abstract class, and polymorphism (plus a Factory Method design pattern). This will help our code move toward sustainable design and best practices.
 
 }

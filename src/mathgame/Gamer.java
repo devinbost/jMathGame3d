@@ -56,6 +56,7 @@ public class Gamer {
         return _level;
     }
 <<<<<<< HEAD
+<<<<<<< HEAD
     public double HighScore(){
         double totalasked = this._qAndABot.GetTotalQuestionsAsked();
         float percentilescore = (float)_score/(float)totalasked;
@@ -72,11 +73,28 @@ public class Gamer {
 =======
 <<<<<<< HEAD
 >>>>>>> Made the high score function in Gamer.java
+||||||| merged common ancestors
+=======
+<<<<<<< HEAD
+||||||| parent of 856359a... Built all of the infrastructure for the HallOfFame singleton. Added a bunch of unit tests and new classes. Also added the new code that will be used for replacing the Question class with an interface, abstract class, and polymorphism (plus a Factory Method design pattern). This will help our code move toward sustainable design and best practices.
+    public double HighScore(){
+        double totalasked = this._qAndABot.GetTotalQuestionsAsked();
+        double percentilescore = _score/totalasked;
+        return percentilescore;
+=======
+    public double HighScore(){
+        double totalasked = this._qAndABot.GetTotalQuestionsAsked();
+        double percentilescore = _score/totalasked;
+        return percentilescore;
+    }
+>>>>>>> 856359a... Built all of the infrastructure for the HallOfFame singleton. Added a bunch of unit tests and new classes. Also added the new code that will be used for replacing the Question class with an interface, abstract class, and polymorphism (plus a Factory Method design pattern). This will help our code move toward sustainable design and best practices.
+>>>>>>> Built all of the infrastructure for the HallOfFame singleton. Added a bunch of unit tests and new classes. Also added the new code that will be used for replacing the Question class with an interface, abstract class, and polymorphism (plus a Factory Method design pattern). This will help our code move toward sustainable design and best practices.
     private void GamerWins(){
         JOptionPane.showMessageDialog(null, 
                 "Congratulations! You have won the game!", 
                 "Congratulations: ", JOptionPane.INFORMATION_MESSAGE);
         // Do something about score here. (Check with singleton if high score.)
+<<<<<<< HEAD
         
         HallOfFame hallOfFame = HallOfFame.getInstance();
         hallOfFame.addScore(_score, _username);
@@ -85,6 +103,16 @@ public class Gamer {
                 "Here are the high scores: \n" +
                 highScores, 
                 "HighScores: ", JOptionPane.INFORMATION_MESSAGE);
+||||||| merged common ancestors
+=======
+        HallOfFame hallOfFame = HallOfFame.getInstance();
+        hallOfFame.addScore(_score, _username);
+        String highScores = hallOfFame.getHighscoreString();
+        JOptionPane.showMessageDialog(null, 
+                "Here are the high scores: \n" +
+                highScores, 
+                "HighScores: ", JOptionPane.INFORMATION_MESSAGE);
+>>>>>>> Built all of the infrastructure for the HallOfFame singleton. Added a bunch of unit tests and new classes. Also added the new code that will be used for replacing the Question class with an interface, abstract class, and polymorphism (plus a Factory Method design pattern). This will help our code move toward sustainable design and best practices.
     }
     private int ValidateLevel(int level){
         if (level % 1 == 0) { // if level somehow becomes a float instead.
@@ -128,6 +156,7 @@ public class Gamer {
     // // Gamer tracks the _score, which is the total number of correct answers.
     // // We need to be able to get the total questions asked. (This is tracked by the 
     // // this._qAndABot.GetTotalQuestionsAsked().)
+<<<<<<< HEAD
 <<<<<<< HEAD
 }
     // User input will be passed through the UI to the gamer class. 
@@ -189,6 +218,11 @@ public class Gamer {
 =======
     }
 >>>>>>> Made the high score function in Gamer.java
+||||||| merged common ancestors
+    }
+=======
+}
+>>>>>>> Built all of the infrastructure for the HallOfFame singleton. Added a bunch of unit tests and new classes. Also added the new code that will be used for replacing the Question class with an interface, abstract class, and polymorphism (plus a Factory Method design pattern). This will help our code move toward sustainable design and best practices.
     // User input will be passed through the UI to the gamer class. 
     
 // The Login and Logout functions have been removed to reduce complexity of application.
@@ -211,5 +245,10 @@ public class Gamer {
 //    }
 //}
 // QandABot needs to be a singleton
+<<<<<<< HEAD
 }
 >>>>>>> Added a ton of classes and unit tests. Almost finished initial design of Question.java, QandABot.java, Gamer.java, QuestionQueue.java, and QuestionTypeEnum.java.
+||||||| merged common ancestors
+}
+=======
+>>>>>>> Built all of the infrastructure for the HallOfFame singleton. Added a bunch of unit tests and new classes. Also added the new code that will be used for replacing the Question class with an interface, abstract class, and polymorphism (plus a Factory Method design pattern). This will help our code move toward sustainable design and best practices.
