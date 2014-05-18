@@ -40,6 +40,8 @@ public class GameUI extends javax.swing.JFrame {
         jCorrect = new javax.swing.JLabel();
         jScore = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        jUsername = new javax.swing.JTextField();
         jMainMenuBar = new javax.swing.JMenuBar();
         jMainMenu = new javax.swing.JMenu();
         jStartGame = new javax.swing.JMenuItem();
@@ -86,10 +88,13 @@ public class GameUI extends javax.swing.JFrame {
 
         jLabel4.setText("Score:");
 
+        jLabel5.setText("What's your name?");
+
+        jUsername.setText("Enter Name Here.");
+
         jMainMenu.setText("Main");
 
         jStartGame.setText("Start Game");
-        jStartGame.setActionCommand("Start Game");
         jStartGame.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jStartGameActionPerformed(evt);
@@ -142,7 +147,10 @@ public class GameUI extends javax.swing.JFrame {
                                 .addComponent(jCorrect)))))
                 .addContainerGap(57, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(jLabel5)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jUsername, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScore))
@@ -152,8 +160,10 @@ public class GameUI extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jScore)
-                    .addComponent(jLabel4))
-                .addGap(35, 35, 35)
+                    .addComponent(jLabel4)
+                    .addComponent(jLabel5)
+                    .addComponent(jUsername, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(32, 32, 32)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jDifficultySpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1))
@@ -170,7 +180,7 @@ public class GameUI extends javax.swing.JFrame {
                     .addComponent(jCheckAnswer)
                     .addComponent(jNextQuestion)
                     .addComponent(jCorrect))
-                .addContainerGap(112, Short.MAX_VALUE))
+                .addContainerGap(109, Short.MAX_VALUE))
         );
 
         pack();
@@ -181,9 +191,11 @@ public class GameUI extends javax.swing.JFrame {
         // This is the event handler method that starts the game.
         int difficulty = (int)jDifficultySpinner.getValue();
         if(difficulty > 3 || difficulty < 0){
-            throw new IllegalArgumentException("Error: The difficulty level cannot be set below 0 or above 3!");
+            //throw new IllegalArgumentException("Error: The difficulty level cannot be set below 0 or above 3!");
         }
-        _Gamer = new Gamer(difficulty, 3);
+        // We need some error handling on the getText method to ensure that the gamer has entered their name!
+        String name = jUsername.getText();
+        _Gamer = new Gamer(difficulty, 3, name);
         _QandABot = new QandABot(_Gamer);
         // set gamer and bot to properties
         // enable answer button when the game is started
@@ -273,6 +285,7 @@ public class GameUI extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JMenu jMainMenu;
     private javax.swing.JMenuBar jMainMenuBar;
     private javax.swing.JButton jNextQuestion;
@@ -280,5 +293,6 @@ public class GameUI extends javax.swing.JFrame {
     private javax.swing.JLabel jQuestion;
     private javax.swing.JLabel jScore;
     private javax.swing.JMenuItem jStartGame;
+    private javax.swing.JTextField jUsername;
     // End of variables declaration//GEN-END:variables
 }
