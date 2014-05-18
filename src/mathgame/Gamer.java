@@ -24,10 +24,11 @@ public class Gamer {
     private QandABot _qAndABot;
     
     // When the game starts, the user will be prompted for the level. That level will be used to construct the Gamer object.
-    public Gamer(int level, int digits){
+    public Gamer(int level, int digits, String name){
         // determine if the gamer's level is set to a legitimate level.
         _level = this.ValidateLevel(level);
         _digits = digits;
+        _username = name;
     }
     public void LevelUp(){
         _level++;
@@ -36,6 +37,9 @@ public class Gamer {
         }
         // This is where we need to check if the next level actually exists. If not, then the 
         // gamer has won the game.
+    }
+    public void SetScore(int score){ // This method is (and should be) only used for unit testing.
+        _score = score;
     }
     public void ScoreUp(){
         _score++;
@@ -53,11 +57,19 @@ public class Gamer {
         double totalasked = this._qAndABot.GetTotalQuestionsAsked();
         double percentilescore = _score/totalasked;
         return percentilescore;
+    }
     private void GamerWins(){
         JOptionPane.showMessageDialog(null, 
                 "Congratulations! You have won the game!", 
-                "InfoBox: ", JOptionPane.INFORMATION_MESSAGE);
+                "Congratulations: ", JOptionPane.INFORMATION_MESSAGE);
         // Do something about score here. (Check with singleton if high score.)
+        HallOfFame hallOfFame = HallOfFame.getInstance();
+        hallOfFame.addScore(_score, _username);
+        String highScores = hallOfFame.getHighscoreString();
+        JOptionPane.showMessageDialog(null, 
+                "Here are the high scores: \n" +
+                highScores, 
+                "HighScores: ", JOptionPane.INFORMATION_MESSAGE);
     }
     private int ValidateLevel(int level){
         if (level % 1 == 0) { // if level somehow becomes a float instead.
@@ -67,7 +79,7 @@ public class Gamer {
         if (level < 0 || level > Question.GetMaximumDifficultyLevel() - 1) {
              JOptionPane.showMessageDialog(null, 
                 "Error: \t " + "You have entered: " + level
-                        + "Please enter a level between 0 and 3. "
+                        + "\n Please enter a level between 0 and 3. "
                         + "\n You will need to start the game again.", 
                 "Error: ", JOptionPane.INFORMATION_MESSAGE);
              // This is a very ugly hack designed to comply with the class assignment requirements.
@@ -93,7 +105,7 @@ public class Gamer {
     // // Gamer tracks the _score, which is the total number of correct answers.
     // // We need to be able to get the total questions asked. (This is tracked by the 
     // // this._qAndABot.GetTotalQuestionsAsked().)
-    }
+}
     // User input will be passed through the UI to the gamer class. 
     
 // The Login and Logout functions have been removed to reduce complexity of application.
@@ -116,4 +128,3 @@ public class Gamer {
 //    }
 //}
 // QandABot needs to be a singleton
-}
