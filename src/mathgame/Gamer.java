@@ -60,6 +60,7 @@ public class Gamer {
         }
         percentilescore *= 100;
         return percentilescore;
+    }
     private void GamerWins(){
         JOptionPane.showMessageDialog(null, 
                 "Congratulations! You have won the game!", 
@@ -123,4 +124,4 @@ public class Gamer {
 //    }
 //}
 // QandABot needs to be a singleton
-}
+
