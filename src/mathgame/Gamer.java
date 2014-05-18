@@ -113,7 +113,14 @@ public class Gamer {
 =======
     public double HighScore(){
         double totalasked = this._qAndABot.GetTotalQuestionsAsked();
-        double percentilescore = _score/totalasked;
+        float percentilescore = (float)_score/(float)totalasked;
+        if (percentilescore>1 || percentilescore<0){
+            System.out.println("\t Error! "
+                    + "\n Incorrect input!");
+            percentilescore = -100;
+            return percentilescore;
+        }
+        percentilescore *= 100;
         return percentilescore;
 >>>>>>> 7bb142c... Made the high score function in Gamer.java
     // public function that returns high score.
