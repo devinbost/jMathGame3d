@@ -44,7 +44,14 @@ public class Gamer {
     }
     public double HighScore(){
         double totalasked = this._qAndABot.GetTotalQuestionsAsked();
-        double percentilescore = _score/totalasked;
+        float percentilescore = (float)_score/(float)totalasked;
+        if (percentilescore>1 || percentilescore<0){
+            System.out.println("\t Error! "
+                    + "\n Incorrect input!");
+            percentilescore = -100;
+            return percentilescore;
+        }
+        percentilescore *= 100;
         return percentilescore;
     // public function that returns high score.
     // high score should be returned as a double. The function should divide total
