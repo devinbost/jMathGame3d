@@ -17,7 +17,7 @@ import com.jme3.asset.plugins.ZipLocator;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.collision.shapes.CapsuleCollisionShape;
 import com.jme3.bullet.collision.shapes.CollisionShape;
-import com.jme3.bullet.control.CharacterControl;
+import com.jme3.bullet.control.BetterCharacterControl;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.util.CollisionShapeFactory;
 import com.jme3.collision.CollisionResult;
@@ -56,9 +56,9 @@ public class HelloJME3 extends SimpleApplication implements AnimEventListener{ /
     private Geometry mark;
     private BulletAppState bulletAppState;
     private RigidBodyControl landscape;
-    private CharacterControl playerControl;
+    private BetterCharacterControl playerControl;
     private Spatial gameLevel;
-    
+    private Vector3f walkDirection = new Vector3f(0,0,0); // stop
     public static void main(String[] args){
         HelloJME3 app = new HelloJME3();
         app.start(); // start the game
@@ -143,14 +143,14 @@ public class HelloJME3 extends SimpleApplication implements AnimEventListener{ /
         control.addListener(this);
         channel = control.createChannel();
         channel.setAnim("stand");
-        CapsuleCollisionShape capsuleShape = new CapsuleCollisionShape(1.5f, 6f, 1);
-        playerControl = new CharacterControl(capsuleShape, 0.05f);
+        //CapsuleCollisionShape capsuleShape = new CapsuleCollisionShape(1.5f, 6f, 1);
+        playerControl = new BetterCharacterControl(1.5f, 6f, 1f);
         player.addControl(playerControl);
-        playerControl.setJumpSpeed(20);
-        playerControl.setFallSpeed(20);
-        playerControl.setGravity(30);
+        playerControl.setJumpForce(new Vector3f(0,5f,0));
+        //playerControl.setFallSpeed(new Vector3f(0,20f,0));
+        playerControl.setGravity(new Vector3f(0,1f,0));
         // Finally we put the player in its starting position and update its state – remember to use setPhysicsLocation() instead of setLocalTranslation() now, since you are dealing with a physical object.
-        playerControl.setPhysicsLocation(new Vector3f(0,10,0));
+        playerControl.warp(new Vector3f(0,10,10));
         // We need to register all solid objects to the PhysicsSpace!
         bulletAppState.getPhysicsSpace().add(playerControl);
         SkeletonDebugger skeletonDebug = ConstructSkeleton();
@@ -236,10 +236,10 @@ public class HelloJME3 extends SimpleApplication implements AnimEventListener{ /
     inputManager.addMapping("Run", new KeyTrigger(KeyInput.KEY_SPACE));
     inputManager.addMapping("Walk", new KeyTrigger(KeyInput.KEY_G));
     inputManager.addMapping("Shoot", new KeyTrigger(KeyInput.KEY_B));
-    inputManager.addListener(actionListener, "Walk", "Shoot");
+    inputManager.addListener(actionListener, "Walk", "Shoot", "Left", "Right", "Run");
     // Add the names to the action listener.
     inputManager.addListener(actionListener,"Pause"); // You register the pause action to the ActionListener, because it is an "on/off" action.
-    inputManager.addListener(analogListener,"Left", "Right", "RotateLeft", "RotateRight", "Run"); // You register the movement actions to the AnalogListener, because they are gradual actions.
+    inputManager.addListener(analogListener, "RotateLeft", "RotateRight"); // You register the movement actions to the AnalogListener, because they are gradual actions.
  
     /* TO make character pickup an object, here are the steps:
      * 1. button is pressed
@@ -256,6 +256,25 @@ public class HelloJME3 extends SimpleApplication implements AnimEventListener{ /
   }
   private ActionListener actionListener = new ActionListener(){
       public void onAction(String name, boolean keyPressed, float tpf){
+          if (name.equals("Left")) {
+                   Vector3f forward = player.getLocalTranslation();
+                   // right direction = cross product between forward and up (forward cross up)
+                   Vector3f downVector = new Vector3f(0,-1,0);
+                   Vector3f leftVector = forward.cross(downVector).normalize();
+                   playerControl.setWalkDirection(keyPressed ? leftVector : Vector3f.ZERO);
+                   //playerControl.setWalkDirection(leftVector); 
+                   //Vector3f v = player.getLocalTranslation();
+                   //player.setLocalTranslation(v.x - value*speed, v.y, v.z);
+              }
+          if (name.equals("Right")) {
+                   Vector3f forward = player.getLocalTranslation();
+                   // right direction = cross product between forward and up (forward cross up)
+                   Vector3f upVector = new Vector3f(0,1,0);
+                   Vector3f rightVector = forward.cross(upVector).normalize();
+                   playerControl.setWalkDirection(keyPressed ? rightVector : Vector3f.ZERO);
+                   //playerControl.setWalkDirection(rightVector);
+                   //player.setLocalTranslation(v.x + value*speed, v.y, v.z);
+              }
           if (name.equals("Pause") && !keyPressed) {
               isRunning = !isRunning;
           }
@@ -341,20 +360,32 @@ public class HelloJME3 extends SimpleApplication implements AnimEventListener{ /
   private AnalogListener analogListener = new AnalogListener(){
       public void onAnalog(String name, float value, float tpf){
           if (isRunning) {
+//               if (name.equals("Right")) {
+//                   Vector3f forward = player.getLocalTranslation();
+//                   // right direction = cross product between forward and up (forward cross up)
+//                   Vector3f upVector = new Vector3f(0,1,0);
+//                   Vector3f rightVector = forward.cross(upVector).normalize();
+//                   playerControl.setWalkDirection(isPressed ? rightVector : Vector3f.zero);
+//                   //playerControl.setWalkDirection(rightVector);
+//                   //player.setLocalTranslation(v.x + value*speed, v.y, v.z);
+//              }
+//              if (name.equals("Left")) {
+//                   Vector3f forward = player.getLocalTranslation();
+//                   // right direction = cross product between forward and up (forward cross up)
+//                   Vector3f downVector = new Vector3f(0,-1,0);
+//                   Vector3f leftVector = forward.cross(downVector).normalize();
+//                   playerControl.setWalkDirection(isPressed ? leftVector : Vector3f.zero);
+//                   //playerControl.setWalkDirection(leftVector); 
+//                   //Vector3f v = player.getLocalTranslation();
+//                   //player.setLocalTranslation(v.x - value*speed, v.y, v.z);
+//              }
               if (name.equals("RotateLeft")) {
                   player.rotate(0, value*speed, 0);
               }
               if (name.equals("RotateRight")) {
                   player.rotate(0, -value*speed, 0);
               }
-              if (name.equals("Right")) {
-                   Vector3f v = player.getLocalTranslation();
-                   player.setLocalTranslation(v.x + value*speed, v.y, v.z);
-              }
-              if (name.equals("Left")) {
-                   Vector3f v = player.getLocalTranslation();
-                   player.setLocalTranslation(v.x - value*speed, v.y, v.z);
-              }
+             
               if (name.equals("Run")) {
                    Vector3f v = player.getLocalTranslation();
                    
@@ -385,7 +416,8 @@ public class HelloJME3 extends SimpleApplication implements AnimEventListener{ /
                         // How do we activate the analogListener for walk when this occurs?
                         channel.setLoopMode(LoopMode.Loop);
                     }
-                   player.setLocalTranslation(actualForward);
+                   //player.setLocalTranslation(actualForward);
+                   playerControl.setWalkDirection(actualForward);
               }
               else {
                   System.out.println("Press P to unpause.");
@@ -398,7 +430,7 @@ public class HelloJME3 extends SimpleApplication implements AnimEventListener{ /
     public void onAnimCycleDone(AnimControl control, AnimChannel channel, String animName) {
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         // reset the character to a standing position after a Walk cycle is done.
-        if (animName.equals("Walk")) {
+        if (animName.equals("Walk") || animName.equals("Run") || animName.equals("Right") || animName.equals("Left")) {
             channel.setAnim("stand", 0.50f);
             channel.setLoopMode(LoopMode.DontLoop);
             channel.setSpeed(1f);
