@@ -18,6 +18,7 @@ import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.collision.shapes.CapsuleCollisionShape;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.control.BetterCharacterControl;
+import com.jme3.bullet.control.CharacterControl;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.util.CollisionShapeFactory;
 import com.jme3.collision.CollisionResult;
@@ -46,7 +47,9 @@ import com.jme3.scene.shape.Sphere;
 /** Sample 1 - how to get started with the most simple JME 3 application.
  * Display a blue 3D cube and view from all sides by
  * moving the mouse and pressing the WASD keys. */
-public class HelloJME3 extends SimpleApplication implements AnimEventListener{ // Make this class implement the ActionListener interface to customize the navigational inputs later.
+public class HelloJME3 extends SimpleApplication implements AnimEventListener
+//,        ActionListener 
+{ // Make this class implement the ActionListener interface to customize the navigational inputs later.
     public Node player;
     public Spatial ninja;
     private AnimChannel channel;
@@ -68,7 +71,7 @@ public class HelloJME3 extends SimpleApplication implements AnimEventListener{ /
     public void simpleInitApp() {
          bulletAppState = new BulletAppState(); // add the BulletAppState object to enable integration with jBullet's physical forces and collisions.
     stateManager.attach(bulletAppState); //  If you ever get confusing physics behaviour, remember to have a look at the collision shapes. Add the following line after the bulletAppState initialization to make the shapes visible:
-    //bulletAppState.getPhysicsSpace().enableDebug(assetManager);
+    bulletAppState.getPhysicsSpace().enableDebug(assetManager);
         guiNode.detachAllChildren(); // be sure to reset guiNode BEFORE we load the crossHairs
           initCrossHairs(); // a "+" in the middle of the screen to help aiming
           initMark();       // a red sphere to mark the hit
@@ -126,33 +129,43 @@ public class HelloJME3 extends SimpleApplication implements AnimEventListener{ /
         CollisionShape sceneShape = CollisionShapeFactory.createMeshShape((Node) gameLevel);
         landscape = new RigidBodyControl(sceneShape, 0);
         gameLevel.addControl(landscape);
-        bulletAppState.getPhysicsSpace().add(gameLevel);
+        bulletAppState.getPhysicsSpace().addAll(gameLevel);
         // Now attach it.
         shootables.attachChild(gameLevel); // should we add the shootables to the bulletAppState?
         //rootNode.attachChild(gameLevel);
         DirectionalLight dl = new DirectionalLight();
         dl.setDirection(new Vector3f(-0.1f, -1f, -1).normalizeLocal());
         rootNode.addLight(dl);
-        
-        player = (Node) assetManager.loadModel("Models/Oto/Oto.mesh.xml");
+        Spatial playerSpatial = assetManager.loadModel("Models/Oto/Oto.mesh.xml");
+        player =  (Node)playerSpatial;
+        Node playerNode = new Node();
+        playerNode.attachChild(player);
+        player.move(0,3.5f,0);
         player.setLocalScale(0.5f);
-        rootNode.attachChild(player);
+        
+        //rootNode.attachChild(player);
         /* Load the animation controls, listen to animation events,
      * create an animation channel, and bring the model in its default position.  */
         control = player.getControl(AnimControl.class);
         control.addListener(this);
         channel = control.createChannel();
         channel.setAnim("stand");
-        //CapsuleCollisionShape capsuleShape = new CapsuleCollisionShape(1.5f, 6f, 1);
+//        CapsuleCollisionShape capsuleShape = new CapsuleCollisionShape(1.5f, 6f, 1);
+//        CharacterControl playerControl = new CharacterControl(capsuleShape, 0.01f);
         playerControl = new BetterCharacterControl(1.5f, 6f, 1f);
-        player.addControl(playerControl);
+//        player.addControl(playerControl);
+        playerNode.addControl(playerControl);
+//        playerControl.setJumpSpeed(10f);
         playerControl.setJumpForce(new Vector3f(0,5f,0));
-        //playerControl.setFallSpeed(new Vector3f(0,20f,0));
+//        playerControl.setFallSpeed(20f);
+//        playerControl.setGravity(1f);
         playerControl.setGravity(new Vector3f(0,1f,0));
         // Finally we put the player in its starting position and update its state – remember to use setPhysicsLocation() instead of setLocalTranslation() now, since you are dealing with a physical object.
         playerControl.warp(new Vector3f(0,10,10));
         // We need to register all solid objects to the PhysicsSpace!
         bulletAppState.getPhysicsSpace().add(playerControl);
+        bulletAppState.getPhysicsSpace().addAll(playerNode);
+        rootNode.attachChild(playerNode);
         SkeletonDebugger skeletonDebug = ConstructSkeleton();
         player.attachChild(skeletonDebug);
     }
@@ -228,7 +241,6 @@ public class HelloJME3 extends SimpleApplication implements AnimEventListener{ /
   private void initKeys() {
     // You can map one or several inputs to one named action
     inputManager.addMapping("Pause",  new KeyTrigger(KeyInput.KEY_P));
-    inputManager.addMapping("Run",  new KeyTrigger(KeyInput.KEY_R));
     inputManager.addMapping("Left",   new KeyTrigger(KeyInput.KEY_J));
     inputManager.addMapping("Right",  new KeyTrigger(KeyInput.KEY_K));
     inputManager.addMapping("RotateLeft", new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
@@ -236,10 +248,10 @@ public class HelloJME3 extends SimpleApplication implements AnimEventListener{ /
     inputManager.addMapping("Run", new KeyTrigger(KeyInput.KEY_SPACE));
     inputManager.addMapping("Walk", new KeyTrigger(KeyInput.KEY_G));
     inputManager.addMapping("Shoot", new KeyTrigger(KeyInput.KEY_B));
-    inputManager.addListener(actionListener, "Walk", "Shoot", "Left", "Right", "Run");
+    inputManager.addListener(actionListener, "Walk", "Shoot", "Left", "Right", "Run","RotateLeft", "RotateRight");
     // Add the names to the action listener.
     inputManager.addListener(actionListener,"Pause"); // You register the pause action to the ActionListener, because it is an "on/off" action.
-    inputManager.addListener(analogListener, "RotateLeft", "RotateRight"); // You register the movement actions to the AnalogListener, because they are gradual actions.
+    //inputManager.addListener(analogListener, "RotateLeft", "RotateRight"); // You register the movement actions to the AnalogListener, because they are gradual actions.
  
     /* TO make character pickup an object, here are the steps:
      * 1. button is pressed
@@ -254,8 +266,38 @@ public class HelloJME3 extends SimpleApplication implements AnimEventListener{ /
      */
     
   }
+//  public void onAction(String name, boolean isPressed, float tpf) {
+//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//    }
   private ActionListener actionListener = new ActionListener(){
       public void onAction(String name, boolean keyPressed, float tpf){
+          if (name.equals("Run")) {
+                   Vector3f forward = playerControl.getViewDirection();
+                   //Vector3f v = player.getLocalTranslation();
+                   //Vector3f forward = new Vector3f(0,0,.05f);
+                   Vector3f actualForward = new Vector3f();
+                   player.localToWorld(forward, actualForward);
+                    if (!channel.getAnimationName().equals("Walk")) {
+                        channel.setAnim("Walk", 0.50f);
+                        channel.setLoopMode(LoopMode.Loop);
+                    }
+                   //player.setLocalTranslation(actualForward);
+                   playerControl.setWalkDirection(keyPressed ? actualForward : Vector3f.ZERO);
+              }
+          if (name.equals("RotateLeft")) {
+              Vector3f forward = playerControl.getViewDirection();
+                   // right direction = cross product between forward and up (forward cross up)
+                   Vector3f downVector = new Vector3f(0,-1,0);
+                   Vector3f leftVector = forward.cross(downVector).normalize();
+                   playerControl.setViewDirection(keyPressed ? leftVector : Vector3f.ZERO);
+          }
+          if (name.equals("RotateRight")) {
+              Vector3f forward = playerControl.getViewDirection();
+                   // right direction = cross product between forward and up (forward cross up)
+                   Vector3f upVector = new Vector3f(0,1,0);
+                   Vector3f rightVector = forward.cross(upVector).normalize();
+                   playerControl.setViewDirection(keyPressed ? rightVector : Vector3f.ZERO);
+          }
           if (name.equals("Left")) {
                    Vector3f forward = player.getLocalTranslation();
                    // right direction = cross product between forward and up (forward cross up)
@@ -380,9 +422,11 @@ public class HelloJME3 extends SimpleApplication implements AnimEventListener{ /
 //                   //player.setLocalTranslation(v.x - value*speed, v.y, v.z);
 //              }
               if (name.equals("RotateLeft")) {
+                  
                   player.rotate(0, value*speed, 0);
               }
               if (name.equals("RotateRight")) {
+                  
                   player.rotate(0, -value*speed, 0);
               }
              
@@ -472,4 +516,6 @@ public class HelloJME3 extends SimpleApplication implements AnimEventListener{ /
       settings.getWidth() / 2 - ch.getLineWidth()/2, settings.getHeight() / 2 + ch.getLineHeight()/2, 0);
     guiNode.attachChild(ch);
   }
+
+    
 }
