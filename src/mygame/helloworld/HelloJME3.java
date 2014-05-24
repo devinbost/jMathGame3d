@@ -58,6 +58,7 @@ public class HelloJME3 extends SimpleApplication implements AnimEventListener
     private AnimChannel attackChannel;
     private AnimControl animationControl;
     private Node shootables;
+    private Node inventory;
     Boolean isRunning=true;
     private Geometry mark;
     private BulletAppState bulletAppState;
@@ -68,6 +69,7 @@ public class HelloJME3 extends SimpleApplication implements AnimEventListener
     private boolean left = false, right = false, up = false, down = false;
     private Vector3f walkDirection = new Vector3f(0,0,0); // stop
     private float airTime = 0;
+    private Vector3f oldPosition; // this may be deprecated.
     
     public static void main(String[] args){
         HelloJME3 app = new HelloJME3();
@@ -77,15 +79,18 @@ public class HelloJME3 extends SimpleApplication implements AnimEventListener
     @Override
     public void simpleInitApp() {
          
-         bulletAppState = new BulletAppState(); // add the BulletAppState object to enable integration with jBullet's physical forces and collisions.
-    stateManager.attach(bulletAppState); //  If you ever get confusing physics behaviour, remember to have a look at the collision shapes. Add the following line after the bulletAppState initialization to make the shapes visible:
-    bulletAppState.getPhysicsSpace().enableDebug(assetManager);
+        bulletAppState = new BulletAppState(); // add the BulletAppState object to enable integration with jBullet's physical forces and collisions.
+        stateManager.attach(bulletAppState); //  If you ever get confusing physics behaviour, remember to have a look at the collision shapes. Add the following line after the bulletAppState initialization to make the shapes visible:
+        bulletAppState.getPhysicsSpace().enableDebug(assetManager);
         guiNode.detachAllChildren(); // be sure to reset guiNode BEFORE we load the crossHairs
-          initCrossHairs(); // a "+" in the middle of the screen to help aiming
-          initMark();       // a red sphere to mark the hit
-         shootables = new Node("Shootables");
-         rootNode.attachChild(shootables);
-         shootables.attachChild(makeCube("a Dragon", -2f, 0f, 1f));
+         initCrossHairs(); // a "+" in the middle of the screen to help aiming
+         initMark();       // a red sphere to mark the hit
+
+        shootables = new Node("Shootables");
+        rootNode.attachChild(shootables);
+        inventory = new Node("Inventory");
+        guiNode.attachChild(inventory);
+        shootables.attachChild(makeCube("a Dragon", -2f, 0f, 1f));
         shootables.attachChild(makeCube("a tin can", 1f, -2f, 0f));
         shootables.attachChild(makeCube("the Sheriff", 0f, 1f, -12f));
         shootables.attachChild(makeCube("the Deputy", 10f, 0f, -4f));
@@ -315,6 +320,7 @@ public class HelloJME3 extends SimpleApplication implements AnimEventListener
     inputManager.addMapping("Run", new KeyTrigger(KeyInput.KEY_SPACE));
     inputManager.addMapping("Walk", new KeyTrigger(KeyInput.KEY_G));
     inputManager.addMapping("Shoot", new KeyTrigger(KeyInput.KEY_B));
+    inputManager.addListener(this, "Shoot");
 //    inputManager.addListener(actionListener, "Walk", "Shoot", "Left", "Right", "Run","RotateLeft", "RotateRight");
 //    // Add the names to the action listener.
 //    inputManager.addListener(actionListener,"Pause"); // You register the pause action to the ActionListener, because it is an "on/off" action.
@@ -354,6 +360,111 @@ public void onAction(String binding, boolean value, float tpf) {
       playerControl.jump();
   if (binding.equals("CharAttack"))
       attack();
+  
+    if (binding.equals("Shoot")) { // Should we have something like [binding.equals("Shoot") && !keyPressed] here?
+//              // 1. Reset results list
+//              CollisionResults results = new CollisionResults();
+//              // 2. Aim the ray from character location to character direction.
+////                    Vector3f forward = new Vector3f(0,0,1.05f); // set the magnitude in front of char.
+////                    Vector3f actualForward = new Vector3f();
+////                    player.localToWorld(forward, actualForward);
+////              Ray ray = new Ray(player.getLocalTranslation(), actualForward);
+//              Ray ray = new Ray(cam.getLocation(), cam.getDirection());
+//              // 3. Collect intersections between Ray and  grabbables in results list.
+//              shootables.collideWith(ray, results);
+//              System.out.println("----- Collisions? " + results.size() + "-----");
+//                for (int i = 0; i < results.size(); i++) {
+//                  // For each hit, we know distance, impact point, name of geometry.
+//                  float dist = results.getCollision(i).getDistance();
+//                  Vector3f pt = results.getCollision(i).getContactPoint();
+//                  String hit = results.getCollision(i).getGeometry().getName();
+//                  System.out.println("* Collision #" + i);
+//                  System.out.println("  You shot " + hit + " at " + pt + ", " + dist + " wu away.");
+//                
+//                // Next, we want to calculate and print the distance between our player's vector and
+//                  // the colliding object's vector.
+//                  Vector3f playerLocation = player.getLocalTranslation();
+//                  float distanceBetweenPlayerAndCollision = playerLocation.distance(pt);
+//                  System.out.println("The distance between your player and the collision is: " + distanceBetweenPlayerAndCollision +
+//                          " world units (wu).");
+//                    if (distanceBetweenPlayerAndCollision < 20 && !"level-geom-5".equals(hit)) { // (ensure we don't try to pick up the entire town)
+//                        // i.e. If object is near player, then lift object (if object is not too heavy)
+//                        Geometry collidingObject = results.getCollision(i).getGeometry();
+//                        // i.e. Grab actual object from the collision.
+//                        Vector3f objectLocation = collidingObject.getLocalTranslation();
+//                        
+//                        Vector3f moveUp = new Vector3f(0,1f,0);
+//                        Vector3f actualMovement = new Vector3f();
+//                        collidingObject.localToWorld(moveUp, actualMovement);
+//                        collidingObject.setLocalTranslation(actualMovement);
+//                        // we need to move the mark on the object
+//                        // we need to check if the object is approximately in front of character.
+//                        // we need to be able to put the object down
+//                        // we need the picked-up object to move with the character
+//                        
+//                        /* Consider picking up the object into inventory:
+//                         *  1. Create an inventory node to store the detached nodes temporarily.
+//                            2. The inventory node is not attached to the rootNode.
+//                            3. You can make the inventory visible by attaching the inventory node to the guiNode (which attaches it to the HUD). Note the following caveats:
+//                                a. If your nodes use a lit Material (not "Unshaded.j3md"), also add a light to the guiNode.
+//                                b. Size units are pixels in the HUD, therefor a 2-wu cube is displayed only 2 pixels wide in the HUD. – Scale it bigger!
+//                                c. Position the nodes: The bottom left corner of the HUD is (0f,0f), and the top right corner is at (settings.getWidth(),settings.getHeight()).
+//                         */
+//                     }
+//                }
+                // THE IMPORTED CODE IS BELOW
+                if (!inventory.getChildren().isEmpty())
+              {
+                  Spatial s1 = inventory.getChild(0);
+                  // scale back
+                  s1.scale(.02f);
+                  s1.setLocalTranslation(oldPosition);
+                  inventory.detachAllChildren();
+                  shootables.attachChild(s1);
+              }
+              else
+              {
+                  CollisionResults results = new CollisionResults();
+                  Ray ray = new Ray(cam.getLocation(), cam.getDirection());
+                  shootables.collideWith(ray, results);
+
+                  if (results.size() > 0)
+                  {
+                      CollisionResult closest = results.getClosestCollision();
+                      Spatial s = closest.getGeometry();
+                      // we cheat Model differently with simple Geometry
+                      // s.parent is Oto-ogremesh when s is Oto_geom-1 and that is what we need
+                      if (s.getName().equals("Oto-geom-1"))
+                      {
+                          s = s.getParent();
+                      }
+                      // It's important to get a clone or otherwise it will behave weird
+                      oldPosition = s.getLocalTranslation().clone();
+                      // We also need to ensure that the object can be actually picked up.
+                      // To do this, we will need to check its mass and any other relevant properties.
+                      // We also need a way to get the object to persist (in inventory) after the button is no longer being
+                      // pressed. We also need a way to take the item out of inventory and put it in front of the 
+                      // character.
+                      
+                      // We must check if the pickedUp boolean is true. If true, then remove the item from
+                      // inventory and place it in front of the character (where cursor is placed).
+                      
+                      // Then, we need to add the animation in Blender.
+                      shootables.detachChild(s);
+                      inventory.attachChild(s);
+                      // make it bigger to see on the HUD
+                      s.scale(50f);
+                      int width = settings.getWidth() - 100;
+                      int height = settings.getHeight() - 100;
+                      
+                      // make it on the HUD center
+                      s.setLocalTranslation(width, 100, 0);
+//                      s.setLocalTranslation(settings.getWidth() / 2, settings.getHeight() / 2, 0);
+                  }
+              }
+                    
+    
+      }
 }
   private void attack() { // The player can attack and walk at the same time. attack() is a custom method that triggers an attack animation in the arms. Here you should also add custom code to play an effect and sound, and to determine whether the hit was successful.
     attackChannel.setAnim("Dodge", 0.1f); 
