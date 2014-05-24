@@ -4,12 +4,12 @@
  * and open the template in the editor.
  */
 
-package mathgame;
+package mathgame.Questions;
 
 /**
  *
- * @author jessewhite
+ * @author devinbost
  */
-public abstract class Menu {
-      //I'm not sure how to use an abstract class in java.
+public class SubtractionQuestion extends AbstractQuestion {
+    
 }

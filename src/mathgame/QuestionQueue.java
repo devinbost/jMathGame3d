@@ -5,10 +5,12 @@
  */
 
 package mathgame;
+import mathgame.Questions.Question;
 import java.util.*;
 /**
  *
- * @author devinbost
+ * import mathgame.Questions.Question;
+@author devinbost
  */
 public class QuestionQueue extends AbstractQueue<Question>{
     Queue _questions = null;

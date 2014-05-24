@@ -4,13 +4,13 @@
  * and open the template in the editor.
  */
 
-package mathgame;
+package mathgame.Menus;
 
 /**
  *
  * @author jessewhite
  */
-public class HelpMenu {
+public class PauseMenu {
     String command = "q";
     public void displayHelp() {
         //Get input from the user and place it in command.

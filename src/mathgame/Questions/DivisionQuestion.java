@@ -4,13 +4,13 @@
  * and open the template in the editor.
  */
 
-package mathgame;
+package mathgame.Questions;
 
 /**
  *
  * @author devinbost
  */
-public class AdditionQuestion extends AbstractQuestion {
+public class DivisionQuestion extends AbstractQuestion {
 
     
 }

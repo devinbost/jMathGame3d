@@ -4,7 +4,9 @@
  * and open the template in the editor.
  */
 
-package mathgame;
+package mathgame.Questions;
+
+import mathgame.QuestionTypeEnum;
 
 /**
  *

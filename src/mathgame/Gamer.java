@@ -5,6 +5,7 @@
  */
 
 package mathgame;
+import mathgame.Questions.Question;
 import java.lang.*;
 import java.util.*;
 import javax.swing.JOptionPane;
