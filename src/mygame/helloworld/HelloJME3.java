@@ -95,9 +95,6 @@ public class HelloJME3 extends SimpleApplication implements AnimEventListener
        //  Create a blue box at coordinates (1, -1, 1)
         Geometry blueBox = ConstructBox(ColorRGBA.Blue);
         rootNode.attachChild(blueBox);              // make the cube appear in the scene
-        //shootables.attachChild(blueBox);
-        //grabbables.attachChild(bo);
-        // create a red box right above the blue one at (1,3,1)
         Geometry redBox = ConstructBox(ColorRGBA.Red);
         // Create a pivot node at (0,0,0) and attach it to the root node.
         Node pivot = new Node("pivot");
@@ -114,10 +111,7 @@ public class HelloJME3 extends SimpleApplication implements AnimEventListener
         guiNode.attachChild(helloText);
         
         // Load a model from test_data (OgreXML + material + texture)
-        ninja = assetManager.loadModel("Models/Ninja/Ninja.mesh.xml");
-        ninja.scale(0.05f, 0.05f, 0.05f);
-        ninja.rotate(0.0f, -3.0f, 0.0f);
-        ninja.setLocalTranslation(0.0f, -5.0f, -2.0f);
+        this.ConstructNinja();
         rootNode.attachChild(ninja);
         initKeys(); // load my custom keybinding
         // You must add light to make the model visible
@@ -129,28 +123,41 @@ public class HelloJME3 extends SimpleApplication implements AnimEventListener
         
         rootNode.attachChild(elephant);
     
-        assetManager.registerLocator("town.zip", ZipLocator.class);
-        gameLevel = assetManager.loadModel("main.scene"); // be sure to give new names to new scenes
-        gameLevel.setLocalTranslation(0, -5.2f, 0); // move the level down by 5.2 units
-        gameLevel.setLocalScale(2f);
-        // Wrap the scene in a rigidbody collision object.
-        CollisionShape sceneShape = CollisionShapeFactory.createMeshShape((Node) gameLevel);
-        landscape = new RigidBodyControl(sceneShape, 0);
-        gameLevel.addControl(landscape);
-        bulletAppState.getPhysicsSpace().addAll(gameLevel);
-        // Now attach it.
-        shootables.attachChild(gameLevel); // should we add the shootables to the bulletAppState?
+        this.ConstructLevel();
         //rootNode.attachChild(gameLevel);
         DirectionalLight dl = new DirectionalLight();
         dl.setDirection(new Vector3f(-0.1f, -1f, -1).normalizeLocal());
         rootNode.addLight(dl);
+        this.ConstructCharacter();
+        
+    }
+//    private void setUpLight() {
+//    // We add light so we see the scene
+//    AmbientLight al = new AmbientLight();
+//    al.setColor(ColorRGBA.White.mult(1.3f));
+//    rootNode.addLight(al);
+// 
+//    DirectionalLight dl = new DirectionalLight();
+//    dl.setColor(ColorRGBA.White);
+//    dl.setDirection(new Vector3f(2.8f, -2.8f, -2.8f).normalizeLocal());
+//    rootNode.addLight(dl);
+//  }
+//    private SkeletonDebugger ConstructSkeleton(){
+//        SkeletonDebugger skeletonDebug = 
+//         new SkeletonDebugger("skeleton", control.getSkeleton());
+//     Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+//     mat.setColor("Color", ColorRGBA.Green);
+//     mat.getAdditionalRenderState().setDepthTest(false);
+//     skeletonDebug.setMaterial(mat);
+//     return skeletonDebug;
+//    }
+    private void ConstructCharacter(){
         Spatial playerSpatial = assetManager.loadModel("Models/Oto/Oto.mesh.xml");
         player =  (Node)playerSpatial;
         Node playerNode = new Node();
         playerNode.attachChild(player);
         player.move(0,3.5f,0);
         player.setLocalScale(0.5f);
-        
         //rootNode.attachChild(player);
         /* Load the animation controls, listen to animation events,
      * create an animation channel, and bring the model in its default position.  */
@@ -185,26 +192,25 @@ public class HelloJME3 extends SimpleApplication implements AnimEventListener
         attackChannel.addBone(animationControl.getSkeleton().getBone("arm.right"));
         attackChannel.addBone(animationControl.getSkeleton().getBone("hand.right"));
     }
-//    private void setUpLight() {
-//    // We add light so we see the scene
-//    AmbientLight al = new AmbientLight();
-//    al.setColor(ColorRGBA.White.mult(1.3f));
-//    rootNode.addLight(al);
-// 
-//    DirectionalLight dl = new DirectionalLight();
-//    dl.setColor(ColorRGBA.White);
-//    dl.setDirection(new Vector3f(2.8f, -2.8f, -2.8f).normalizeLocal());
-//    rootNode.addLight(dl);
-//  }
-//    private SkeletonDebugger ConstructSkeleton(){
-//        SkeletonDebugger skeletonDebug = 
-//         new SkeletonDebugger("skeleton", control.getSkeleton());
-//     Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-//     mat.setColor("Color", ColorRGBA.Green);
-//     mat.getAdditionalRenderState().setDepthTest(false);
-//     skeletonDebug.setMaterial(mat);
-//     return skeletonDebug;
-//    }
+    private void ConstructLevel(){
+        assetManager.registerLocator("town.zip", ZipLocator.class);
+        gameLevel = assetManager.loadModel("main.scene"); // be sure to give new names to new scenes
+        gameLevel.setLocalTranslation(0, -5.2f, 0); // move the level down by 5.2 units
+        gameLevel.setLocalScale(2f);
+        // Wrap the scene in a rigidbody collision object.
+        CollisionShape sceneShape = CollisionShapeFactory.createMeshShape((Node) gameLevel);
+        landscape = new RigidBodyControl(sceneShape, 0);
+        gameLevel.addControl(landscape);
+        bulletAppState.getPhysicsSpace().addAll(gameLevel);
+        // Now attach it.
+        shootables.attachChild(gameLevel); // should we add the shootables to the bulletAppState?
+    }
+    private void ConstructNinja(){
+        ninja = assetManager.loadModel("Models/Ninja/Ninja.mesh.xml");
+        ninja.scale(0.05f, 0.05f, 0.05f);
+        ninja.rotate(0.0f, -3.0f, 0.0f);
+        ninja.setLocalTranslation(0.0f, -5.0f, -2.0f);
+    }
     private BitmapText ConstructGuiText(){
         guiFont = assetManager.loadFont("Interface/Fonts/Default.fnt");
         BitmapText helloText = new BitmapText(guiFont, false);
@@ -349,8 +355,8 @@ public void onAction(String binding, boolean value, float tpf) {
   if (binding.equals("CharAttack"))
       attack();
 }
-  private void attack() { // The player can attack and walk at the same time. Attack() is a custom method that triggers an attack animation in the arms. Here you should also add custom code to play an effect and sound, and to determine whether the hit was successful.
-    attackChannel.setAnim("Dodge", 0.1f); // this can be an attackChannel instead.
+  private void attack() { // The player can attack and walk at the same time. attack() is a custom method that triggers an attack animation in the arms. Here you should also add custom code to play an effect and sound, and to determine whether the hit was successful.
+    attackChannel.setAnim("Dodge", 0.1f); 
     attackChannel.setLoopMode(LoopMode.DontLoop); // this can be an attackChannel instead.
 }
 //  private ActionListener actionListener = new ActionListener(){
