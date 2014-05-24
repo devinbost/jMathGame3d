@@ -5,6 +5,7 @@
  */
 
 package MathGame.Tests;
+import mathgame.Questions.Question;
 import org.junit.*;
 import org.junit.runner.*;
 import java.util.*;

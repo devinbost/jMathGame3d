@@ -6,10 +6,14 @@
 
 package mathgame;
 
+import mathgame.Menus.AbstractMenu;
+
 /**
  *
  * @author devinbost
  */
-public class SubtractionQuestion extends AbstractQuestion {
-    
+public interface IDisplayCommand { // This is required for the Command design pattern.
+    void Execute();
+    AbstractMenu abstractMenu = null;
+    String GetContents();
 }

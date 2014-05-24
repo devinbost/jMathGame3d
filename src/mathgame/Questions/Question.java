@@ -4,7 +4,8 @@
  * and open the template in the editor.
  */
 
-package mathgame;
+package mathgame.Questions;
+import mathgame.QuestionTypeEnum;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;

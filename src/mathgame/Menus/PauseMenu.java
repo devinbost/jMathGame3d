@@ -4,13 +4,12 @@
  * and open the template in the editor.
  */
 
-package mathgame;
+package mathgame.Menus;
 
 /**
  *
  * @author devinbost
  */
-public class AdditionQuestion extends AbstractQuestion {
-
+public class PauseMenu {
     
 }

@@ -6,6 +6,7 @@
 
 package mathgame;
 
+import mathgame.Questions.Question;
 import java.util.*;
 
 /**

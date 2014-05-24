@@ -6,6 +6,7 @@
 
 package MathGame.Tests;
 
+import mathgame.Questions.Question;
 import java.io.File;
 import java.util.*;
 import mathgame.*;
