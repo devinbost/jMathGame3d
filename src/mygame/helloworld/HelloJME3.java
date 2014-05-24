@@ -48,12 +48,15 @@ import com.jme3.scene.shape.Sphere;
  * Display a blue 3D cube and view from all sides by
  * moving the mouse and pressing the WASD keys. */
 public class HelloJME3 extends SimpleApplication implements AnimEventListener
-//,        ActionListener 
+,        ActionListener 
 { // Make this class implement the ActionListener interface to customize the navigational inputs later.
     public Node player;
     public Spatial ninja;
     private AnimChannel channel;
     private AnimControl control;
+    private AnimChannel animationChannel;
+    private AnimChannel attackChannel;
+    private AnimControl animationControl;
     private Node shootables;
     Boolean isRunning=true;
     private Geometry mark;
@@ -61,7 +64,11 @@ public class HelloJME3 extends SimpleApplication implements AnimEventListener
     private RigidBodyControl landscape;
     private BetterCharacterControl playerControl;
     private Spatial gameLevel;
+    // track directional input, so we can walk left-forward etc
+    private boolean left = false, right = false, up = false, down = false;
     private Vector3f walkDirection = new Vector3f(0,0,0); // stop
+    private float airTime = 0;
+    
     public static void main(String[] args){
         HelloJME3 app = new HelloJME3();
         app.start(); // start the game
@@ -69,6 +76,7 @@ public class HelloJME3 extends SimpleApplication implements AnimEventListener
     
     @Override
     public void simpleInitApp() {
+         
          bulletAppState = new BulletAppState(); // add the BulletAppState object to enable integration with jBullet's physical forces and collisions.
     stateManager.attach(bulletAppState); //  If you ever get confusing physics behaviour, remember to have a look at the collision shapes. Add the following line after the bulletAppState initialization to make the shapes visible:
     bulletAppState.getPhysicsSpace().enableDebug(assetManager);
@@ -146,10 +154,10 @@ public class HelloJME3 extends SimpleApplication implements AnimEventListener
         //rootNode.attachChild(player);
         /* Load the animation controls, listen to animation events,
      * create an animation channel, and bring the model in its default position.  */
-        control = player.getControl(AnimControl.class);
-        control.addListener(this);
-        channel = control.createChannel();
-        channel.setAnim("stand");
+////        control = player.getControl(AnimControl.class);
+////        control.addListener(this);
+////        channel = control.createChannel();
+////        channel.setAnim("stand");
 //        CapsuleCollisionShape capsuleShape = new CapsuleCollisionShape(1.5f, 6f, 1);
 //        CharacterControl playerControl = new CharacterControl(capsuleShape, 0.01f);
         playerControl = new BetterCharacterControl(1.5f, 6f, 1f);
@@ -166,8 +174,16 @@ public class HelloJME3 extends SimpleApplication implements AnimEventListener
         bulletAppState.getPhysicsSpace().add(playerControl);
         bulletAppState.getPhysicsSpace().addAll(playerNode);
         rootNode.attachChild(playerNode);
-        SkeletonDebugger skeletonDebug = ConstructSkeleton();
-        player.attachChild(skeletonDebug);
+//        SkeletonDebugger skeletonDebug = ConstructSkeleton();
+//        player.attachChild(skeletonDebug);
+        
+         animationControl = player.getControl(AnimControl.class);
+        animationControl.addListener(this);
+        animationChannel = animationControl.createChannel();
+        attackChannel = animationControl.createChannel();
+        attackChannel.addBone(animationControl.getSkeleton().getBone("uparm.right"));
+        attackChannel.addBone(animationControl.getSkeleton().getBone("arm.right"));
+        attackChannel.addBone(animationControl.getSkeleton().getBone("hand.right"));
     }
 //    private void setUpLight() {
 //    // We add light so we see the scene
@@ -180,15 +196,15 @@ public class HelloJME3 extends SimpleApplication implements AnimEventListener
 //    dl.setDirection(new Vector3f(2.8f, -2.8f, -2.8f).normalizeLocal());
 //    rootNode.addLight(dl);
 //  }
-    private SkeletonDebugger ConstructSkeleton(){
-        SkeletonDebugger skeletonDebug = 
-         new SkeletonDebugger("skeleton", control.getSkeleton());
-     Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-     mat.setColor("Color", ColorRGBA.Green);
-     mat.getAdditionalRenderState().setDepthTest(false);
-     skeletonDebug.setMaterial(mat);
-     return skeletonDebug;
-    }
+//    private SkeletonDebugger ConstructSkeleton(){
+//        SkeletonDebugger skeletonDebug = 
+//         new SkeletonDebugger("skeleton", control.getSkeleton());
+//     Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+//     mat.setColor("Color", ColorRGBA.Green);
+//     mat.getAdditionalRenderState().setDepthTest(false);
+//     skeletonDebug.setMaterial(mat);
+//     return skeletonDebug;
+//    }
     private BitmapText ConstructGuiText(){
         guiFont = assetManager.loadFont("Interface/Fonts/Default.fnt");
         BitmapText helloText = new BitmapText(guiFont, false);
@@ -221,6 +237,39 @@ public class HelloJME3 extends SimpleApplication implements AnimEventListener
     }
     @Override
     public void simpleUpdate(float tpf){ // "tpf" stands for "time per frame"
+         Vector3f camDir = cam.getDirection().clone().multLocal(7.25f); // multLocal controls rate of movement multiplier.
+        Vector3f camLeft = cam.getLeft().clone().multLocal(7.25f);
+        camDir.y = 0;
+        camLeft.y = 0;
+        walkDirection.set(0, 0, 0);
+
+        if (left)  walkDirection.addLocal(camLeft);
+        if (right) walkDirection.addLocal(camLeft.negate());
+        if (up) walkDirection.addLocal(camDir);
+        if (down) walkDirection.addLocal(camDir.negate());
+
+        if (!playerControl.isOnGround()) {
+            airTime = airTime + tpf;
+        } else {
+            airTime = 0;
+        }
+
+        if (walkDirection.length() == 0) {
+            if (!"stand".equals(animationChannel.getAnimationName())) {
+              animationChannel.setAnim("stand", 1f);
+            }
+        } else {
+            playerControl.setViewDirection(walkDirection);
+            if (airTime > .3f) {
+              if (!"stand".equals(animationChannel.getAnimationName())) {
+                animationChannel.setAnim("stand");
+              }
+            } else if (!"Walk".equals(animationChannel.getAnimationName())) {
+              animationChannel.setAnim("Walk", 0.7f); // 0.7f controls rate of animation
+            }
+          }
+        playerControl.setWalkDirection(walkDirection); // THIS IS WHERE THE WALKING HAPPENS
+        
         // This method is where we update score, health, check for collisions, make enemies calculate next move, play sounds, roll dice for traps, etc.
         //ninja.rotate(0, 2*tpf, 0);
         /*
@@ -239,18 +288,30 @@ public class HelloJME3 extends SimpleApplication implements AnimEventListener
     }
     /** Custom Keybinding: Map named actions to inputs. */
   private void initKeys() {
+      
+    // configure mappings, e.g. the WASD keys
+    inputManager.addMapping("CharLeft", new KeyTrigger(KeyInput.KEY_J));
+    inputManager.addMapping("CharRight", new KeyTrigger(KeyInput.KEY_L));
+    inputManager.addMapping("CharForward", new KeyTrigger(KeyInput.KEY_I));
+    inputManager.addMapping("CharBackward", new KeyTrigger(KeyInput.KEY_K));
+    inputManager.addMapping("CharJump", new KeyTrigger(KeyInput.KEY_RETURN));
+    inputManager.addMapping("CharAttack", new KeyTrigger(KeyInput.KEY_O));
+    // setup mapping that uses our override (via ActionListener interface):
+    inputManager.addListener(this, "CharLeft", "CharRight");
+    inputManager.addListener(this, "CharForward", "CharBackward");
+    inputManager.addListener(this, "CharJump", "CharAttack");
     // You can map one or several inputs to one named action
     inputManager.addMapping("Pause",  new KeyTrigger(KeyInput.KEY_P));
-    inputManager.addMapping("Left",   new KeyTrigger(KeyInput.KEY_J));
-    inputManager.addMapping("Right",  new KeyTrigger(KeyInput.KEY_K));
-    inputManager.addMapping("RotateLeft", new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
-    inputManager.addMapping("RotateRight",  new MouseButtonTrigger(MouseInput.BUTTON_RIGHT));
+//    inputManager.addMapping("Left",   new KeyTrigger(KeyInput.KEY_J));
+//    inputManager.addMapping("Right",  new KeyTrigger(KeyInput.KEY_K));
+//    inputManager.addMapping("RotateLeft", new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
+//    inputManager.addMapping("RotateRight",  new MouseButtonTrigger(MouseInput.BUTTON_RIGHT));
     inputManager.addMapping("Run", new KeyTrigger(KeyInput.KEY_SPACE));
     inputManager.addMapping("Walk", new KeyTrigger(KeyInput.KEY_G));
     inputManager.addMapping("Shoot", new KeyTrigger(KeyInput.KEY_B));
-    inputManager.addListener(actionListener, "Walk", "Shoot", "Left", "Right", "Run","RotateLeft", "RotateRight");
-    // Add the names to the action listener.
-    inputManager.addListener(actionListener,"Pause"); // You register the pause action to the ActionListener, because it is an "on/off" action.
+//    inputManager.addListener(actionListener, "Walk", "Shoot", "Left", "Right", "Run","RotateLeft", "RotateRight");
+//    // Add the names to the action listener.
+//    inputManager.addListener(actionListener,"Pause"); // You register the pause action to the ActionListener, because it is an "on/off" action.
     //inputManager.addListener(analogListener, "RotateLeft", "RotateRight"); // You register the movement actions to the AnalogListener, because they are gradual actions.
  
     /* TO make character pickup an object, here are the steps:
@@ -269,136 +330,159 @@ public class HelloJME3 extends SimpleApplication implements AnimEventListener
 //  public void onAction(String name, boolean isPressed, float tpf) {
 //        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 //    }
-  private ActionListener actionListener = new ActionListener(){
-      public void onAction(String name, boolean keyPressed, float tpf){
-          if (name.equals("Run")) {
-                   Vector3f forward = playerControl.getViewDirection();
-                   //Vector3f v = player.getLocalTranslation();
-                   //Vector3f forward = new Vector3f(0,0,.05f);
-                   Vector3f actualForward = new Vector3f();
-                   player.localToWorld(forward, actualForward);
-                    if (!channel.getAnimationName().equals("Walk")) {
-                        channel.setAnim("Walk", 0.50f);
-                        channel.setLoopMode(LoopMode.Loop);
-                    }
-                   //player.setLocalTranslation(actualForward);
-                   playerControl.setWalkDirection(keyPressed ? actualForward : Vector3f.ZERO);
-              }
-          if (name.equals("RotateLeft")) {
-              Vector3f forward = playerControl.getViewDirection();
-                   // right direction = cross product between forward and up (forward cross up)
-                   Vector3f downVector = new Vector3f(0,-1,0);
-                   Vector3f leftVector = forward.cross(downVector).normalize();
-                   playerControl.setViewDirection(keyPressed ? leftVector : Vector3f.ZERO);
-          }
-          if (name.equals("RotateRight")) {
-              Vector3f forward = playerControl.getViewDirection();
-                   // right direction = cross product between forward and up (forward cross up)
-                   Vector3f upVector = new Vector3f(0,1,0);
-                   Vector3f rightVector = forward.cross(upVector).normalize();
-                   playerControl.setViewDirection(keyPressed ? rightVector : Vector3f.ZERO);
-          }
-          if (name.equals("Left")) {
-                   Vector3f forward = player.getLocalTranslation();
-                   // right direction = cross product between forward and up (forward cross up)
-                   Vector3f downVector = new Vector3f(0,-1,0);
-                   Vector3f leftVector = forward.cross(downVector).normalize();
-                   playerControl.setWalkDirection(keyPressed ? leftVector : Vector3f.ZERO);
-                   //playerControl.setWalkDirection(leftVector); 
-                   //Vector3f v = player.getLocalTranslation();
-                   //player.setLocalTranslation(v.x - value*speed, v.y, v.z);
-              }
-          if (name.equals("Right")) {
-                   Vector3f forward = player.getLocalTranslation();
-                   // right direction = cross product between forward and up (forward cross up)
-                   Vector3f upVector = new Vector3f(0,1,0);
-                   Vector3f rightVector = forward.cross(upVector).normalize();
-                   playerControl.setWalkDirection(keyPressed ? rightVector : Vector3f.ZERO);
-                   //playerControl.setWalkDirection(rightVector);
-                   //player.setLocalTranslation(v.x + value*speed, v.y, v.z);
-              }
-          if (name.equals("Pause") && !keyPressed) {
-              isRunning = !isRunning;
-          }
-          if (name.equals("Walk") && !keyPressed) {
-              if (!channel.getAnimationName().equals("Walk")) {
-                  channel.setAnim("Walk", 0.50f);
-                  // How do we activate the analogListener for walk when this occurs?
-                  channel.setLoopMode(LoopMode.Loop);
-              }
-          }
-          if (name.equals("Shoot") && !keyPressed) {
-              // 1. Reset results list
-              CollisionResults results = new CollisionResults();
-              // 2. Aim the ray from character location to character direction.
-//                    Vector3f forward = new Vector3f(0,0,1.05f); // set the magnitude in front of char.
-//                    Vector3f actualForward = new Vector3f();
-//                    player.localToWorld(forward, actualForward);
-//              Ray ray = new Ray(player.getLocalTranslation(), actualForward);
-              Ray ray = new Ray(cam.getLocation(), cam.getDirection());
-              // 3. Collect intersections between Ray and  grabbables in results list.
-              shootables.collideWith(ray, results);
-              System.out.println("----- Collisions? " + results.size() + "-----");
-                for (int i = 0; i < results.size(); i++) {
-                  // For each hit, we know distance, impact point, name of geometry.
-                  float dist = results.getCollision(i).getDistance();
-                  Vector3f pt = results.getCollision(i).getContactPoint();
-                  String hit = results.getCollision(i).getGeometry().getName();
-                  System.out.println("* Collision #" + i);
-                  System.out.println("  You shot " + hit + " at " + pt + ", " + dist + " wu away.");
-                
-                // Next, we want to calculate and print the distance between our player's vector and
-                  // the colliding object's vector.
-                  Vector3f playerLocation = player.getLocalTranslation();
-                  float distanceBetweenPlayerAndCollision = playerLocation.distance(pt);
-                  System.out.println("The distance between your player and the collision is: " + distanceBetweenPlayerAndCollision +
-                          " world units (wu).");
-                    if (distanceBetweenPlayerAndCollision < 20 && !"level-geom-5".equals(hit)) { // (ensure we don't try to pick up the entire town)
-                        // i.e. If object is near player, then lift object (if object is not too heavy)
-                        Geometry collidingObject = results.getCollision(i).getGeometry();
-                        // i.e. Grab actual object from the collision.
-                        Vector3f objectLocation = collidingObject.getLocalTranslation();
-                        
-                        Vector3f moveUp = new Vector3f(0,1f,0);
-                        Vector3f actualMovement = new Vector3f();
-                        collidingObject.localToWorld(moveUp, actualMovement);
-                        collidingObject.setLocalTranslation(actualMovement);
-                        // we need to move the mark on the object
-                        // we need to check if the object is approximately in front of character.
-                        // we need to be able to put the object down
-                        // we need the picked-up object to move with the character
-                        
-                        /* Consider picking up the object into inventory:
-                         *  1. Create an inventory node to store the detached nodes temporarily.
-                            2. The inventory node is not attached to the rootNode.
-                            3. You can make the inventory visible by attaching the inventory node to the guiNode (which attaches it to the HUD). Note the following caveats:
-                                a. If your nodes use a lit Material (not "Unshaded.j3md"), also add a light to the guiNode.
-                                b. Size units are pixels in the HUD, therefor a 2-wu cube is displayed only 2 pixels wide in the HUD. – Scale it bigger!
-                                c. Position the nodes: The bottom left corner of the HUD is (0f,0f), and the top right corner is at (settings.getWidth(),settings.getHeight()).
-                         */
-                        
-                        
-                    }
-                }
-                // 5. Use the results (we mark the hit object)
-                if (results.size() > 0) {
-                  // The closest collision ponit is what was truly hit:
-                    CollisionResult closest = results.getClosestCollision();
-                    // Let's interact - we mark the hit object with a red dot
-                    mark.setLocalTranslation(closest.getContactPoint());
-                    rootNode.attachChild(mark); // we need to attach to a container instead of the object
-                    // then, we can move the container when the object is picked up by the character
-                    
-                    
-                    
-                    
-              }else{
-                    // No hits? Then remove the red mark.
-                    rootNode.detachChild(mark);
-                }
-          }
-      }
-  };
+  @Override
+public void onAction(String binding, boolean value, float tpf) {
+  if (binding.equals("CharLeft")) {
+      if (value) left = true;
+      else left = false;
+  } else if (binding.equals("CharRight")) {
+      if (value) right = true;
+      else right = false;
+  } else if (binding.equals("CharForward")) {
+      if (value) up = true;
+      else up = false;
+  } else if (binding.equals("CharBackward")) {
+      if (value) down = true;
+      else down = false;
+  } else if (binding.equals("CharJump"))
+      playerControl.jump();
+  if (binding.equals("CharAttack"))
+      attack();
+}
+  private void attack() { // The player can attack and walk at the same time. Attack() is a custom method that triggers an attack animation in the arms. Here you should also add custom code to play an effect and sound, and to determine whether the hit was successful.
+    attackChannel.setAnim("Dodge", 0.1f); // this can be an attackChannel instead.
+    attackChannel.setLoopMode(LoopMode.DontLoop); // this can be an attackChannel instead.
+}
+//  private ActionListener actionListener = new ActionListener(){
+//      public void onAction(String name, boolean keyPressed, float tpf){
+//          if (name.equals("Run")) {
+//                   Vector3f forward = playerControl.getViewDirection();
+//                   //Vector3f v = player.getLocalTranslation();
+//                   //Vector3f forward = new Vector3f(0,0,.05f);
+//                   Vector3f actualForward = new Vector3f();
+//                   player.localToWorld(forward, actualForward);
+//                    if (!channel.getAnimationName().equals("Walk")) {
+//                        channel.setAnim("Walk", 0.50f);
+//                        channel.setLoopMode(LoopMode.Loop);
+//                    }
+//                   //player.setLocalTranslation(actualForward);
+//                   playerControl.setWalkDirection(keyPressed ? actualForward : Vector3f.ZERO);
+//              }
+//          if (name.equals("RotateLeft")) {
+//              Vector3f forward = playerControl.getViewDirection();
+//                   // right direction = cross product between forward and up (forward cross up)
+//                   Vector3f downVector = new Vector3f(0,-1,0);
+//                   Vector3f leftVector = forward.cross(downVector).normalize();
+//                   playerControl.setViewDirection(keyPressed ? leftVector : Vector3f.ZERO);
+//          }
+//          if (name.equals("RotateRight")) {
+//              Vector3f forward = playerControl.getViewDirection();
+//                   // right direction = cross product between forward and up (forward cross up)
+//                   Vector3f upVector = new Vector3f(0,1,0);
+//                   Vector3f rightVector = forward.cross(upVector).normalize();
+//                   playerControl.setViewDirection(keyPressed ? rightVector : Vector3f.ZERO);
+//          }
+//          if (name.equals("Left")) {
+//                   Vector3f forward = player.getLocalTranslation();
+//                   // right direction = cross product between forward and up (forward cross up)
+//                   Vector3f downVector = new Vector3f(0,-1,0);
+//                   Vector3f leftVector = forward.cross(downVector).normalize();
+//                   playerControl.setWalkDirection(keyPressed ? leftVector : Vector3f.ZERO);
+//                   //playerControl.setWalkDirection(leftVector); 
+//                   //Vector3f v = player.getLocalTranslation();
+//                   //player.setLocalTranslation(v.x - value*speed, v.y, v.z);
+//              }
+//          if (name.equals("Right")) {
+//                   Vector3f forward = player.getLocalTranslation();
+//                   // right direction = cross product between forward and up (forward cross up)
+//                   Vector3f upVector = new Vector3f(0,1,0);
+//                   Vector3f rightVector = forward.cross(upVector).normalize();
+//                   playerControl.setWalkDirection(keyPressed ? rightVector : Vector3f.ZERO);
+//                   //playerControl.setWalkDirection(rightVector);
+//                   //player.setLocalTranslation(v.x + value*speed, v.y, v.z);
+//              }
+//          if (name.equals("Pause") && !keyPressed) {
+//              isRunning = !isRunning;
+//          }
+//          if (name.equals("Walk") && !keyPressed) {
+//              if (!channel.getAnimationName().equals("Walk")) {
+//                  channel.setAnim("Walk", 0.50f);
+//                  // How do we activate the analogListener for walk when this occurs?
+//                  channel.setLoopMode(LoopMode.Loop);
+//              }
+//          }
+//          if (name.equals("Shoot") && !keyPressed) {
+//              // 1. Reset results list
+//              CollisionResults results = new CollisionResults();
+//              // 2. Aim the ray from character location to character direction.
+////                    Vector3f forward = new Vector3f(0,0,1.05f); // set the magnitude in front of char.
+////                    Vector3f actualForward = new Vector3f();
+////                    player.localToWorld(forward, actualForward);
+////              Ray ray = new Ray(player.getLocalTranslation(), actualForward);
+//              Ray ray = new Ray(cam.getLocation(), cam.getDirection());
+//              // 3. Collect intersections between Ray and  grabbables in results list.
+//              shootables.collideWith(ray, results);
+//              System.out.println("----- Collisions? " + results.size() + "-----");
+//                for (int i = 0; i < results.size(); i++) {
+//                  // For each hit, we know distance, impact point, name of geometry.
+//                  float dist = results.getCollision(i).getDistance();
+//                  Vector3f pt = results.getCollision(i).getContactPoint();
+//                  String hit = results.getCollision(i).getGeometry().getName();
+//                  System.out.println("* Collision #" + i);
+//                  System.out.println("  You shot " + hit + " at " + pt + ", " + dist + " wu away.");
+//                
+//                // Next, we want to calculate and print the distance between our player's vector and
+//                  // the colliding object's vector.
+//                  Vector3f playerLocation = player.getLocalTranslation();
+//                  float distanceBetweenPlayerAndCollision = playerLocation.distance(pt);
+//                  System.out.println("The distance between your player and the collision is: " + distanceBetweenPlayerAndCollision +
+//                          " world units (wu).");
+//                    if (distanceBetweenPlayerAndCollision < 20 && !"level-geom-5".equals(hit)) { // (ensure we don't try to pick up the entire town)
+//                        // i.e. If object is near player, then lift object (if object is not too heavy)
+//                        Geometry collidingObject = results.getCollision(i).getGeometry();
+//                        // i.e. Grab actual object from the collision.
+//                        Vector3f objectLocation = collidingObject.getLocalTranslation();
+//                        
+//                        Vector3f moveUp = new Vector3f(0,1f,0);
+//                        Vector3f actualMovement = new Vector3f();
+//                        collidingObject.localToWorld(moveUp, actualMovement);
+//                        collidingObject.setLocalTranslation(actualMovement);
+//                        // we need to move the mark on the object
+//                        // we need to check if the object is approximately in front of character.
+//                        // we need to be able to put the object down
+//                        // we need the picked-up object to move with the character
+//                        
+//                        /* Consider picking up the object into inventory:
+//                         *  1. Create an inventory node to store the detached nodes temporarily.
+//                            2. The inventory node is not attached to the rootNode.
+//                            3. You can make the inventory visible by attaching the inventory node to the guiNode (which attaches it to the HUD). Note the following caveats:
+//                                a. If your nodes use a lit Material (not "Unshaded.j3md"), also add a light to the guiNode.
+//                                b. Size units are pixels in the HUD, therefor a 2-wu cube is displayed only 2 pixels wide in the HUD. – Scale it bigger!
+//                                c. Position the nodes: The bottom left corner of the HUD is (0f,0f), and the top right corner is at (settings.getWidth(),settings.getHeight()).
+//                         */
+//                        
+//                        
+//                    }
+//                }
+//                // 5. Use the results (we mark the hit object)
+//                if (results.size() > 0) {
+//                  // The closest collision ponit is what was truly hit:
+//                    CollisionResult closest = results.getClosestCollision();
+//                    // Let's interact - we mark the hit object with a red dot
+//                    mark.setLocalTranslation(closest.getContactPoint());
+//                    rootNode.attachChild(mark); // we need to attach to a container instead of the object
+//                    // then, we can move the container when the object is picked up by the character
+//                    
+//                    
+//                    
+//                    
+//              }else{
+//                    // No hits? Then remove the red mark.
+//                    rootNode.detachChild(mark);
+//                }
+//          }
+//      }
+//  };
   private AnalogListener analogListener = new AnalogListener(){
       public void onAnalog(String name, float value, float tpf){
           if (isRunning) {
@@ -474,6 +558,8 @@ public class HelloJME3 extends SimpleApplication implements AnimEventListener
     public void onAnimCycleDone(AnimControl control, AnimChannel channel, String animName) {
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         // reset the character to a standing position after a Walk cycle is done.
+        if (channel == attackChannel) channel.setAnim("stand");
+        
         if (animName.equals("Walk") || animName.equals("Run") || animName.equals("Right") || animName.equals("Left")) {
             channel.setAnim("stand", 0.50f);
             channel.setLoopMode(LoopMode.DontLoop);
