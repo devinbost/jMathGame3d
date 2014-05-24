@@ -259,6 +259,7 @@ public class GameUI extends javax.swing.JFrame {
 
     private void jMenuItemHelpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemHelpActionPerformed
         // TODO add your handling code here:
+<<<<<<< HEAD
         MenuView view = MenuView.getInstance();
         view.HandleMenuItemClick("jMenuItemHelp");
         //displayHelp();
@@ -273,6 +274,28 @@ public class GameUI extends javax.swing.JFrame {
 //    private void displayHelp(){
 //        System.out.println("Display help");
 //    }
+||||||| merged common ancestors
+        displayHelp();
+    }//GEN-LAST:event_jDisplayHelpActionPerformed
+    private void displayHelp(){
+        System.out.println("Display help");
+    }
+=======
+        MenuController controller = MenuController.getInstance();
+        controller.getDisplayMenuCommand("jMenuItemHelp");
+        //displayHelp();
+        // pass "jMenuItemHelp" to MenuView.
+    }//GEN-LAST:event_jMenuItemHelpActionPerformed
+
+    private void jMenuItemAboutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemAboutActionPerformed
+        // TODO add your handling code here:
+        MenuController controller = MenuController.getInstance();
+        controller.getDisplayMenuCommand("jMenuItemAbout");
+    }//GEN-LAST:event_jMenuItemAboutActionPerformed
+//    private void displayHelp(){
+//        System.out.println("Display help");
+//    }
+>>>>>>> Added infrastructure for view and controller for menu system. Also added code for Command pattern.
     /**
      * @param args the command line arguments
      */
