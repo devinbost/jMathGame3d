@@ -64,7 +64,7 @@ public class HallOfFame {
         try{
             _inputStream = new ObjectInputStream(new FileInputStream(HIGHSCORE_FILE));
             _scores = (ArrayList<Score>) _inputStream.readObject();
-        }catch (FileNotFoundException e) {
+        } catch (FileNotFoundException e) {
             System.out.println("Error:\n FileNotFound when trying to load scores: " + e.getMessage());
         } catch (IOException e) {
             System.out.println("Error:\n IO Problem when trying to load scores: " + e.getMessage());

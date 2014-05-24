@@ -5,6 +5,9 @@
  */
 
 package mathgame.UI;
+import java.awt.Component;
+import java.util.ArrayList;
+import javax.swing.JMenuItem;
 import mathgame.*;
 /**
  *
@@ -48,6 +51,7 @@ public class GameUI extends javax.swing.JFrame {
         jPauseMenu = new javax.swing.JMenu();
         jHelpMenu = new javax.swing.JMenu();
         jDisplayHelp = new javax.swing.JMenuItem();
+        jMenuItemAbout = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -116,6 +120,9 @@ public class GameUI extends javax.swing.JFrame {
             }
         });
         jHelpMenu.add(jDisplayHelp);
+
+        jMenuItemAbout.setText("About");
+        jHelpMenu.add(jMenuItemAbout);
 
         jMainMenuBar.add(jHelpMenu);
 
@@ -187,6 +194,18 @@ public class GameUI extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jStartGameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jStartGameActionPerformed
+// // Lambda expressions require JDK 1.8+
+//       Component[] menuComponents = jHelpMenu.getComponents();
+//        for (Component instance : jHelpMenu.getComponents()) {
+//            if (instance instanceof JMenuItem) {
+//                menuItemInstance -> {
+//                    JMenuItem myItem = (JMenuItem)menuItemInstance;
+//                    myItem.addActionListener((e) ->{
+//                        System.out.print(myItem.getName());
+//                    })
+//                }
+//            }
+//        }
         // TODO add your handling code here:
         // This is the event handler method that starts the game.
         int difficulty = (int)jDifficultySpinner.getValue();
@@ -201,7 +220,6 @@ public class GameUI extends javax.swing.JFrame {
         // enable answer button when the game is started
         jCheckAnswer.setEnabled(true);
         jNextQuestion.setEnabled(true);
-        
         // When button is clicked, update 
         // jQuestion is where the question appears
         // jAnswer is where the user enters their answer
@@ -288,6 +306,7 @@ public class GameUI extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JMenu jMainMenu;
     private javax.swing.JMenuBar jMainMenuBar;
+    private javax.swing.JMenuItem jMenuItemAbout;
     private javax.swing.JButton jNextQuestion;
     private javax.swing.JMenu jPauseMenu;
     private javax.swing.JLabel jQuestion;
