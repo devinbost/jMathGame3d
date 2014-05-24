@@ -11,5 +11,6 @@ package mathgame;
  * @author devinbost
  */
 public class AdditionQuestion extends AbstractQuestion {
+
     
 }

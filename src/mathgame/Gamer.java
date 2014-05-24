@@ -70,6 +70,7 @@ public class Gamer {
                 "Congratulations! You have won the game!", 
                 "Congratulations: ", JOptionPane.INFORMATION_MESSAGE);
         // Do something about score here. (Check with singleton if high score.)
+        
         HallOfFame hallOfFame = HallOfFame.getInstance();
         hallOfFame.addScore(_score, _username);
         String highScores = hallOfFame.getHighscoreString();
