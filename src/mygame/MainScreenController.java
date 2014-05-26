@@ -12,6 +12,8 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Node;
 import de.lessvoid.nifty.Nifty;
+import de.lessvoid.nifty.elements.Element;
+import de.lessvoid.nifty.elements.render.TextRenderer;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 /**
@@ -29,6 +31,7 @@ public class MainScreenController extends AbstractAppState implements ScreenCont
     private Node localRootNode = new Node("Start Screen RootNode");
     private Node localGuiNode = new Node("Start Screen GuiNode");
     private final ColorRGBA backgroundColor = ColorRGBA.Gray;  
+    private AppStateManager _stateManager;
     
     @Override
     public void initialize(AppStateManager stateManager, Application app) {
@@ -38,7 +41,7 @@ public class MainScreenController extends AbstractAppState implements ScreenCont
         rootNode.attachChild(localRootNode);
         guiNode.attachChild(localGuiNode);
         viewPort.setBackgroundColor(backgroundColor);
-        
+        this._stateManager = stateManager;
  
     /** init the screen */    
         System.out.println("MainScreenController.initialize(AppStateManager stateManager, Application app) is being called here.");
@@ -55,6 +58,11 @@ public class MainScreenController extends AbstractAppState implements ScreenCont
     public void update(float tpf) {
         //TODO: implement behavior during runtime
          /** any main loop action happens here */
+//        if (screen.getScreenId().equals("hud")) {
+//      Element niftyElement = nifty.getCurrentScreen().findElementByName("score");
+//      // Display the time-per-frame -- this field could also display the score etc...
+//      niftyElement.getRenderer(TextRenderer.class).setText((int)(tpf*100000) + ""); 
+//    }
     }
  
     @Override
@@ -87,12 +95,14 @@ public class MainScreenController extends AbstractAppState implements ScreenCont
         //throw new UnsupportedOperationException("Not supported yet.");
         System.out.println("MainScreenController.onStartScreen() is being called here.");
     }
-    public void startGame(){
+    public void startGame(String nextScreen){
         // nifty.gotoScreen(nextScreen); // switch to another screen.
         System.out.println("MainScreenController.startGame() is being called here.");
         System.out.println("MainScreenController.startGame() is executing this._gameApplication.start().");
        // this.onEndScreen();
-        
+        // this._stateManager.detach(this);
+        //this._nifty.gotoScreen(nextScreen);  // switch to another screen
+        this._nifty.gotoScreen(nextScreen);  // switch to another screen
        
     }
    public void quitGame() {
