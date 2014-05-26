@@ -5,7 +5,7 @@
     <!-- +++++++++++++++++++++++++++++++++++++++ -->
   <useStyles filename="nifty-default-styles.xml" />
   <useControls filename="nifty-default-controls.xml" />
-    <screen id="startGame" controller="mygame.MainScreenController">
+    <screen id="startGameScreen" controller="mygame.MainScreenController">
         <layer id="background" backgroundColor="#000f" childLayout="center">
             <image filename="Interface/start-background.png"></image>
         </layer>
@@ -21,7 +21,8 @@
              <panel id="panel_bottom" height="25%" width="75%" align="center" childLayout="horizontal" backgroundColor="#00f8">  
                 <panel id="panel_bottom_left" height="50%" width="50%" valign="center" childLayout="center"  backgroundColor="#44f8">  
                     <control name="button" label="Start" id="StartButton" align="center" valign="center" visibleToMouse="true"> 
-                        <interact onClick="startGame(hud)"/>
+                        <!-- <interact onClick="startGame(hud)"/> -->
+                        <interact onClick="startGame()"/>
                     </control>
                 </panel>
                 <panel id="panel_bottom_right" height="50%" width="50%" valign="center" childLayout="center" backgroundColor="#88f8">  
