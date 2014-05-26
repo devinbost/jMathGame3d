@@ -258,16 +258,16 @@ public class GameUI extends javax.swing.JFrame {
 
     private void jMenuItemHelpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemHelpActionPerformed
         // TODO add your handling code here:
-        MenuController controller = MenuController.getInstance();
-        controller.getDisplayMenuCommand("jMenuItemHelp");
+        MenuView view = MenuView.getInstance();
+        view.HandleMenuItemClick("jMenuItemHelp");
         //displayHelp();
         // pass "jMenuItemHelp" to MenuView.
     }//GEN-LAST:event_jMenuItemHelpActionPerformed
 
     private void jMenuItemAboutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemAboutActionPerformed
         // TODO add your handling code here:
-        MenuController controller = MenuController.getInstance();
-        controller.getDisplayMenuCommand("jMenuItemAbout");
+        MenuView view = MenuView.getInstance();
+        view.HandleMenuItemClick("jMenuItemAbout");
     }//GEN-LAST:event_jMenuItemAboutActionPerformed
 //    private void displayHelp(){
 //        System.out.println("Display help");
