@@ -137,6 +137,7 @@ public class Main extends SimpleApplication implements AnimEventListener
         stateManager.attach(screenController);
         // [...] boilerplate init nifty omitted
         nifty.fromXml("Interface/startGameScreen.xml", "startGameScreen", screenController); 
+        //nifty.fromXml("Interface/hudScreen.xml", "hudScreen", screenController);
         // attach the Nifty display to the gui view port as a processor
         guiViewPort.addProcessor(niftyDisplay);
         this._nifty = nifty;
@@ -154,6 +155,8 @@ public class Main extends SimpleApplication implements AnimEventListener
         
         // We need to call LoadGameFromScreen() next!! If it won't be called from a screen,
         // then it needs to be called here instead!
+        
+        // Need to disable mouse cursor when ready to start actual game: mouseInput.setCursorVisible(false);
         LoadGameFromScreen();
     }
     public void LoadGameFromScreen(){
