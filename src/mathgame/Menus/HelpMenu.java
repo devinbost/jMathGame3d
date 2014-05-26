@@ -20,7 +20,7 @@ public class HelpMenu extends AbstractMenu {
 //    }
     @Override
     void SetContents() {
-        super._contents = "The value inside command is " + command;
+        super._contents = "The value inside the HelpMenu's command text value is: " + command;
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

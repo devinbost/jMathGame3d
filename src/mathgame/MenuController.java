@@ -39,6 +39,7 @@ public class MenuController { // This needs to be a singleton.
        // type of Menu to construct.
        
        // Once we have constructed the Menu, we stuff it into a type of IDisplayCommand.
+       // This is done with dependeny injection. (We just pass the menu object into the constructor of the DisplayCommand type.)
        // We then return the IDisplayCommand.
        // Here are the items that must be included in the switch statement's cases:
        // 1. jMenuItemHelp
