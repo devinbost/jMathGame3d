@@ -134,7 +134,7 @@ public class Main extends SimpleApplication implements AnimEventListener
         // How do I set  the screen here?
         /** Read your XML and initialize your custom ScreenController */
         MainScreenController screenController = new MainScreenController(this);
-////////////        stateManager.attach(screenController);
+        stateManager.attach(screenController);
         // [...] boilerplate init nifty omitted
         nifty.fromXml("Interface/startGameScreen.xml", "startGameScreen", screenController); 
         // attach the Nifty display to the gui view port as a processor

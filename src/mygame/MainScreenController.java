@@ -35,9 +35,10 @@ public class MainScreenController extends AbstractAppState implements ScreenCont
         super.initialize(stateManager, app);
         //TODO: initialize your AppState, e.g. attach spatials to rootNode
         //this is called on the OpenGL thread after the AppState has been attached
-//        rootNode.attachChild(localRootNode);
-//        guiNode.attachChild(localGuiNode);
-//        viewPort.setBackgroundColor(backgroundColor);
+        rootNode.attachChild(localRootNode);
+        guiNode.attachChild(localGuiNode);
+        viewPort.setBackgroundColor(backgroundColor);
+        
  
     /** init the screen */    
         System.out.println("MainScreenController.initialize(AppStateManager stateManager, Application app) is being called here.");
@@ -58,8 +59,8 @@ public class MainScreenController extends AbstractAppState implements ScreenCont
  
     @Override
     public void cleanup() {
-//        rootNode.detachChild(localRootNode);
-//        guiNode.detachChild(localGuiNode);
+        rootNode.detachChild(localRootNode);
+        guiNode.detachChild(localGuiNode);
 //        
         super.cleanup();
         //TODO: clean up what you initialized in the initialize method,
@@ -91,17 +92,17 @@ public class MainScreenController extends AbstractAppState implements ScreenCont
         System.out.println("MainScreenController.startGame() is being called here.");
         System.out.println("MainScreenController.startGame() is executing this._gameApplication.start().");
        // this.onEndScreen();
-        //this._gameApplication.LoadGameFromScreen();
+        
        
     }
-//   public void quitGame() {
-//    app.stop(); 
-//  }
+   public void quitGame() {
+    this._gameApplication.stop();
+  }
     public void onEndScreen() {
        // throw new UnsupportedOperationException("Not supported yet.");
         // app.stop();
         //this._gameApplication.stop();
-         this._gameApplication.stop();
+         
         System.out.println("MainScreenController.onEndScreen() is being called here.");
     }
 }
