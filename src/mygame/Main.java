@@ -88,6 +88,7 @@ import com.jme3.niftygui.NiftyJmeDisplay;
 import com.jme3.scene.debug.SkeletonDebugger;
 import com.jme3.scene.shape.Sphere;
 import de.lessvoid.nifty.Nifty;
+import de.lessvoid.nifty.screen.Screen;
  
 /** Sample 1 - how to get started with the most simple JME 3 application.
  * Display a blue 3D cube and view from all sides by
@@ -115,30 +116,48 @@ public class Main extends SimpleApplication implements AnimEventListener
     private Vector3f walkDirection = new Vector3f(0,0,0); // stop
     private float airTime = 0;
     private Vector3f oldPosition; // this may be deprecated.
-    
+    public Nifty _nifty;
+    public Screen _screen;
     public static void main(String[] args){
+        System.out.println("Main.main(String[] args) is being called here.");
         Main app = new Main();
         app.start(); // start the game
+        
     }
     
     @Override
     public void simpleInitApp() {
-         
+        System.out.println("Main.simpleInitApp() is being called here.");
         NiftyJmeDisplay niftyDisplay = new NiftyJmeDisplay(assetManager, inputManager, audioRenderer, guiViewPort);
         /** Create a new NiftyGUI object */
         Nifty nifty = niftyDisplay.getNifty();
+        // How do I set  the screen here?
         /** Read your XML and initialize your custom ScreenController */
-        nifty.fromXml("Interface/startGameScreen.xml", "startGame", new MainScreenController()); 
-        // How do I determine if "startGame" is the correct string to pass the above method?
+        MainScreenController screenController = new MainScreenController(this);
+////////////        stateManager.attach(screenController);
+        // [...] boilerplate init nifty omitted
+        nifty.fromXml("Interface/startGameScreen.xml", "startGameScreen", screenController); 
+        // attach the Nifty display to the gui view port as a processor
+        guiViewPort.addProcessor(niftyDisplay);
+        this._nifty = nifty;
+        System.out.println("In the Main.simpleInitApp() method, nifty is: " + nifty.toString());
+        
+        // Q: How do I determine if "startGame" is the correct string to pass the above method?
+        // A: I think this (second parameter) is the ID of the screen in the given file.
         // 
 //        nifty.fromXml("Interface/startGameScreen.xml", "startGame"); // Once I have a screencontroller, we will use the commented version
         // nifty.fromXml("Interface/helloworld.xml", "start", new MySettingsScreenController(data));
-        // attach the Nifty display to the gui view port as a processor
-        guiViewPort.addProcessor(niftyDisplay);
+        
         flyCam.setDragToRotate(true); // This may cause complications without additional on/off logic.
         // if we have additional screens to load, just call them like this:
         // nifty.fromXml("Interface/startGameScreen.xml", "startGame");
         
+        // We need to call LoadGameFromScreen() next!! If it won't be called from a screen,
+        // then it needs to be called here instead!
+        LoadGameFromScreen();
+    }
+    public void LoadGameFromScreen(){
+        System.out.println("The Main.LoadGameFromScreen() method is getting called here.");
         bulletAppState = new BulletAppState(); // add the BulletAppState object to enable integration with jBullet's physical forces and collisions.
         stateManager.attach(bulletAppState); //  If you ever get confusing physics behaviour, remember to have a look at the collision shapes. Add the following line after the bulletAppState initialization to make the shapes visible:
         bulletAppState.getPhysicsSpace().enableDebug(assetManager);
@@ -194,7 +213,6 @@ public class Main extends SimpleApplication implements AnimEventListener
         dl.setDirection(new Vector3f(-0.1f, -1f, -1).normalizeLocal());
         rootNode.addLight(dl);
         this.ConstructCharacter();
-        
     }
 //    private void setUpLight() {
 //    // We add light so we see the scene
@@ -308,6 +326,7 @@ public class Main extends SimpleApplication implements AnimEventListener
     }
     @Override
     public void simpleUpdate(float tpf){ // "tpf" stands for "time per frame"
+        // How do I pause the game?
          Vector3f camDir = cam.getDirection().clone().multLocal(7.25f); // multLocal controls rate of movement multiplier.
         Vector3f camLeft = cam.getLeft().clone().multLocal(7.25f);
         camDir.y = 0;
