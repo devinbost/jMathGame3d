@@ -21,5 +21,5 @@ public abstract class AbstractMenu {
           // This method must return the contents of this menu.
           return _contents;
       }
-      abstract void SetContents();
+      public abstract void SetContents();
 }
