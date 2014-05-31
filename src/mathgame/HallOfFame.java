@@ -118,4 +118,22 @@ public class HallOfFame {
         }
         return highscoreString;
     }
+    public String getTopTenHighscoresString() {
+        String highscoreString = "";
+	int max = 10;
+
+        ArrayList<Score> scores;
+        scores = GetHighScores();
+
+        int i = 0;
+        int x = 10;
+        if (x > max) {
+            x = max;
+        }
+        while (i < x) { // Using a stringbuilder here would be faster and use less memory. Please do fix this in a later revision.
+            highscoreString += (i + 1) + ".\t" + scores.get(i).getGamerName()+ "\t\t" + scores.get(i).getScore() + "\n";
+            i++;
+        }
+        return highscoreString;
+    }
 }
