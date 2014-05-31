@@ -20,7 +20,7 @@ public class MainMenu extends AbstractMenu {
 //    }
 
     @Override
-    void SetContents() {
+    public void SetContents() {
         super._contents = "The value inside command is " + command;
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }

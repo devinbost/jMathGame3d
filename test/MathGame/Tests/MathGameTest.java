@@ -67,6 +67,18 @@ public class MathGameTest {
         System.out.println("qAndABot.GetTotalQuestionsAsked() returns " + returnValue);
         assertThat(returnValue, is(not(-1)));
     }
+    @Test
+    public void MenuController_IsgetDisplayMenuCommandReturningHelpCommand_ReturnsCommand(){
+        MenuController _controller = MenuController.getInstance();
+        IDisplayCommand command = _controller.getDisplayMenuCommand("jMenuItemHelp");
+        assertTrue(command instanceof IDisplayCommand);
+    }
+    @Test
+    public void MenuController_IsgetDisplayMenuCommandReturningAboutCommand_ReturnsCommand(){
+        MenuController _controller = MenuController.getInstance();
+        IDisplayCommand command = _controller.getDisplayMenuCommand("jMenuItemAbout");
+        assertTrue(command instanceof IDisplayCommand);
+    }
     // We need some tests for the QuestionQueue;
     
 //    @Test

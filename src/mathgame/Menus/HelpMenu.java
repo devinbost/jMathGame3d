@@ -19,7 +19,7 @@ public class HelpMenu extends AbstractMenu {
 //        System.out.println("The value inside command is " + command);
 //    }
     @Override
-    void SetContents() {
+    public void SetContents() {
         super._contents = "The value inside the HelpMenu's command text value is: " + command;
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }

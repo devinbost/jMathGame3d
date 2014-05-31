@@ -6,6 +6,11 @@
 
 package mathgame;
 
+import javax.swing.JOptionPane;
+import mathgame.Menus.AboutMenu;
+import mathgame.Menus.AbstractMenu;
+import mathgame.Menus.HelpMenu;
+
 /**
  *
  * @author devinbost
@@ -32,6 +37,34 @@ public class MenuController { // This needs to be a singleton.
       return instance;
    }
    public IDisplayCommand getDisplayMenuCommand(String jMenuItemName){
+       IDisplayCommand command;
+       AbstractMenu _menu;
+       switch (jMenuItemName){
+            case "jMenuItemHelp": 
+                HelpMenu helpMenu = new HelpMenu();
+                _menu = helpMenu;
+                _menu.SetContents();
+                command = new DisplayMenuCommand(_menu);
+                break;
+            case "jMenuItemAbout":
+                 AboutMenu aboutMenu = new AboutMenu();
+                 _menu = aboutMenu;
+                 _menu.SetContents();
+                command = new DisplayMenuCommand(_menu);
+                break;
+            default: 
+                 AboutMenu mYaboutMenu = new AboutMenu();
+                 _menu = mYaboutMenu;
+                 _menu.SetContents();
+                command = new DisplayMenuCommand(_menu);
+                break;
+        }
+       if ("".equals(_menu.GetContents())) {
+           JOptionPane.showMessageDialog(null, 
+            "Warning: _menu.GetContents() is an empty string.", "Display Message: ", JOptionPane.INFORMATION_MESSAGE);
+       }
+       _menu.SetContents();
+         return command;
        // This method determines the correct type of AbstractMenu to construct,
        // according to the name of the jMenuItem.
        

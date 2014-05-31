@@ -13,7 +13,7 @@ package mathgame.Menus;
 public class AboutMenu extends AbstractMenu {
 
     @Override
-    void SetContents() {
+    public void SetContents() {
         super._contents = "jMathGame: Copyright 2014 Devin Bost and Jesse White.";
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
