@@ -58,11 +58,14 @@ import com.jme3.animation.LoopMode;
 import com.jme3.app.SimpleApplication;
 import com.jme3.asset.plugins.ZipLocator;
 import com.jme3.bullet.BulletAppState;
+import com.jme3.bullet.collision.shapes.BoxCollisionShape;
 import com.jme3.bullet.collision.shapes.CapsuleCollisionShape;
 import com.jme3.bullet.collision.shapes.CollisionShape;
+import com.jme3.bullet.collision.shapes.CompoundCollisionShape;
 import com.jme3.bullet.control.BetterCharacterControl;
 import com.jme3.bullet.control.CharacterControl;
 import com.jme3.bullet.control.RigidBodyControl;
+import com.jme3.bullet.control.VehicleControl;
 import com.jme3.bullet.util.CollisionShapeFactory;
 import com.jme3.collision.CollisionResult;
 import com.jme3.collision.CollisionResults;
@@ -82,6 +85,8 @@ import com.jme3.input.controls.AnalogListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.input.controls.MouseButtonTrigger;
 import com.jme3.light.AmbientLight;
+import com.jme3.math.FastMath;
+import com.jme3.math.Matrix3f;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Ray;
 import com.jme3.niftygui.NiftyJmeDisplay;
@@ -97,6 +102,7 @@ public class Main extends SimpleApplication implements AnimEventListener
 ,        ActionListener 
 { // Make this class implement the ActionListener interface to customize the navigational inputs later.
     public Node player;
+    public Node cannon;
     public Spatial ninja;
     private AnimChannel channel;
     private AnimControl control;
@@ -118,6 +124,16 @@ public class Main extends SimpleApplication implements AnimEventListener
     private Vector3f oldPosition; // this may be deprecated.
     public Nifty _nifty;
     public Screen _screen;
+    private Node explosionEffectWrapper = new Node("explosionFX");
+    private ExplosionEffect explosion;
+    private boolean triggerExplosion1 = false;
+    private VehicleControl vehicle;
+    private final float accelerationForce = 1000.0f;
+    private final float brakeForce = 100.0f;
+    private float steeringValue = 0;
+    private float accelerationValue = 0;
+    private Vector3f jumpForce = new Vector3f(0, 3000, 0);
+    
     public static void main(String[] args){
         System.out.println("Main.main(String[] args) is being called here.");
         Main app = new Main();
@@ -137,6 +153,7 @@ public class Main extends SimpleApplication implements AnimEventListener
         stateManager.attach(screenController);
         // [...] boilerplate init nifty omitted
         nifty.fromXml("Interface/startGameScreen.xml", "startGameScreen", screenController); 
+        nifty.addXml("Interface/hudScreen.xml");
         //nifty.fromXml("Interface/hudScreen.xml", "hudScreen", screenController);
         // attach the Nifty display to the gui view port as a processor
         guiViewPort.addProcessor(niftyDisplay);
@@ -216,6 +233,16 @@ public class Main extends SimpleApplication implements AnimEventListener
         dl.setDirection(new Vector3f(-0.1f, -1f, -1).normalizeLocal());
         rootNode.addLight(dl);
         this.ConstructCharacter();
+        
+        this.ConstructCannon();
+        
+        this.explosion = new ExplosionEffect(explosionEffectWrapper, this.getAssetManager());
+        renderManager.preloadScene(explosionEffectWrapper);
+        rootNode.attachChild(explosionEffectWrapper);
+        explosionEffectWrapper.setLocalTranslation(new Vector3f(0,10,10));
+        // Set position of explosionEffectWrapper to position explosion.
+        // We want to position the explosion at the tip of the cannon.
+        this.ConstructPhysicalCannon();
     }
 //    private void setUpLight() {
 //    // We add light so we see the scene
@@ -237,6 +264,67 @@ public class Main extends SimpleApplication implements AnimEventListener
 //     skeletonDebug.setMaterial(mat);
 //     return skeletonDebug;
 //    }
+    private void ConstructPhysicalCannon(){
+        CompoundCollisionShape compoundShape = new CompoundCollisionShape();
+        BoxCollisionShape box = new BoxCollisionShape(new Vector3f(1.2f, 0.5f, 2.4f)); 
+        compoundShape.addChildShape(box, new Vector3f(0, 1, 0)); // Best Practice: We attach the BoxCollisionShape (the vehicle body) to the CompoundCollisionShape at a Vector of (0,1,0): This shifts the effective center of mass of the BoxCollisionShape downwards to 0,-1,0 and makes a moving vehicle more stable!
+        Spatial cannonPhysicalSpatial = assetManager.loadModel("Models/Cannon/cannon_body_01.j3o");
+        Node cannonPhysicalNode = (Node)cannonPhysicalSpatial;
+        vehicle = new VehicleControl(compoundShape, 400); // 400 is the mass that we set. This is heavy.
+        cannonPhysicalNode.addControl(vehicle);
+        float stiffness = 60.0f;//200=f1 car
+        float compValue = .3f; //(should be lower than damp)
+        float dampValue = .4f;
+        vehicle.setSuspensionCompression(compValue * 2.0f * FastMath.sqrt(stiffness));
+        vehicle.setSuspensionDamping(dampValue * 2.0f * FastMath.sqrt(stiffness));
+        vehicle.setSuspensionStiffness(stiffness);
+        vehicle.setMaxSuspensionForce(10000.0f);
+        
+        Vector3f wheelDirection = new Vector3f(0, -1, 0);
+        Vector3f wheelAxle = new Vector3f(-1, 0, 0);
+        float radius = 0.5f;
+        float restLength = 0.3f;
+        float yOff = 0.0f;
+        float xOff = 0.0f;
+        float zOff = 0.0f;
+
+        Spatial cannonLeftWheel = assetManager.loadModel("Models/Cannon/cannon_wheel_01_left.j3o");
+        Node cannonLeftWheelNode = (Node)cannonLeftWheel;
+        
+        Spatial cannonRightWheel = assetManager.loadModel("Models/Cannon/cannon_wheel_01_right.j3o");
+        Node cannonRightWheelNode = (Node)cannonRightWheel;
+        
+        vehicle.addWheel(cannonLeftWheelNode, new Vector3f(-xOff, yOff, zOff),
+                wheelDirection, wheelAxle, restLength, radius, true);
+        vehicle.addWheel(cannonRightWheelNode, new Vector3f(-xOff, yOff, zOff),
+                wheelDirection, wheelAxle, restLength, radius, true);
+        // Do I need little wheels in the back?
+//        vehicle.addWheel(cannonLeftRearWheelNode, new Vector3f(-xOff, yOff, zOff),
+//                wheelDirection, wheelAxle, restLength, radius, false);
+//        vehicle.addWheel(cannonRightRearWheelNode, new Vector3f(-xOff, yOff, zOff),
+//                wheelDirection, wheelAxle, restLength, radius, false);
+        cannonPhysicalNode.attachChild(cannonLeftWheelNode);
+        cannonPhysicalNode.attachChild(cannonRightWheelNode);
+        
+        
+        rootNode.attachChild(cannonPhysicalNode);
+        bulletAppState.getPhysicsSpace().add(vehicle);
+        
+    }
+    private void ConstructCannon(){
+        System.out.println("Constructing cannon.");
+        Spatial cannonSpatial = assetManager.loadModel("Models/Cannon/cannon_01.j3o");
+        cannon =  (Node)cannonSpatial;
+        Node cannonNode = new Node();
+        cannonNode.attachChild(cannon);
+        cannon.move(5f,-3.5f,8f);
+        cannon.setLocalScale(5f);
+        DirectionalLight dl = new DirectionalLight();
+        dl.setDirection(new Vector3f(-0.1f, -1f, -1).normalizeLocal());
+        cannon.addLight(dl);
+        
+        rootNode.attachChild(cannon);
+    }
     private void ConstructCharacter(){
         Spatial playerSpatial = assetManager.loadModel("Models/Oto/Oto.mesh.xml");
         player =  (Node)playerSpatial;
@@ -362,6 +450,12 @@ public class Main extends SimpleApplication implements AnimEventListener
             }
           }
         playerControl.setWalkDirection(walkDirection); // THIS IS WHERE THE WALKING HAPPENS
+        if (triggerExplosion1 == true) {
+            this.triggerExplosion1 = this.explosion.triggerEffect(tpf, speed, triggerExplosion1);
+            // We must turn off the explosion trigger after the explosion to ensure it doesn't repeat in a loop.
+            
+        }
+        
         
         // This method is where we update score, health, check for collisions, make enemies calculate next move, play sounds, roll dice for traps, etc.
         //ninja.rotate(0, 2*tpf, 0);
@@ -403,6 +497,18 @@ public class Main extends SimpleApplication implements AnimEventListener
     inputManager.addMapping("Walk", new KeyTrigger(KeyInput.KEY_G));
     inputManager.addMapping("Shoot", new KeyTrigger(KeyInput.KEY_B));
     inputManager.addListener(this, "Shoot");
+    inputManager.addMapping("Lefts", new KeyTrigger(KeyInput.KEY_0));
+        inputManager.addMapping("Rights", new KeyTrigger(KeyInput.KEY_1));
+        inputManager.addMapping("Ups", new KeyTrigger(KeyInput.KEY_2));
+        inputManager.addMapping("Downs", new KeyTrigger(KeyInput.KEY_3));
+        inputManager.addMapping("Space", new KeyTrigger(KeyInput.KEY_4));
+        inputManager.addMapping("Reset", new KeyTrigger(KeyInput.KEY_5));
+    inputManager.addListener(this, "Lefts");
+    inputManager.addListener(this, "Rights");
+    inputManager.addListener(this, "Ups");
+    inputManager.addListener(this, "Downs");
+    inputManager.addListener(this, "Space");
+    inputManager.addListener(this, "Reset");
 //    inputManager.addListener(actionListener, "Walk", "Shoot", "Left", "Right", "Run","RotateLeft", "RotateRight");
 //    // Add the names to the action listener.
 //    inputManager.addListener(actionListener,"Pause"); // You register the pause action to the ActionListener, because it is an "on/off" action.
@@ -440,8 +546,41 @@ public void onAction(String binding, boolean value, float tpf) {
       else down = false;
   } else if (binding.equals("CharJump"))
       playerControl.jump();
-  if (binding.equals("CharAttack"))
+  if (binding.equals("CharAttack")){
       attack();
+      this.triggerExplosion1 = true;
+  }
+  if (binding.equals("Lefts")) {
+      if (value) { steeringValue += .5f; } else { steeringValue += -.5f; }
+      vehicle.steer(steeringValue);
+  } else if (binding.equals("Rights")) {
+      if (value) { steeringValue += -.5f; } else { steeringValue += .5f; }
+      vehicle.steer(steeringValue);
+  } else if (binding.equals("Ups")) {
+      if (value) {
+        accelerationValue += accelerationForce;
+      } else {
+        accelerationValue -= accelerationForce;
+      }
+      vehicle.accelerate(accelerationValue);
+  } else if (binding.equals("Downs")) {
+      if (value) { vehicle.brake(brakeForce); } else { vehicle.brake(0f); }
+  } else if (binding.equals("Space")) {
+      if (value) {
+        vehicle.applyImpulse(jumpForce, Vector3f.ZERO);
+      }
+  } else if (binding.equals("Reset")) {
+      if (value) {
+        System.out.println("Reset");
+        vehicle.setPhysicsLocation(Vector3f.ZERO);
+        vehicle.setPhysicsRotation(new Matrix3f());
+        vehicle.setLinearVelocity(Vector3f.ZERO);
+        vehicle.setAngularVelocity(Vector3f.ZERO);
+        vehicle.resetSuspension();
+      } else {
+    }
+  }
+      
   
     if (binding.equals("Shoot")) { // Should we have something like [binding.equals("Shoot") && !keyPressed] here?
 //              // 1. Reset results list
