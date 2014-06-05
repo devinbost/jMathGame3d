@@ -6,11 +6,15 @@
 
 package MathGame.Tests;
 
-import mathgame.Questions.Question;
+import de.congrace.exp4j.Calculable;
+import de.congrace.exp4j.ExpressionBuilder;
 import java.io.File;
 import java.util.*;
 import mathgame.*;
+import mathgame.Questions.Question;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.not;
@@ -79,6 +83,7 @@ public class MathGameTest {
         IDisplayCommand command = _controller.getDisplayMenuCommand("jMenuItemAbout");
         assertTrue(command instanceof IDisplayCommand);
     }
+    
     // We need some tests for the QuestionQueue;
     
 //    @Test
