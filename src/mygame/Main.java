@@ -57,6 +57,7 @@ import com.jme3.animation.AnimEventListener;
 import com.jme3.animation.LoopMode;
 import com.jme3.app.SimpleApplication;
 import com.jme3.asset.plugins.ZipLocator;
+import com.jme3.bounding.BoundingBox;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.collision.shapes.BoxCollisionShape;
 import com.jme3.bullet.collision.shapes.CapsuleCollisionShape;
@@ -66,6 +67,7 @@ import com.jme3.bullet.control.BetterCharacterControl;
 import com.jme3.bullet.control.CharacterControl;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.control.VehicleControl;
+import com.jme3.bullet.objects.VehicleWheel;
 import com.jme3.bullet.util.CollisionShapeFactory;
 import com.jme3.collision.CollisionResult;
 import com.jme3.collision.CollisionResults;
@@ -90,8 +92,11 @@ import com.jme3.math.Matrix3f;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Ray;
 import com.jme3.niftygui.NiftyJmeDisplay;
+import com.jme3.renderer.queue.RenderQueue.ShadowMode;
 import com.jme3.scene.debug.SkeletonDebugger;
+import com.jme3.scene.shape.Cylinder;
 import com.jme3.scene.shape.Sphere;
+import com.jme3.shadow.BasicShadowRenderer;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.screen.Screen;
  
@@ -103,6 +108,7 @@ public class Main extends SimpleApplication implements AnimEventListener
 { // Make this class implement the ActionListener interface to customize the navigational inputs later.
     public Node player;
     public Node cannon;
+    private Node carNode;
     public Spatial ninja;
     private AnimChannel channel;
     private AnimControl control;
@@ -133,6 +139,10 @@ public class Main extends SimpleApplication implements AnimEventListener
     private float steeringValue = 0;
     private float accelerationValue = 0;
     private Vector3f jumpForce = new Vector3f(0, 3000, 0);
+    private VehicleWheel fr, fl, br, bl;
+    private Node node_fr, node_fl, node_br, node_bl;
+    private float wheelRadius;
+    
     
     public static void main(String[] args){
         System.out.println("Main.main(String[] args) is being called here.");
@@ -175,6 +185,11 @@ public class Main extends SimpleApplication implements AnimEventListener
         
         // Need to disable mouse cursor when ready to start actual game: mouseInput.setCursorVisible(false);
         LoadGameFromScreen();
+        if (settings.getRenderer().startsWith("LWJGL")) {
+            BasicShadowRenderer bsr = new BasicShadowRenderer(assetManager, 512);
+            bsr.setDirection(new Vector3f(-0.5f, -0.3f, -0.3f).normalizeLocal());
+            viewPort.addProcessor(bsr);
+        }
     }
     public void LoadGameFromScreen(){
         System.out.println("The Main.LoadGameFromScreen() method is getting called here.");
@@ -265,51 +280,214 @@ public class Main extends SimpleApplication implements AnimEventListener
 //     return skeletonDebug;
 //    }
     private void ConstructPhysicalCannon(){
-        CompoundCollisionShape compoundShape = new CompoundCollisionShape();
-        BoxCollisionShape box = new BoxCollisionShape(new Vector3f(1.2f, 0.5f, 2.4f)); 
-        compoundShape.addChildShape(box, new Vector3f(0, 1, 0)); // Best Practice: We attach the BoxCollisionShape (the vehicle body) to the CompoundCollisionShape at a Vector of (0,1,0): This shifts the effective center of mass of the BoxCollisionShape downwards to 0,-1,0 and makes a moving vehicle more stable!
-        Spatial cannonPhysicalSpatial = assetManager.loadModel("Models/Cannon/cannon_body_01.j3o");
-        Node cannonPhysicalNode = (Node)cannonPhysicalSpatial;
-        vehicle = new VehicleControl(compoundShape, 400); // 400 is the mass that we set. This is heavy.
-        cannonPhysicalNode.addControl(vehicle);
-        float stiffness = 60.0f;//200=f1 car
-        float compValue = .3f; //(should be lower than damp)
-        float dampValue = .4f;
+//        CompoundCollisionShape compoundShape = new CompoundCollisionShape();
+//        BoxCollisionShape box = new BoxCollisionShape(new Vector3f(1.2f, 0.5f, 2.4f)); 
+//        compoundShape.addChildShape(box, new Vector3f(0, 1, 0)); // Best Practice: We attach the BoxCollisionShape (the vehicle body) to the CompoundCollisionShape at a Vector of (0,1,0): This shifts the effective center of mass of the BoxCollisionShape downwards to 0,-1,0 and makes a moving vehicle more stable!
+//        Spatial cannonPhysicalSpatial = assetManager.loadModel("Models/Cannon/cannon_body_01.j3o");
+//        Node cannonPhysicalNode = (Node)cannonPhysicalSpatial;
+//        vehicle = new VehicleControl(compoundShape, 400); // 400 is the mass that we set. This is heavy.
+//        cannonPhysicalNode.addControl(vehicle);
+//        float stiffness = 60.0f;//200=f1 car
+//        float compValue = .3f; //(should be lower than damp)
+//        float dampValue = .4f;
+//        vehicle.setSuspensionCompression(compValue * 2.0f * FastMath.sqrt(stiffness));
+//        vehicle.setSuspensionDamping(dampValue * 2.0f * FastMath.sqrt(stiffness));
+//        vehicle.setSuspensionStiffness(stiffness);
+//        vehicle.setMaxSuspensionForce(10000.0f);
+        float stiffness = 120.0f;//200=f1 car
+        float compValue = 0.2f; //(lower than damp!)
+        float dampValue = 0.3f;
+        final float mass = 400;
+
+        //Load model and get chassis Geometry
+        carNode = (Node)assetManager.loadModel("Models/Ferrari/Car.scene");
+        carNode.setShadowMode(ShadowMode.Cast);
+        Geometry chasis = findGeom(carNode, "Car");
+        BoundingBox boundingBox = (BoundingBox) chasis.getModelBound();
+         //Create a hull collision shape for the chassis
+        CollisionShape carHull = CollisionShapeFactory.createDynamicMeshShape(chasis);
+
+        //Create a vehicle control
+        vehicle = new VehicleControl(carHull, mass);
+        carNode.addControl(vehicle);
+        //Setting default values for wheels
         vehicle.setSuspensionCompression(compValue * 2.0f * FastMath.sqrt(stiffness));
         vehicle.setSuspensionDamping(dampValue * 2.0f * FastMath.sqrt(stiffness));
         vehicle.setSuspensionStiffness(stiffness);
-        vehicle.setMaxSuspensionForce(10000.0f);
+        vehicle.setMaxSuspensionForce(10000);
         
+        //Create four wheels and add them at their locations
         Vector3f wheelDirection = new Vector3f(0, -1, 0);
-        Vector3f wheelAxle = new Vector3f(-1, 0, 0);
-        float radius = 0.5f;
-        float restLength = 0.3f;
-        float yOff = 0.0f;
-        float xOff = 0.0f;
-        float zOff = 0.0f;
+        Vector3f wheelAxle = new Vector3f(-1, 0, 0); // Is this how the wheels rotate?
+        
+        
+         Geometry wheel_fr = findGeom(carNode, "WheelFrontRight");
+        wheel_fr.center();
+        boundingBox = (BoundingBox) wheel_fr.getModelBound();
+        wheelRadius = boundingBox.getYExtent();
+        float back_wheel_h = (wheelRadius * 1.7f) - 1f;
+        float front_wheel_h = (wheelRadius * 1.9f) - 1f;
+        vehicle.addWheel(wheel_fr.getParent(), boundingBox.getCenter().add(0, -front_wheel_h, 0),
+                wheelDirection, wheelAxle, 0.2f, wheelRadius, true);
 
-        Spatial cannonLeftWheel = assetManager.loadModel("Models/Cannon/cannon_wheel_01_left.j3o");
-        Node cannonLeftWheelNode = (Node)cannonLeftWheel;
-        
-        Spatial cannonRightWheel = assetManager.loadModel("Models/Cannon/cannon_wheel_01_right.j3o");
-        Node cannonRightWheelNode = (Node)cannonRightWheel;
-        
-        vehicle.addWheel(cannonLeftWheelNode, new Vector3f(-xOff, yOff, zOff),
-                wheelDirection, wheelAxle, restLength, radius, true);
-        vehicle.addWheel(cannonRightWheelNode, new Vector3f(-xOff, yOff, zOff),
-                wheelDirection, wheelAxle, restLength, radius, true);
-        // Do I need little wheels in the back?
-//        vehicle.addWheel(cannonLeftRearWheelNode, new Vector3f(-xOff, yOff, zOff),
-//                wheelDirection, wheelAxle, restLength, radius, false);
-//        vehicle.addWheel(cannonRightRearWheelNode, new Vector3f(-xOff, yOff, zOff),
-//                wheelDirection, wheelAxle, restLength, radius, false);
-        cannonPhysicalNode.attachChild(cannonLeftWheelNode);
-        cannonPhysicalNode.attachChild(cannonRightWheelNode);
-        
-        
-        rootNode.attachChild(cannonPhysicalNode);
+        Geometry wheel_fl = findGeom(carNode, "WheelFrontLeft");
+        wheel_fl.center();
+        boundingBox = (BoundingBox) wheel_fl.getModelBound();
+        vehicle.addWheel(wheel_fl.getParent(), boundingBox.getCenter().add(0, -front_wheel_h, 0),
+                wheelDirection, wheelAxle, 0.2f, wheelRadius, true);
+
+        Geometry wheel_br = findGeom(carNode, "WheelBackRight");
+        wheel_br.center();
+        boundingBox = (BoundingBox) wheel_br.getModelBound();
+        vehicle.addWheel(wheel_br.getParent(), boundingBox.getCenter().add(0, -back_wheel_h, 0),
+                wheelDirection, wheelAxle, 0.2f, wheelRadius, false);
+
+        Geometry wheel_bl = findGeom(carNode, "WheelBackLeft");
+        wheel_bl.center();
+        boundingBox = (BoundingBox) wheel_bl.getModelBound();
+        vehicle.addWheel(wheel_bl.getParent(), boundingBox.getCenter().add(0, -back_wheel_h, 0),
+                wheelDirection, wheelAxle, 0.2f, wheelRadius, false);
+
+        vehicle.getWheel(2).setFrictionSlip(4);
+        vehicle.getWheel(3).setFrictionSlip(4);
+
+        rootNode.attachChild(carNode);
         bulletAppState.getPhysicsSpace().add(vehicle);
         
+        //Vector3f wheelAxle = new Vector3f(0, 0, -1);  // How do I have the wheels rotate without the body rotating?
+        // How do I separate the body from the wheels?
+        
+//        float radius = 0.5f;
+//        float restLength = 0.3f;
+//        float yOff = 0.0f;
+//        float xOff = 0.0f;
+//        float zOff = 0.0f;
+        
+//        Material mat = new Material(getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
+//        mat.getAdditionalRenderState().setWireframe(true);
+//        mat.setColor("Color", ColorRGBA.Red);
+//        
+//        float radius = 0.5f;
+//        float restLength = 0.3f;
+//        float yOff = 0.5f;
+//        float xOff = 1f;
+//        float zOff = 2f;
+//        // We create a Cylinder mesh shape that we use to create the four visible wheel geometries.
+//        Cylinder wheelMesh = new Cylinder(16, 16, radius, radius * 0.6f, true);
+//        // For each wheel, we create a Node and a Geometry. We attach the Cylinder Geometry to the Node. We rotate the wheel by 90° around the Y axis. We set a material to make it visible. Finally we add the wheel (plus its properties) to the vehicle.
+//            
+//        Node node1 = new Node("wheel 1 node");
+//            Geometry wheels1 = new Geometry("wheel 1", wheelMesh);
+//            node1.attachChild(wheels1);
+//            wheels1.rotate(0, FastMath.HALF_PI, 0);
+//            wheels1.setMaterial(mat);
+//            vehicle.addWheel(node1, new Vector3f(-xOff, yOff, zOff),
+//                wheelDirection, wheelAxle, restLength, radius, true);
+//        Node node2 = new Node("wheel 2 node");
+//            Geometry wheels2 = new Geometry("wheel 2", wheelMesh);
+//            node2.attachChild(wheels2);
+//            wheels2.rotate(0, FastMath.HALF_PI, 0);
+//            wheels2.setMaterial(mat);
+//            vehicle.addWheel(node2, new Vector3f(xOff, yOff, zOff),
+//                wheelDirection, wheelAxle, restLength, radius, true);
+//        Node node3 = new Node("wheel 3 node");
+//            Geometry wheels3 = new Geometry("wheel 3", wheelMesh);
+//            node3.attachChild(wheels3);
+//            wheels3.rotate(0, FastMath.HALF_PI, 0);
+//            wheels3.setMaterial(mat);
+//            vehicle.addWheel(node3, new Vector3f(-xOff, yOff, -zOff),
+//                wheelDirection, wheelAxle, restLength, radius, false);
+//        Node node4 = new Node("wheel 4 node");
+//            Geometry wheels4 = new Geometry("wheel 4", wheelMesh);
+//            node4.attachChild(wheels4);
+//            wheels4.rotate(0, FastMath.HALF_PI, 0);
+//            wheels4.setMaterial(mat);
+//            vehicle.addWheel(node4, new Vector3f(xOff, yOff, -zOff),
+//                wheelDirection, wheelAxle, restLength, radius, false);
+////        Spatial cannonLeftWheel = assetManager.loadModel("Models/Cannon/cannon_wheel_01_left.j3o");
+////        Node cannonLeftWheelNode = (Node)cannonLeftWheel;
+////        
+////        Spatial cannonRightWheel = assetManager.loadModel("Models/Cannon/cannon_wheel_01_right.j3o");
+////        Node cannonRightWheelNode = (Node)cannonRightWheel;
+////        
+////        vehicle.addWheel(cannonLeftWheelNode, new Vector3f(-xOff, yOff, zOff),
+////                wheelDirection, wheelAxle, restLength, radius, true);
+////        vehicle.addWheel(cannonRightWheelNode, new Vector3f(-xOff, yOff, zOff),
+////                wheelDirection, wheelAxle, restLength, radius, true);
+////        // Do I need little wheels in the back?
+//////        vehicle.addWheel(cannonLeftRearWheelNode, new Vector3f(-xOff, yOff, zOff),
+//////                wheelDirection, wheelAxle, restLength, radius, false);
+//////        vehicle.addWheel(cannonRightRearWheelNode, new Vector3f(-xOff, yOff, zOff),
+//////                wheelDirection, wheelAxle, restLength, radius, false);
+//////        vehicle.addWheel(cannonLeftWheelNode, new Vector3f(-xOff, yOff, -0.5f),
+//////                wheelDirection, wheelAxle, restLength, radius, false);
+//////        vehicle.addWheel(cannonRightWheelNode, new Vector3f(-xOff, yOff, -0.5f),
+//////                wheelDirection, wheelAxle, restLength, radius, false);
+////        
+////        cannonPhysicalNode.attachChild(cannonLeftWheelNode);
+////        cannonPhysicalNode.attachChild(cannonRightWheelNode);
+        
+        
+        //rootNode.attachChild(cannonPhysicalNode);
+//        rootNode.attachChild(carNode);
+//        bulletAppState.getPhysicsSpace().add(vehicle);
+        
+//        Geometry chasis = findGeom(cannonPhysicalNode, "Barrel"); //????
+//        BoundingBox boundingBox = (BoundingBox) chasis.getModelBound();
+
+//        //Create a hull collision shape for the chassis
+//        CollisionShape carHull = CollisionShapeFactory.createDynamicMeshShape(chasis);
+//        Geometry wheel_fr = findGeom(carNode, "WheelFrontRight");
+//        wheel_fr.center();
+//        box = (BoundingBox) wheel_fr.getModelBound();
+//        wheelRadius = box.getYExtent();
+//        float back_wheel_h = (wheelRadius * 1.7f) - 1f;
+//        float front_wheel_h = (wheelRadius * 1.9f) - 1f;
+//        player.addWheel(wheel_fr.getParent(), box.getCenter().add(0, -front_wheel_h, 0),
+//                wheelDirection, wheelAxle, 0.2f, wheelRadius, true);
+//
+//        Geometry wheel_fl = findGeom(carNode, "WheelFrontLeft");
+//        wheel_fl.center();
+//        box = (BoundingBox) wheel_fl.getModelBound();
+//        player.addWheel(wheel_fl.getParent(), box.getCenter().add(0, -front_wheel_h, 0),
+//                wheelDirection, wheelAxle, 0.2f, wheelRadius, true);
+//
+//        Geometry wheel_br = findGeom(carNode, "WheelBackRight");
+//        wheel_br.center();
+//        box = (BoundingBox) wheel_br.getModelBound();
+//        player.addWheel(wheel_br.getParent(), box.getCenter().add(0, -back_wheel_h, 0),
+//                wheelDirection, wheelAxle, 0.2f, wheelRadius, false);
+//
+//        Geometry wheel_bl = findGeom(carNode, "WheelBackLeft");
+//        wheel_bl.center();
+//        box = (BoundingBox) wheel_bl.getModelBound();
+//        player.addWheel(wheel_bl.getParent(), box.getCenter().add(0, -back_wheel_h, 0),
+//                wheelDirection, wheelAxle, 0.2f, wheelRadius, false);
+//
+//        player.getWheel(2).setFrictionSlip(4);
+//        player.getWheel(3).setFrictionSlip(4);
+//
+//        rootNode.attachChild(carNode);
+//        getPhysicsSpace().add(player);
+        
+    }
+    private Geometry findGeom(Spatial spatial, String name) {
+        if (spatial instanceof Node) {
+            Node node = (Node) spatial;
+            for (int i = 0; i < node.getQuantity(); i++) {
+                System.out.println("findGeom is returning: " + node.getChild(i).getName() + " for node.getChild(" + i + ")");
+                Spatial child = node.getChild(i);
+                Geometry result = findGeom(child, name);
+                if (result != null) {
+                    return result;
+                }
+            }
+        } else if (spatial instanceof Geometry) {
+            if (spatial.getName().startsWith(name)) {
+                return (Geometry) spatial;
+            }
+        }
+        return null;
     }
     private void ConstructCannon(){
         System.out.println("Constructing cannon.");
@@ -396,7 +574,7 @@ public class Main extends SimpleApplication implements AnimEventListener
     private Geometry ConstructBox(ColorRGBA color){
         Box box1 = new Box(1, 1, 1); // create cube shape
         Geometry blueBox = new Geometry("Box", box1);  // create cube geometry from the shape
-        blueBox.setLocalTranslation(new Vector3f(1, -1, 1));
+        blueBox.setLocalTranslation(new Vector3f(1, -1, 4));
         Material blueBoxMaterial = new Material(assetManager,
           "Common/MatDefs/Misc/Unshaded.j3md");  // create a simple material
         blueBoxMaterial.setColor("Color", color.Blue);   // set color of material to blue
@@ -405,7 +583,7 @@ public class Main extends SimpleApplication implements AnimEventListener
     }
     private Spatial ConstructWall(){
         // Create a wall with a simple texture from test_data
-        Box superBox = new Box(2.5f, 2.5f, 1.0f);
+        Box superBox = new Box(2.5f, 2.5f, 4.0f);
         Spatial wall = new Geometry("Box", superBox);
         Material mat_brick = new Material(
                 assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
@@ -556,13 +734,14 @@ public void onAction(String binding, boolean value, float tpf) {
   } else if (binding.equals("Rights")) {
       if (value) { steeringValue += -.5f; } else { steeringValue += .5f; }
       vehicle.steer(steeringValue);
-  } else if (binding.equals("Ups")) {
-      if (value) {
-        accelerationValue += accelerationForce;
-      } else {
+  } else if (binding.equals("Ups")) { 
+      if (value) {//note that our fancy car actually goes backwards..
         accelerationValue -= accelerationForce;
+      } else {
+        accelerationValue += accelerationForce;
       }
       vehicle.accelerate(accelerationValue);
+      vehicle.setCollisionShape(CollisionShapeFactory.createDynamicMeshShape(findGeom(carNode, "Car")));
   } else if (binding.equals("Downs")) {
       if (value) { vehicle.brake(brakeForce); } else { vehicle.brake(0f); }
   } else if (binding.equals("Space")) {
