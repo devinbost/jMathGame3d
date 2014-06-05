@@ -7,11 +7,18 @@
 package MathGame.Tests;
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 import de.congrace.exp4j.Calculable;
 import de.congrace.exp4j.ExpressionBuilder;
 import java.io.File;
 ||||||| merged common ancestors
 =======
+||||||| merged common ancestors
+import mathgame.Questions.Question;
+=======
+import de.congrace.exp4j.Calculable;
+import de.congrace.exp4j.ExpressionBuilder;
+>>>>>>> Added jScience library to project.
 import java.io.File;
 >>>>>>> Built all of the infrastructure for the HallOfFame singleton. Added a bunch of unit tests and new classes. Also added the new code that will be used for replacing the Question class with an interface, abstract class, and polymorphism (plus a Factory Method design pattern). This will help our code move toward sustainable design and best practices.
 import java.util.*;
@@ -27,6 +34,7 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.not;
+<<<<<<< HEAD
 import org.jscience.mathematics.function.Polynomial;
 import org.jscience.mathematics.function.Variable;
 import org.jscience.mathematics.number.Real;
@@ -34,6 +42,11 @@ import org.jscience.mathematics.number.Real;
 =======
 import static org.hamcrest.CoreMatchers.not;
 >>>>>>> Built all of the infrastructure for the HallOfFame singleton. Added a bunch of unit tests and new classes. Also added the new code that will be used for replacing the Question class with an interface, abstract class, and polymorphism (plus a Factory Method design pattern). This will help our code move toward sustainable design and best practices.
+||||||| merged common ancestors
+=======
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.not;
+>>>>>>> Added jScience library to project.
 import org.junit.AfterClass;
 import static org.junit.Assert.*;
 import org.junit.BeforeClass;
@@ -99,6 +112,7 @@ public class MathGameTest {
         IDisplayCommand command = _controller.getDisplayMenuCommand("jMenuItemAbout");
         assertTrue(command instanceof IDisplayCommand);
     }
+<<<<<<< HEAD
     @Test
     public void JScience_IsPossibleToSolveForUnknownValueOfX_ReturnsTrue(){
         // Defines two local variables (x, y).
@@ -122,6 +136,10 @@ public class MathGameTest {
 //        varX.set(Complex.valueOf(2, 3));
 //        System.out.println(fx.evaluate());
     }
+||||||| merged common ancestors
+=======
+    
+>>>>>>> Added jScience library to project.
     // We need some tests for the QuestionQueue;
     
 //    @Test

@@ -119,6 +119,7 @@ public class HallOfFame {
         }
         return highscoreString;
     }
+<<<<<<< HEAD
     public String getTopHighscoresString(int numberOfHighScoresToReturn) {
         String highscoreString = "";
 	int max = numberOfHighScoresToReturn;
@@ -297,8 +298,13 @@ public class HallOfFame {
         }
     }
     public String getHighscoreString() {
+||||||| merged common ancestors
+    public String getTopTenHighscoresString() {
+=======
+    public String getTopHighscoresString(int numberOfHighScoresToReturn) {
+>>>>>>> Added jScience library to project.
         String highscoreString = "";
-	int max = 10;
+	int max = numberOfHighScoresToReturn;
 
         ArrayList<Score> scores;
         scores = GetHighScores();
@@ -308,7 +314,7 @@ public class HallOfFame {
         if (x > max) {
             x = max;
         }
-        while (i < x) { // Using a stringbuilder here would be faster and use less memory. Please do fix this in a later revision.
+        while (i < numberOfHighScoresToReturn) { // Using a stringbuilder here would be faster and use less memory. Please do fix this in a later revision.
             highscoreString += (i + 1) + ".\t" + scores.get(i).getGamerName()+ "\t\t" + scores.get(i).getScore() + "\n";
             i++;
         }
