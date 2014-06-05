@@ -103,16 +103,17 @@ public class MainScreenController extends AbstractAppState implements ScreenCont
         // this._stateManager.detach(this);
         //this._nifty.gotoScreen(nextScreen);  // switch to another screen
         this._nifty.gotoScreen(nextScreen);  // switch to another screen
-       
+        
     }
    public void quitGame() {
     this._gameApplication.stop();
+    cleanup();
   }
     public void onEndScreen() {
        // throw new UnsupportedOperationException("Not supported yet.");
         // app.stop();
         //this._gameApplication.stop();
-         
+         cleanup();
         System.out.println("MainScreenController.onEndScreen() is being called here.");
     }
 }

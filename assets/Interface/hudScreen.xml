@@ -6,10 +6,11 @@
   <useStyles filename="nifty-default-styles.xml" />
   <useControls filename="nifty-default-controls.xml" />
   <!-- <screen id="hudScreen" controller="mygame.MainScreenController">-->
-    <screen id="hud" controller="mygame.MainScreenController">
+    <screen id="hudScreen" controller="mygame.MainScreenController">
         <layer id="background" backgroundColor="#000f" childLayout="center">
             <!-- <image filename="Interface/hud-frame.png"></image> -->
-            <image filename="Interface/hud-frame.png" imageMode="resize:40,490,110,170,40,560,40,270,40,560,40,40" width="100%" height="100%"/>
+            <image filename="Interface/hud-frame.png"  width="100%" height="100%"/>
+           <!--  <image filename="Interface/hud-frame.png" imageMode="resize:40,490,110,170,40,560,40,270,40,560,40,40" width="100%" height="100%"/>-->
         </layer>
         <layer id="foreground" backgroundColor="#0000" childLayout="horizontal">
             <panel id="panel_left" width="80%" height="100%" childLayout="vertical" backgroundColor="#0f08">  
