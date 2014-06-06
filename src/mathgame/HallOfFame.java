@@ -136,4 +136,58 @@ public class HallOfFame {
         }
         return highscoreString;
     }
+    public String getLowestScores(int numberOfLowScoresToReturn){
+        String lowScoreString = "";
+	int max = numberOfLowScoresToReturn;
+
+        ArrayList<Score> scores;
+        ArrayList<Score> sortedScores;
+        scores = GetHighScores();
+        sortedScores = this.ScoreInsertionSort(scores);
+        
+         int i = 0;
+        int x = scores.size();
+        if (x > max) {
+            x = max;
+        }
+        while (i < numberOfLowScoresToReturn) { // Using a stringbuilder here would be faster and use less memory. Please do fix this in a later revision.
+            lowScoreString += (i + 1) + ".\t" + sortedScores.get(i).getGamerName()+ "\t\t" + sortedScores.get(i).getScore() + "\n";
+            i++;
+        }
+        
+       return lowScoreString;
+    }
+    public ArrayList<Score> ScoreInsertionSort(ArrayList<Score> scores){
+        int j;                     // the number of items sorted so far
+        Score key;                // the item to be inserted
+        int i;
+        
+        for (j = 1; j < scores.size(); j++)    // Start with 1 (not 0)
+         {
+               key = scores.get(j);
+               for(i = j - 1; (i >= 0) && (scores.get(i)._score > key._score); i--)   // Smaller values are moving down
+               {
+                   scores.set(i+1, scores.get(i));
+               }
+               scores.set(i+1, key); // Put the key in its proper location
+         }
+        return scores;
+    }
+//    public static void InsertionSort( int [ ] num)
+//    {
+//         int j;                     // the number of items sorted so far
+//         int key;                // the item to be inserted
+//         int i;  
+//
+//         for (j = 1; j < num.length; j++)    // Start with 1 (not 0)
+//         {
+//               key = num[ j ];
+//               for(i = j - 1; (i >= 0) && (num[ i ] < key); i--)   // Smaller values are moving up
+//              {
+//                     num[ i+1 ] = num[ i ];
+//              }
+//             num[ i+1 ] = key;    // Put the key in its proper location
+//         }
+//    }
+    
 }
