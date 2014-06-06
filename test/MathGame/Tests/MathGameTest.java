@@ -18,6 +18,12 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.not;
+import org.jscience.mathematics.function.Polynomial;
+import org.jscience.mathematics.function.Variable;
+import org.jscience.mathematics.number.Real;
 import org.junit.AfterClass;
 import static org.junit.Assert.*;
 import org.junit.BeforeClass;
@@ -83,7 +89,29 @@ public class MathGameTest {
         IDisplayCommand command = _controller.getDisplayMenuCommand("jMenuItemAbout");
         assertTrue(command instanceof IDisplayCommand);
     }
-    
+    @Test
+    public void JScience_IsPossibleToSolveForUnknownValueOfX_ReturnsTrue(){
+        // Defines two local variables (x, y).
+        Variable<Real> varX = new Variable.Local<Real>("x");
+        Variable<Real> varY = new Variable.Local<Real>("y");
+        Variable<Real> varA = new Variable.Local<Real>("a");
+        
+        // f(x) = ix² + 2x + 1
+        Polynomial<Real> x = Polynomial.valueOf(Real.ONE, varX);
+        Polynomial<Real> fx = x.pow(2).times(Real.valueOf(2)).plus(x.times(Real.valueOf(4)).plus(Real.valueOf(0.5)));
+        System.out.println(fx);
+        System.out.println(fx.pow(2));
+        System.out.println(fx.differentiate(varX));
+        System.out.println(fx.integrate(varY));
+        System.out.println(fx.compose(fx));
+
+        // TO DO: Solve for x.
+        // See: http://jscience.org/api/overview-summary.html#TUTORIAL
+        
+//        // Calculates expression.
+//        varX.set(Complex.valueOf(2, 3));
+//        System.out.println(fx.evaluate());
+    }
     // We need some tests for the QuestionQueue;
     
 //    @Test
@@ -120,6 +148,32 @@ public class MathGameTest {
         System.out.println("scores should not be empty. scores has a size of: " + scores.size());
         assertTrue(scores.isEmpty() == false);
         // the best practice would be to use an interface to create a seam to make it easier to unit test the HallOfFame class.
+    }
+    @Test
+    public void HallOfFame_DoesGetTopHighscoresStringDisplay_ReturnsTrue(){
+        HallOfFame hallOfFame = HallOfFame.getInstance();
+        hallOfFame.addScore(11, "Devin");
+        hallOfFame.addScore(12, "Bill");
+        hallOfFame.addScore(492, "Jack");
+        hallOfFame.addScore(83, "Mary");
+        String highScores = hallOfFame.getTopHighscoresString(10);
+        System.out.print("HallOfFame_DoesGetTopHighscoresStringDisplay_ReturnsTrue() is getting called.\n");
+        System.out.print("The top high scores are: \n" + highScores);
+        System.out.print("HallOfFame_DoesGetTopHighscoresStringDisplay_ReturnsTrue() is done.\n");
+        assertTrue(!"".equals(highScores));
+    }
+    @Test
+    public void HallOfFame_DoesGetLowestScoresStringDisplay_ReturnsTrue(){
+        HallOfFame hallOfFame = HallOfFame.getInstance();
+        hallOfFame.addScore(11, "Devin");
+        hallOfFame.addScore(12, "Bill");
+        hallOfFame.addScore(492, "Jack");
+        hallOfFame.addScore(83, "Mary");
+        String highScores = hallOfFame.getLowestScores(10);
+        System.out.print("HallOfFame_DoesGetLowestScoresStringDisplay_ReturnsTrue() is getting called.\n");
+        System.out.print("The lowest scores are: \n" + highScores);
+        System.out.print("HallOfFame_DoesGetLowestScoresStringDisplay_ReturnsTrue() is done.\n");
+        assertTrue(!"".equals(highScores));
     }
     @Test
     public void HallOfFame_IsGetInstanceWorking_ReturnsInstance(){
