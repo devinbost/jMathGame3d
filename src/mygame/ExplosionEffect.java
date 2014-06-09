@@ -249,4 +249,5 @@ public class ExplosionEffect {
         }
         return trigger;
     }
+    
 }
