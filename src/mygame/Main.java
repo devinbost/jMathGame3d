@@ -1121,7 +1121,8 @@ public void onAction(String binding, boolean value, float tpf) {
         //ball_phy.setLinearVelocity(cannonBallOrigin.mult(2)); works better than using cam.
         // Now we just need to figure out the direction.
        // ball_phy.setPhysicsRotation(vehicle.getPhysicsRotation());
-        ball_phy.setLinearVelocity(vehicle.getPhysicsRotation().mult(Vector3f.UNIT_Z).mult(-20));
+        Vector3f accelerationVector = new Vector3f(vehicle.getPhysicsRotation().mult(Vector3f.UNIT_Z).mult(-20)); // works great!
+        ball_phy.setLinearVelocity(accelerationVector); // works great
         //ball_phy.setLinearVelocity(vehicle.getPhysicsLocation().mult(2)); // works much better, but lags behind until acceleration occurs
         
         // Can I use the physics rotation quaternion?
