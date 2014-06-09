@@ -351,6 +351,21 @@ public class Main extends SimpleApplication implements AnimEventListener
         rootNode.attachChild(carNode);
         bulletAppState.getPhysicsSpace().add(vehicle);
         
+        // Add code to add an origin from which to fire the cannonballs.
+        Box barrelBox = new Box(.1f, .1f, .1f);
+        barrelTip = new Geometry("BarrelBox", barrelBox);
+        // position the barrelTip to a location just above the vehicle.
+        Vector3f carNodeLocation = carNode.getLocalTranslation();
+        System.out.println("carNodeLocation is: (" + carNodeLocation.x + ", " + carNodeLocation.y + ", " +
+                carNodeLocation.z + ")");
+        Vector3f barrelTipLocation = carNodeLocation;
+        barrelTipLocation.y += 3f;
+        barrelTip.setLocalTranslation(barrelTipLocation);
+        // Create barreltip material to make it visible (mostly just for debugging).
+        Material barrelTipMaterial = new Material(assetManager,  "Common/MatDefs/Misc/Unshaded.j3md");
+        barrelTipMaterial.setColor("Color", ColorRGBA.Blue);
+        barrelTip.setMaterial(barrelTipMaterial);
+        carNode.attachChild(barrelTip);
         //Vector3f wheelAxle = new Vector3f(0, 0, -1);  // How do I have the wheels rotate without the body rotating?
         // How do I separate the body from the wheels?
         
