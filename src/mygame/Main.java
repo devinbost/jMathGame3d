@@ -240,7 +240,7 @@ public class Main extends SimpleApplication implements AnimEventListener
         dl.setDirection(new Vector3f(-0.1f, -1f, -1).normalizeLocal());
         rootNode.addLight(dl);
         this.ConstructCharacter();
-        
+        this.ConstructPhysicalCannon();
         this.ConstructCannon();
         
         this.explosion = new ExplosionEffect(explosionEffectWrapper, this.getAssetManager());
@@ -249,7 +249,7 @@ public class Main extends SimpleApplication implements AnimEventListener
         explosionEffectWrapper.setLocalTranslation(new Vector3f(0,10,10));
         // Set position of explosionEffectWrapper to position explosion.
         // We want to position the explosion at the tip of the cannon.
-        this.ConstructPhysicalCannon();
+        
     }
 //    private void setUpLight() {
 //    // We add light so we see the scene
@@ -293,15 +293,16 @@ public class Main extends SimpleApplication implements AnimEventListener
 
         //Load model and get chassis Geometry
        
-        cannonNode = (Node)assetManager.loadModel("Models/Cannon/cannon_01.j3o");
-        cannonNode.setShadowMode(ShadowMode.Cast);
+//        cannonNode = (Node)assetManager.loadModel("Models/Cannon/cannon_01.j3o");
+//        cannonNode.setShadowMode(ShadowMode.Cast);
+        
         carNode = (Node)assetManager.loadModel("Models/Ferrari/Car.scene");
         carNode.setShadowMode(ShadowMode.Cast);
-        Geometry barrel = findGeom(cannonNode, "Barrel1"); //Geometry chasis = findGeom(carNode, "Cannon");
+//        Geometry barrel = findGeom(cannonNode, "Barrel1"); //Geometry chasis = findGeom(carNode, "Cannon");
         // findGeom doesn't work for group types because groups aren't geometries.
         Geometry chasis = findGeom(carNode, "Car"); // I need a node here for the cannon object.
         // Can I do the same thing for the LeftWheel and RightWheel objects?
-        BoundingBox barrelBoundingBox = (BoundingBox) barrel.getModelBound();
+//        BoundingBox barrelBoundingBox = (BoundingBox) barrel.getModelBound();
         BoundingBox boundingBox = (BoundingBox) chasis.getModelBound();
          //Create a hull collision shape for the chassis
         CollisionShape carHull = CollisionShapeFactory.createDynamicMeshShape(chasis);
@@ -351,12 +352,24 @@ public class Main extends SimpleApplication implements AnimEventListener
         vehicle.getWheel(3).setFrictionSlip(4);
 
         rootNode.attachChild(carNode);
-        rootNode.attachChild(cannonNode);
+        //rootNode.attachChild(cannonNode);
         bulletAppState.getPhysicsSpace().add(vehicle);
         
-        
-        carNode.attachChild(barrelTip);
-        barrelTip.setLocalTranslation(new Vector3f(0,3f,0));
+//         // Construct a node that we will use to position the origin of cannonballs
+//        Box barrelBox = new Box(.1f, .1f, .1f);
+//        barrelTip = new Geometry("BarrelBox", barrelBox);
+//        Vector3f cannonNodeLocation = carNode.getLocalTranslation();
+//        System.out.println("playerLocation is: (" + cannonNodeLocation.x + ", " + cannonNodeLocation.y + ", " +
+//                cannonNodeLocation.z + ")");
+//        //Vector3f cannonNodeLocation = cannonNode.getLocalTranslation();
+//        Vector3f barrelTipLocation = cannonNodeLocation;
+//        barrelTipLocation.y = barrelTipLocation.y += 3f;
+//        barrelTip.setLocalTranslation(cannonNodeLocation);
+//        Material barrelTipMaterial = new Material(assetManager,  "Common/MatDefs/Misc/Unshaded.j3md");
+//        barrelTipMaterial.setColor("Color", ColorRGBA.Blue);
+//        barrelTip.setMaterial(barrelTipMaterial);
+//        //cannonNode.attachChild(barrelTip);
+//        carNode.attachChild(barrelTip);
         //Vector3f wheelAxle = new Vector3f(0, 0, -1);  // How do I have the wheels rotate without the body rotating?
         // How do I separate the body from the wheels?
         
@@ -474,6 +487,36 @@ public class Main extends SimpleApplication implements AnimEventListener
 //        getPhysicsSpace().add(player);
         
     }
+    private void ConstructCannon(){
+        System.out.println("Constructing cannon.");
+        Spatial cannonSpatial = assetManager.loadModel("Models/Cannon/cannon_01.j3o");
+        cannon =  (Node)cannonSpatial;
+        cannonNode = new Node();
+        cannonNode.attachChild(cannon);
+        cannon.move(5f,-3.5f,8f);
+        cannon.setLocalScale(5f);
+        DirectionalLight dl = new DirectionalLight();
+        dl.setDirection(new Vector3f(-0.1f, -1f, -1).normalizeLocal());
+        cannon.addLight(dl);
+        
+        rootNode.attachChild(cannon);
+         // Construct a node that we will use to position the origin of cannonballs
+        Box barrelBox = new Box(.1f, .1f, .1f);
+        barrelTip = new Geometry("BarrelBox", barrelBox);
+        Vector3f cannonNodeLocation = carNode.getLocalTranslation();
+        System.out.println("playerLocation is: (" + cannonNodeLocation.x + ", " + cannonNodeLocation.y + ", " +
+                cannonNodeLocation.z + ")");
+        //Vector3f cannonNodeLocation = cannonNode.getLocalTranslation();
+        Vector3f barrelTipLocation = cannonNodeLocation;
+        barrelTipLocation.y = barrelTipLocation.y += 3f;
+        barrelTip.setLocalTranslation(cannonNodeLocation);
+        Material barrelTipMaterial = new Material(assetManager,  "Common/MatDefs/Misc/Unshaded.j3md");
+        barrelTipMaterial.setColor("Color", ColorRGBA.Blue);
+        barrelTip.setMaterial(barrelTipMaterial);
+        //cannonNode.attachChild(barrelTip);
+        carNode.attachChild(barrelTip);
+//        barrelTip.move();
+    }
     private Geometry findGeom(Spatial spatial, String name) {
         if (spatial instanceof Node) {
             Node node = (Node) spatial; // Can I use a foreach loop here?
@@ -533,6 +576,9 @@ public class Main extends SimpleApplication implements AnimEventListener
         attackChannel.addBone(animationControl.getSkeleton().getBone("uparm.right"));
         attackChannel.addBone(animationControl.getSkeleton().getBone("arm.right"));
         attackChannel.addBone(animationControl.getSkeleton().getBone("hand.right"));
+//        Vector3f playerLocation = playerNode.getLocalTranslation();
+//        System.out.println("playerLocation is: (" + playerLocation.x + ", " + playerLocation.y + ", " +
+//                playerLocation.z + ")");
     }
     /** Make a solid floor and add it to the scene. */
   public void initFloor() {
@@ -1139,16 +1185,24 @@ public void onAction(String binding, boolean value, float tpf) {
         ball_geo.setMaterial(stone_mat);
         rootNode.attachChild(ball_geo);
         /** Position the cannon ball  */
-        Vector3f playerLocation = playerNode.getLocalTranslation();
-        //playerLocation.y = playerLocation.y + 1f;
-        //Vector3f cannonLocation = carNode.getLocalTranslation();
-        Vector3f cannonLocation = barrelTip.getLocalTranslation();
-        Vector3f vectorFromPlayerToCannon = playerLocation.subtract(cannonLocation);
-        Vector3f vectorFromCannonToPlayer = cannonLocation.subtract(playerLocation);
+        //Vector3f playerLocation = player.getLocalTranslation();
+        Vector3f playerLocation = playerControl.getViewDirection();
+        //Vector3f playerLocation = playerNode.getLocalTranslation();
+//        System.out.println("playerLocation is: (" + playerLocation.x + ", " + playerLocation.y + ", " +
+//                playerLocation.z + ")");
+//        //Vector3f playerLocation = player.getLocalTranslation();
+//        //playerLocation.y = playerLocation.y + 1f;
+//        //Vector3f cannonLocation = carNode.getLocalTranslation();
+//        Vector3f cannonLocation = barrelTip.getLocalTranslation();
+//        System.out.println("cannonLocation is: (" + cannonLocation.x + ", " + cannonLocation.y + ", " +
+//                cannonLocation.z + ")");
+//        Vector3f vectorFromPlayerToCannon = playerLocation.subtract(cannonLocation);
+//        Vector3f vectorFromCannonToPlayer = cannonLocation.subtract(playerLocation);
         // Can we create a ray from the playerLocation to the target object location?
         // Or should we just try subtracting the vectors between the playerLocation and targetLocation?
 //        ball_geo.setLocalTranslation(vectorFromCannonToPlayer);
-        ball_geo.setLocalTranslation(cannonLocation);
+        ball_geo.setLocalTranslation(playerLocation);
+//        ball_geo.setLocalTranslation(vectorFromPlayerToCannon);
         //ball_geo.setLocalTranslation(playerLocation);
         //ball_geo.setLocalTranslation(cam.getLocation());
         /** Make the ball physcial with a mass > 0.0f */
@@ -1182,33 +1236,7 @@ public void onAction(String binding, boolean value, float tpf) {
     floor_mat.setTexture("ColorMap", tex3);
   }
  
-  private void ConstructCannon(){
-        System.out.println("Constructing cannon.");
-        Spatial cannonSpatial = assetManager.loadModel("Models/Cannon/cannon_01.j3o");
-        cannon =  (Node)cannonSpatial;
-        cannonNode = new Node();
-        cannonNode.attachChild(cannon);
-        cannon.move(5f,-3.5f,8f);
-        cannon.setLocalScale(5f);
-        DirectionalLight dl = new DirectionalLight();
-        dl.setDirection(new Vector3f(-0.1f, -1f, -1).normalizeLocal());
-        cannon.addLight(dl);
-        
-        rootNode.attachChild(cannon);
-// Construct a node that we will use to position the origin of cannonballs
-        Box barrelBox = new Box(.1f, .1f, .1f);
-        barrelTip = new Geometry("BarrelBox", barrelBox);
-        Vector3f cannonNodeLocation = cannonNode.getLocalTranslation();
-        Vector3f barrelTipLocation = cannonNodeLocation;
-        barrelTipLocation.y = barrelTipLocation.y += 3f;
-        barrelTip.setLocalTranslation(cannonNodeLocation);
-        Material barrelTipMaterial = new Material(assetManager,  "Common/MatDefs/Misc/Unshaded.j3md");
-        barrelTipMaterial.setColor("Color", ColorRGBA.Blue);
-        barrelTip.setMaterial(barrelTipMaterial);
-        cannonNode.attachChild(barrelTip);
-//        barrelTip.move();        
-        
-    }
+  
  
   /** This loop builds a wall out of individual bricks. */
   public void initWall() {
