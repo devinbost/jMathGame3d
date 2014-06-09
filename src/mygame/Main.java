@@ -1,4 +1,50 @@
+//package mygame;
+//
+//import com.jme3.app.SimpleApplication;
+//import com.jme3.material.Material;
+//import com.jme3.math.ColorRGBA;
+//import com.jme3.math.Vector3f;
+//import com.jme3.renderer.RenderManager;
+//import com.jme3.scene.Geometry;
+//import com.jme3.scene.shape.Box;
 
+/**
+ * test
+ * @author Devin Bost
+ */
+//public class Main extends SimpleApplication { // This extends the Application class. The Application class represents a generic real-time 3D rendering jME3 application
+//
+//    public static void main(String[] args) {
+//        Main app = new Main();
+//        app.start();
+//    }
+//
+//    @Override
+//    public void simpleInitApp() {
+//        Box b = new Box(1, 1, 1);
+//        Geometry geom = new Geometry("Box", b);
+//
+//        Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+//        mat.setColor("Color", ColorRGBA.Red);
+//        geom.setMaterial(mat);
+//
+//        rootNode.attachChild(geom);
+//    }
+//
+//    @Override
+//    public void simpleUpdate(float tpf) {
+//        //TODO: add update code
+//    }
+//
+//    @Override
+//    public void simpleRender(RenderManager rm) {
+//        //TODO: add render code
+//    }
+//}
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package mygame;
 
 /**
@@ -10,7 +56,6 @@ import com.jme3.animation.AnimControl;
 import com.jme3.animation.AnimEventListener;
 import com.jme3.animation.LoopMode;
 import com.jme3.app.SimpleApplication;
-import com.jme3.asset.TextureKey;
 import com.jme3.asset.plugins.ZipLocator;
 import com.jme3.bounding.BoundingBox;
 import com.jme3.bullet.BulletAppState;
@@ -46,16 +91,12 @@ import com.jme3.math.FastMath;
 import com.jme3.math.Matrix3f;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Ray;
-import com.jme3.math.Vector2f;
 import com.jme3.niftygui.NiftyJmeDisplay;
 import com.jme3.renderer.queue.RenderQueue.ShadowMode;
 import com.jme3.scene.debug.SkeletonDebugger;
 import com.jme3.scene.shape.Cylinder;
 import com.jme3.scene.shape.Sphere;
-import com.jme3.scene.shape.Sphere.TextureMode;
 import com.jme3.shadow.BasicShadowRenderer;
-import com.jme3.texture.Texture;
-import com.jme3.texture.Texture.WrapMode;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.screen.Screen;
  
@@ -68,7 +109,6 @@ public class Main extends SimpleApplication implements AnimEventListener
     public Node player;
     public Node cannon;
     private Node carNode;
-    private Node cannonNode;
     public Spatial ninja;
     private AnimChannel channel;
     private AnimControl control;
@@ -102,43 +142,15 @@ public class Main extends SimpleApplication implements AnimEventListener
     private VehicleWheel fr, fl, br, bl;
     private Node node_fr, node_fl, node_br, node_bl;
     private float wheelRadius;
-        /** Prepare Materials */
-    Material wall_mat;
-    Material stone_mat;
-    Material floor_mat;
-    private Geometry barrelTip;
-    private Node playerNode = new Node();
-      /** Prepare geometries and physical nodes for bricks and cannon balls. */
-  private RigidBodyControl    brick_phy;
-  private static final Box    box;
-  private RigidBodyControl    ball_phy;
-  private static final Sphere sphere;
-  private RigidBodyControl    floor_phy;
-  private static final Box    floor;
- 
-  /** dimensions used for bricks and wall */
-  private static final float brickLength = 0.48f;
-  private static final float brickWidth  = 0.24f;
-  private static final float brickHeight = 0.12f;
- 
-  
+    
+    
     public static void main(String[] args){
         System.out.println("Main.main(String[] args) is being called here.");
         Main app = new Main();
         app.start(); // start the game
         
     }
-      static {
-    /** Initialize the cannon ball geometry */
-    sphere = new Sphere(32, 32, 0.4f, true, false);
-    sphere.setTextureMode(TextureMode.Projected);
-    /** Initialize the brick geometry */
-    box = new Box(brickLength, brickHeight, brickWidth);
-    box.scaleTextureCoordinates(new Vector2f(1f, .5f));
-    /** Initialize the floor geometry */
-    floor = new Box(10f, 0.1f, 5f);
-    floor.scaleTextureCoordinates(new Vector2f(3, 6));
-  }
+    
     @Override
     public void simpleInitApp() {
         System.out.println("Main.simpleInitApp() is being called here.");
@@ -157,7 +169,6 @@ public class Main extends SimpleApplication implements AnimEventListener
         guiViewPort.addProcessor(niftyDisplay);
         this._nifty = nifty;
         System.out.println("In the Main.simpleInitApp() method, nifty is: " + nifty.toString());
-        /** Initialize the cannon ball geometry */
         
         // Q: How do I determine if "startGame" is the correct string to pass the above method?
         // A: I think this (second parameter) is the ID of the screen in the given file.
@@ -179,9 +190,6 @@ public class Main extends SimpleApplication implements AnimEventListener
             bsr.setDirection(new Vector3f(-0.5f, -0.3f, -0.3f).normalizeLocal());
             viewPort.addProcessor(bsr);
         }
-        initMaterials();
-        initWall();
-        initFloor();
     }
     public void LoadGameFromScreen(){
         System.out.println("The Main.LoadGameFromScreen() method is getting called here.");
@@ -230,9 +238,9 @@ public class Main extends SimpleApplication implements AnimEventListener
         sun.setDirection(new Vector3f(-0.1f, -0.7f, 1.0f));
         rootNode.addLight(sun);
         
-        //Spatial elephant = assetManager.loadModel("Models/Elephant/Elephant.mesh.xml"); // be sure to convert to .j3o file format for production. (see instructions here: http://hub.jmonkeyengine.org/wiki/doku.php/jme3:beginner:hello_asset)
+        Spatial elephant = assetManager.loadModel("Models/Elephant/Elephant.mesh.xml"); // be sure to convert to .j3o file format for production. (see instructions here: http://hub.jmonkeyengine.org/wiki/doku.php/jme3:beginner:hello_asset)
         
-        //rootNode.attachChild(elephant);
+        rootNode.attachChild(elephant);
     
         this.ConstructLevel();
         //rootNode.attachChild(gameLevel);
@@ -240,7 +248,7 @@ public class Main extends SimpleApplication implements AnimEventListener
         dl.setDirection(new Vector3f(-0.1f, -1f, -1).normalizeLocal());
         rootNode.addLight(dl);
         this.ConstructCharacter();
-        this.ConstructPhysicalCannon();
+        
         this.ConstructCannon();
         
         this.explosion = new ExplosionEffect(explosionEffectWrapper, this.getAssetManager());
@@ -249,7 +257,7 @@ public class Main extends SimpleApplication implements AnimEventListener
         explosionEffectWrapper.setLocalTranslation(new Vector3f(0,10,10));
         // Set position of explosionEffectWrapper to position explosion.
         // We want to position the explosion at the tip of the cannon.
-        
+        this.ConstructPhysicalCannon();
     }
 //    private void setUpLight() {
 //    // We add light so we see the scene
@@ -292,17 +300,9 @@ public class Main extends SimpleApplication implements AnimEventListener
         final float mass = 400;
 
         //Load model and get chassis Geometry
-       
-//        cannonNode = (Node)assetManager.loadModel("Models/Cannon/cannon_01.j3o");
-//        cannonNode.setShadowMode(ShadowMode.Cast);
-        
         carNode = (Node)assetManager.loadModel("Models/Ferrari/Car.scene");
         carNode.setShadowMode(ShadowMode.Cast);
-//        Geometry barrel = findGeom(cannonNode, "Barrel1"); //Geometry chasis = findGeom(carNode, "Cannon");
-        // findGeom doesn't work for group types because groups aren't geometries.
-        Geometry chasis = findGeom(carNode, "Car"); // I need a node here for the cannon object.
-        // Can I do the same thing for the LeftWheel and RightWheel objects?
-//        BoundingBox barrelBoundingBox = (BoundingBox) barrel.getModelBound();
+        Geometry chasis = findGeom(carNode, "Car");
         BoundingBox boundingBox = (BoundingBox) chasis.getModelBound();
          //Create a hull collision shape for the chassis
         CollisionShape carHull = CollisionShapeFactory.createDynamicMeshShape(chasis);
@@ -352,24 +352,8 @@ public class Main extends SimpleApplication implements AnimEventListener
         vehicle.getWheel(3).setFrictionSlip(4);
 
         rootNode.attachChild(carNode);
-        //rootNode.attachChild(cannonNode);
         bulletAppState.getPhysicsSpace().add(vehicle);
         
-//         // Construct a node that we will use to position the origin of cannonballs
-//        Box barrelBox = new Box(.1f, .1f, .1f);
-//        barrelTip = new Geometry("BarrelBox", barrelBox);
-//        Vector3f cannonNodeLocation = carNode.getLocalTranslation();
-//        System.out.println("playerLocation is: (" + cannonNodeLocation.x + ", " + cannonNodeLocation.y + ", " +
-//                cannonNodeLocation.z + ")");
-//        //Vector3f cannonNodeLocation = cannonNode.getLocalTranslation();
-//        Vector3f barrelTipLocation = cannonNodeLocation;
-//        barrelTipLocation.y = barrelTipLocation.y += 3f;
-//        barrelTip.setLocalTranslation(cannonNodeLocation);
-//        Material barrelTipMaterial = new Material(assetManager,  "Common/MatDefs/Misc/Unshaded.j3md");
-//        barrelTipMaterial.setColor("Color", ColorRGBA.Blue);
-//        barrelTip.setMaterial(barrelTipMaterial);
-//        //cannonNode.attachChild(barrelTip);
-//        carNode.attachChild(barrelTip);
         //Vector3f wheelAxle = new Vector3f(0, 0, -1);  // How do I have the wheels rotate without the body rotating?
         // How do I separate the body from the wheels?
         
@@ -487,39 +471,9 @@ public class Main extends SimpleApplication implements AnimEventListener
 //        getPhysicsSpace().add(player);
         
     }
-    private void ConstructCannon(){
-        System.out.println("Constructing cannon.");
-        Spatial cannonSpatial = assetManager.loadModel("Models/Cannon/cannon_01.j3o");
-        cannon =  (Node)cannonSpatial;
-        cannonNode = new Node();
-        cannonNode.attachChild(cannon);
-        cannon.move(5f,-3.5f,8f);
-        cannon.setLocalScale(5f);
-        DirectionalLight dl = new DirectionalLight();
-        dl.setDirection(new Vector3f(-0.1f, -1f, -1).normalizeLocal());
-        cannon.addLight(dl);
-        
-        rootNode.attachChild(cannon);
-         // Construct a node that we will use to position the origin of cannonballs
-        Box barrelBox = new Box(.1f, .1f, .1f);
-        barrelTip = new Geometry("BarrelBox", barrelBox);
-        Vector3f cannonNodeLocation = carNode.getLocalTranslation();
-        System.out.println("playerLocation is: (" + cannonNodeLocation.x + ", " + cannonNodeLocation.y + ", " +
-                cannonNodeLocation.z + ")");
-        //Vector3f cannonNodeLocation = cannonNode.getLocalTranslation();
-        Vector3f barrelTipLocation = cannonNodeLocation;
-        barrelTipLocation.y = barrelTipLocation.y += 3f;
-        barrelTip.setLocalTranslation(cannonNodeLocation);
-        Material barrelTipMaterial = new Material(assetManager,  "Common/MatDefs/Misc/Unshaded.j3md");
-        barrelTipMaterial.setColor("Color", ColorRGBA.Blue);
-        barrelTip.setMaterial(barrelTipMaterial);
-        //cannonNode.attachChild(barrelTip);
-        carNode.attachChild(barrelTip);
-//        barrelTip.move();
-    }
     private Geometry findGeom(Spatial spatial, String name) {
         if (spatial instanceof Node) {
-            Node node = (Node) spatial; // Can I use a foreach loop here?
+            Node node = (Node) spatial;
             for (int i = 0; i < node.getQuantity(); i++) {
                 System.out.println("findGeom is returning: " + node.getChild(i).getName() + " for node.getChild(" + i + ")");
                 Spatial child = node.getChild(i);
@@ -535,11 +489,24 @@ public class Main extends SimpleApplication implements AnimEventListener
         }
         return null;
     }
-    
+    private void ConstructCannon(){
+        System.out.println("Constructing cannon.");
+        Spatial cannonSpatial = assetManager.loadModel("Models/Cannon/cannon_01.j3o");
+        cannon =  (Node)cannonSpatial;
+        Node cannonNode = new Node();
+        cannonNode.attachChild(cannon);
+        cannon.move(5f,-3.5f,8f);
+        cannon.setLocalScale(5f);
+        DirectionalLight dl = new DirectionalLight();
+        dl.setDirection(new Vector3f(-0.1f, -1f, -1).normalizeLocal());
+        cannon.addLight(dl);
+        
+        rootNode.attachChild(cannon);
+    }
     private void ConstructCharacter(){
         Spatial playerSpatial = assetManager.loadModel("Models/Oto/Oto.mesh.xml");
         player =  (Node)playerSpatial;
-        
+        Node playerNode = new Node();
         playerNode.attachChild(player);
         player.move(0,3.5f,0);
         player.setLocalScale(0.5f);
@@ -576,22 +543,7 @@ public class Main extends SimpleApplication implements AnimEventListener
         attackChannel.addBone(animationControl.getSkeleton().getBone("uparm.right"));
         attackChannel.addBone(animationControl.getSkeleton().getBone("arm.right"));
         attackChannel.addBone(animationControl.getSkeleton().getBone("hand.right"));
-//        Vector3f playerLocation = playerNode.getLocalTranslation();
-//        System.out.println("playerLocation is: (" + playerLocation.x + ", " + playerLocation.y + ", " +
-//                playerLocation.z + ")");
     }
-    /** Make a solid floor and add it to the scene. */
-  public void initFloor() {
-        Geometry floor_geo = new Geometry("Floor", floor);
-        floor_geo.setMaterial(floor_mat);
-        floor_geo.setLocalTranslation(0, -5.1f, 0);
-        //floor_geo.setLocalTranslation(0, -0.1f, 0);
-        this.rootNode.attachChild(floor_geo);
-        /* Make the floor physical with mass 0.0f! */
-        floor_phy = new RigidBodyControl(0.0f);
-        floor_geo.addControl(floor_phy);
-        bulletAppState.getPhysicsSpace().add(floor_phy);
-  }
     private void ConstructLevel(){
         assetManager.registerLocator("town.zip", ZipLocator.class);
         gameLevel = assetManager.loadModel("main.scene"); // be sure to give new names to new scenes
@@ -676,12 +628,8 @@ public class Main extends SimpleApplication implements AnimEventListener
             }
           }
         playerControl.setWalkDirection(walkDirection); // THIS IS WHERE THE WALKING HAPPENS
-        
-        // use a while loop to cause explosions to occur as long as triggerExplosion1 == true
-        
         if (triggerExplosion1 == true) {
             this.triggerExplosion1 = this.explosion.triggerEffect(tpf, speed, triggerExplosion1);
-            // also fire cannonball here.
             // We must turn off the explosion trigger after the explosion to ensure it doesn't repeat in a loop.
             
         }
@@ -813,9 +761,7 @@ public void onAction(String binding, boolean value, float tpf) {
   }
       
   
-    if (binding.equals("Shoot")) { 
-        
-        // Should we have something like [binding.equals("Shoot") && !keyPressed] here?
+    if (binding.equals("Shoot")) { // Should we have something like [binding.equals("Shoot") && !keyPressed] here?
 //              // 1. Reset results list
 //              CollisionResults results = new CollisionResults();
 //              // 2. Aim the ray from character location to character direction.
@@ -866,8 +812,6 @@ public void onAction(String binding, boolean value, float tpf) {
 //                         */
 //                     }
 //                }
-        
-                makeCannonBall();
                 // THE IMPORTED CODE IS BELOW
                 if (!inventory.getChildren().isEmpty())
               {
@@ -1176,95 +1120,5 @@ public void onAction(String binding, boolean value, float tpf) {
     guiNode.attachChild(ch);
   }
 
-     /** This method creates one individual physical cannon ball.
-   * By defaul, the ball is accelerated and flies
-   * from the camera position in the camera direction.*/
-   public void makeCannonBall() {
-        /** Create a cannon ball geometry and attach to scene graph. */
-        Geometry ball_geo = new Geometry("cannon ball", sphere);
-        ball_geo.setMaterial(stone_mat);
-        rootNode.attachChild(ball_geo);
-        /** Position the cannon ball  */
-        //Vector3f playerLocation = player.getLocalTranslation();
-        Vector3f playerLocation = playerControl.getViewDirection();
-        //Vector3f playerLocation = playerNode.getLocalTranslation();
-//        System.out.println("playerLocation is: (" + playerLocation.x + ", " + playerLocation.y + ", " +
-//                playerLocation.z + ")");
-//        //Vector3f playerLocation = player.getLocalTranslation();
-//        //playerLocation.y = playerLocation.y + 1f;
-//        //Vector3f cannonLocation = carNode.getLocalTranslation();
-//        Vector3f cannonLocation = barrelTip.getLocalTranslation();
-//        System.out.println("cannonLocation is: (" + cannonLocation.x + ", " + cannonLocation.y + ", " +
-//                cannonLocation.z + ")");
-//        Vector3f vectorFromPlayerToCannon = playerLocation.subtract(cannonLocation);
-//        Vector3f vectorFromCannonToPlayer = cannonLocation.subtract(playerLocation);
-        // Can we create a ray from the playerLocation to the target object location?
-        // Or should we just try subtracting the vectors between the playerLocation and targetLocation?
-//        ball_geo.setLocalTranslation(vectorFromCannonToPlayer);
-        ball_geo.setLocalTranslation(playerLocation);
-//        ball_geo.setLocalTranslation(vectorFromPlayerToCannon);
-        //ball_geo.setLocalTranslation(playerLocation);
-        //ball_geo.setLocalTranslation(cam.getLocation());
-        /** Make the ball physcial with a mass > 0.0f */
-        ball_phy = new RigidBodyControl(1f);
-        /** Add physical ball to physics space. */
-        ball_geo.addControl(ball_phy);
-        bulletAppState.getPhysicsSpace().add(ball_phy);
-        /** Accelerate the physcial ball to shoot it. */
-
-        ball_phy.setLinearVelocity(cam.getDirection().mult(250)); // This is where we set the velocity
-  } 
-   /** Initialize the materials used in this scene. */
-  public void initMaterials() {
-    wall_mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-    TextureKey key = new TextureKey("Textures/Terrain/BrickWall/BrickWall.jpg");
-    key.setGenerateMips(true);
-    Texture tex = assetManager.loadTexture(key);
-    wall_mat.setTexture("ColorMap", tex);
- 
-    stone_mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-    TextureKey key2 = new TextureKey("Textures/Terrain/Rock/Rock.PNG");
-    key2.setGenerateMips(true);
-    Texture tex2 = assetManager.loadTexture(key2);
-    stone_mat.setTexture("ColorMap", tex2);
- 
-    floor_mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-    TextureKey key3 = new TextureKey("Textures/Terrain/Pond/Pond.jpg");
-    key3.setGenerateMips(true);
-    Texture tex3 = assetManager.loadTexture(key3);
-    tex3.setWrap(WrapMode.Repeat);
-    floor_mat.setTexture("ColorMap", tex3);
-  }
- 
-  
- 
-  /** This loop builds a wall out of individual bricks. */
-  public void initWall() {
-    float startpt = brickLength / 4;
-    float height = 0;
-    for (int j = 0; j < 15; j++) {
-      for (int i = 0; i < 6; i++) {
-        Vector3f vt =
-         new Vector3f(i * brickLength * 2 + startpt, brickHeight + height, 0);
-        makeBrick(vt);
-      }
-      startpt = -startpt;
-      height += 2 * brickHeight;
-    }
-  }
- 
-  /** This method creates one individual physical brick. */
-  public void makeBrick(Vector3f loc) {
-    /** Create a brick geometry and attach to scene graph. */
-    Geometry brick_geo = new Geometry("brick", box);
-    brick_geo.setMaterial(wall_mat);
-    rootNode.attachChild(brick_geo);
-    /** Position the brick geometry  */
-    brick_geo.setLocalTranslation(loc);
-    /** Make brick physical with a mass > 0.0f. */
-    brick_phy = new RigidBodyControl(2f);
-    /** Add physical brick to physics space. */
-    brick_geo.addControl(brick_phy);
-    bulletAppState.getPhysicsSpace().add(brick_phy);
-  }
+    
 }
