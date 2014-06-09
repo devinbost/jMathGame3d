@@ -1229,7 +1229,9 @@ public void onAction(String binding, boolean value, float tpf) {
     ball_geo.setMaterial(stone_mat);
     rootNode.attachChild(ball_geo);
     /** Position the cannon ball  */
-    ball_geo.setLocalTranslation(cam.getLocation());
+    Vector3f cannonBallOrigin = carNode.getLocalTranslation();
+    ball_geo.setLocalTranslation(cannonBallOrigin);
+//    ball_geo.setLocalTranslation(cam.getLocation());
     /** Make the ball physcial with a mass > 0.0f */
     ball_phy = new RigidBodyControl(1f);
     /** Add physical ball to physics space. */
