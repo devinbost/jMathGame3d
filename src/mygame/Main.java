@@ -712,7 +712,11 @@ public void onAction(String binding, boolean value, float tpf) {
 //                         */
 //                     }
 //                }
-             makeCannonBall(carNode);
+            Node barrelTipNode = new Node();
+            carNode.attachChild(barrelTipNode);
+            barrelTipNode.attachChild(barrelTip);
+           makeCannonBall(barrelTipNode);   
+         //makeCannonBall(carNode);
                 // THE IMPORTED CODE IS BELOW
                 if (!inventory.getChildren().isEmpty())
               {
@@ -1086,13 +1090,13 @@ public void onAction(String binding, boolean value, float tpf) {
   /** This method creates one individual physical cannon ball.
    * By defaul, the ball is accelerated and flies
    * from the camera position in the camera direction.*/
-   public void makeCannonBall(Node cannonBallOriginObject) {
+   public void makeCannonBall(Vector3f cannonBallOrigin) {
         /** Create a cannon ball geometry and attach to scene graph. */
         Geometry ball_geo = new Geometry("cannon ball", sphere);
         ball_geo.setMaterial(stone_mat);
         rootNode.attachChild(ball_geo);
         /** Position the cannon ball  */
-        Vector3f cannonBallOrigin = cannonBallOriginObject.getLocalTranslation();
+        //Vector3f cannonBallOrigin = cannonBallOriginObject.getLocalTranslation();
         ball_geo.setLocalTranslation(cannonBallOrigin);
     //    ball_geo.setLocalTranslation(cam.getLocation());
         /** Make the ball physcial with a mass > 0.0f */
