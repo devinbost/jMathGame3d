@@ -126,6 +126,7 @@ public class Main extends SimpleApplication implements AnimEventListener
     
     // Add properties for cannonball firing.
     private Geometry barrelTip;
+    private Vector3f barrelTipLocation;
     
     public static void main(String[] args){
         System.out.println("Main.main(String[] args) is being called here.");
@@ -358,8 +359,9 @@ public class Main extends SimpleApplication implements AnimEventListener
         Vector3f carNodeLocation = carNode.getLocalTranslation();
         System.out.println("carNodeLocation is: (" + carNodeLocation.x + ", " + carNodeLocation.y + ", " +
                 carNodeLocation.z + ")");
-        Vector3f barrelTipLocation = carNodeLocation;
-        barrelTipLocation.y += 3f;
+//        carNodeLocation.y = carNodeLocation.y + 4.5f; // Still doesn't do anything.
+        barrelTipLocation = carNodeLocation;
+        //barrelTipLocation.y += 3f; // doesn't do anything.
         barrelTip.setLocalTranslation(barrelTipLocation);
         // Create barreltip material to make it visible (mostly just for debugging).
         Material barrelTipMaterial = new Material(assetManager,  "Common/MatDefs/Misc/Unshaded.j3md");
@@ -712,11 +714,19 @@ public void onAction(String binding, boolean value, float tpf) {
 //                         */
 //                     }
 //                }
-            Node barrelTipNode = new Node();
-            carNode.attachChild(barrelTipNode);
-            barrelTipNode.attachChild(barrelTip);
-           makeCannonBall(barrelTipNode);   
-         //makeCannonBall(carNode);
+            System.out.println("barrelTipLocation is: (" + barrelTipLocation.x + ", " + barrelTipLocation.y + ", " +
+                barrelTipLocation.z + ")");
+             
+//           makeCannonBall(barrelTip.getLocalTranslation());   // doesn't work
+             Vector3f position = new Vector3f(carNode.getLocalTranslation());
+             System.out.println("position is: (" + position.x + ", " + position.y + ", " +
+                position.z + ")");
+             Vector3f newPosition = position.add(new Vector3f(0, 4.5f, 0));
+             System.out.println("newPosition is: (" + newPosition.x + ", " + newPosition.y + ", " +
+                newPosition.z + ")");
+             makeCannonBall(newPosition);
+//             makeCannonBall(barrelTipLocation);
+         //makeCannonBall(carNode); // works
                 // THE IMPORTED CODE IS BELOW
                 if (!inventory.getChildren().isEmpty())
               {
@@ -1097,7 +1107,9 @@ public void onAction(String binding, boolean value, float tpf) {
         rootNode.attachChild(ball_geo);
         /** Position the cannon ball  */
         //Vector3f cannonBallOrigin = cannonBallOriginObject.getLocalTranslation();
-        ball_geo.setLocalTranslation(cannonBallOrigin);
+        
+        //ball_geo.setLocalTranslation(cannonBallOrigin); // works
+         ball_geo.setLocalTranslation(vehicle.getPhysicsLocation().add(new Vector3f(0, 4.5f,0))); 
     //    ball_geo.setLocalTranslation(cam.getLocation());
         /** Make the ball physcial with a mass > 0.0f */
         ball_phy = new RigidBodyControl(1f);
@@ -1105,6 +1117,13 @@ public void onAction(String binding, boolean value, float tpf) {
         ball_geo.addControl(ball_phy);
         bulletAppState.getPhysicsSpace().add(ball_phy);
         /** Accelerate the physcial ball to shoot it. */
-        ball_phy.setLinearVelocity(cam.getDirection().mult(25));
+        //ball_phy.setLinearVelocity(cam.getDirection().mult(25)); // sort of works (not really)
+        //ball_phy.setLinearVelocity(cannonBallOrigin.mult(2)); works better than using cam.
+        // Now we just need to figure out the direction.
+       // ball_phy.setPhysicsRotation(vehicle.getPhysicsRotation());
+        ball_phy.setLinearVelocity(vehicle.getPhysicsRotation().mult(Vector3f.UNIT_Z).mult(-20));
+        //ball_phy.setLinearVelocity(vehicle.getPhysicsLocation().mult(2)); // works much better, but lags behind until acceleration occurs
+        
+        // Can I use the physics rotation quaternion?
   }
 }
