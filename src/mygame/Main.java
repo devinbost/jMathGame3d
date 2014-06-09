@@ -712,7 +712,7 @@ public void onAction(String binding, boolean value, float tpf) {
 //                         */
 //                     }
 //                }
-             makeCannonBall();
+             makeCannonBall(carNode);
                 // THE IMPORTED CODE IS BELOW
                 if (!inventory.getChildren().isEmpty())
               {
@@ -1086,21 +1086,21 @@ public void onAction(String binding, boolean value, float tpf) {
   /** This method creates one individual physical cannon ball.
    * By defaul, the ball is accelerated and flies
    * from the camera position in the camera direction.*/
-   public void makeCannonBall() {
-    /** Create a cannon ball geometry and attach to scene graph. */
-    Geometry ball_geo = new Geometry("cannon ball", sphere);
-    ball_geo.setMaterial(stone_mat);
-    rootNode.attachChild(ball_geo);
-    /** Position the cannon ball  */
-    Vector3f cannonBallOrigin = carNode.getLocalTranslation();
-    ball_geo.setLocalTranslation(cannonBallOrigin);
-//    ball_geo.setLocalTranslation(cam.getLocation());
-    /** Make the ball physcial with a mass > 0.0f */
-    ball_phy = new RigidBodyControl(1f);
-    /** Add physical ball to physics space. */
-    ball_geo.addControl(ball_phy);
-    bulletAppState.getPhysicsSpace().add(ball_phy);
-    /** Accelerate the physcial ball to shoot it. */
-    ball_phy.setLinearVelocity(cam.getDirection().mult(25));
+   public void makeCannonBall(Node cannonBallOriginObject) {
+        /** Create a cannon ball geometry and attach to scene graph. */
+        Geometry ball_geo = new Geometry("cannon ball", sphere);
+        ball_geo.setMaterial(stone_mat);
+        rootNode.attachChild(ball_geo);
+        /** Position the cannon ball  */
+        Vector3f cannonBallOrigin = cannonBallOriginObject.getLocalTranslation();
+        ball_geo.setLocalTranslation(cannonBallOrigin);
+    //    ball_geo.setLocalTranslation(cam.getLocation());
+        /** Make the ball physcial with a mass > 0.0f */
+        ball_phy = new RigidBodyControl(1f);
+        /** Add physical ball to physics space. */
+        ball_geo.addControl(ball_phy);
+        bulletAppState.getPhysicsSpace().add(ball_phy);
+        /** Accelerate the physcial ball to shoot it. */
+        ball_phy.setLinearVelocity(cam.getDirection().mult(25));
   }
 }
