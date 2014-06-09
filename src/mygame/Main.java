@@ -124,6 +124,8 @@ public class Main extends SimpleApplication implements AnimEventListener
     private static final float brickWidth  = 0.24f;
     private static final float brickHeight = 0.12f;
     
+    // Add properties for cannonball firing.
+    private Geometry barrelTip;
     
     public static void main(String[] args){
         System.out.println("Main.main(String[] args) is being called here.");
@@ -248,7 +250,7 @@ public class Main extends SimpleApplication implements AnimEventListener
         explosionEffectWrapper.setLocalTranslation(new Vector3f(0,10,10));
         // Set position of explosionEffectWrapper to position explosion.
         // We want to position the explosion at the tip of the cannon.
-        this.ConstructPhysicalCannon();
+        this.ConstructVehicle();
         
         initMaterials();
         initWall();
@@ -274,7 +276,7 @@ public class Main extends SimpleApplication implements AnimEventListener
 //     skeletonDebug.setMaterial(mat);
 //     return skeletonDebug;
 //    }
-    private void ConstructPhysicalCannon(){
+    private void ConstructVehicle(){
 //        CompoundCollisionShape compoundShape = new CompoundCollisionShape();
 //        BoxCollisionShape box = new BoxCollisionShape(new Vector3f(1.2f, 0.5f, 2.4f)); 
 //        compoundShape.addChildShape(box, new Vector3f(0, 1, 0)); // Best Practice: We attach the BoxCollisionShape (the vehicle body) to the CompoundCollisionShape at a Vector of (0,1,0): This shifts the effective center of mass of the BoxCollisionShape downwards to 0,-1,0 and makes a moving vehicle more stable!
