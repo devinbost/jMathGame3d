@@ -60,7 +60,8 @@ public class SharedConstructors {
     brick_geo.addControl(brick_phy);
     this.getBulletAppState().getPhysicsSpace().add(brick_phy);
   }
-  public void initWall(Box box, Material wall_mat, RigidBodyControl brick_phy) {
+  // how do I check if the bulletAppState contains the RigidBodyControl?
+  public void constructBrickWall(Box box, Material wall_mat, RigidBodyControl brick_phy) {
     float startpt = brickLength / 4;
     float height = 0;
     for (int j = 0; j < 15; j++) {
