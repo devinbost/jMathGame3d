@@ -145,6 +145,10 @@ public class Main extends SimpleApplication implements AnimEventListener
         floor = new Box(10f, 0.1f, 5f);
         floor.scaleTextureCoordinates(new Vector2f(3, 6));
     }
+//    @Override
+    public BulletAppState getBulletAppState(){
+        return this.bulletAppState;
+    }
     @Override
     public void simpleInitApp() {
         System.out.println("Main.simpleInitApp() is being called here.");
