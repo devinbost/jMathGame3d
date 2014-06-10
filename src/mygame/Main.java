@@ -253,6 +253,8 @@ public class Main extends SimpleApplication implements AnimEventListener
         // We want to position the explosion at the tip of the cannon.
         this.ConstructVehicle();
         
+        
+        
         initMaterials();
         initWall();
         initFloor();
