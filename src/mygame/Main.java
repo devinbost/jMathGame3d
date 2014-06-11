@@ -470,7 +470,7 @@ public class Main extends SimpleApplication implements AnimEventListener
         ninja = assetManager.loadModel("Models/Ninja/Ninja.mesh.xml");
         ninja.scale(0.05f, 0.05f, 0.05f);
         ninja.rotate(0.0f, -3.0f, 0.0f);
-        ninja.setLocalTranslation(0.0f, -5.0f, -2.0f);
+        ninja.setLocalTranslation(20.0f, -5.0f, 20.0f);
     }
     private BitmapText ConstructGuiText(){
         guiFont = assetManager.loadFont("Interface/Fonts/Default.fnt");
@@ -499,7 +499,7 @@ public class Main extends SimpleApplication implements AnimEventListener
         mat_brick.setTexture("ColorMap", 
                 assetManager.loadTexture("Textures/Terrain/BrickWall/BrickWall.jpg"));
         wall.setMaterial(mat_brick);
-        wall.setLocalTranslation(2.0f, -2.5f, 0.0f);
+        wall.setLocalTranslation(25.0f, -2.5f, -10.0f);
         return wall;
     }
     @Override
