@@ -5,6 +5,7 @@
 package mygame;
 
 import com.jme3.bullet.BulletAppState;
+import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.material.Material;
 import com.jme3.math.Vector3f;
@@ -48,9 +49,11 @@ public class SharedConstructors {
 //    }
     /** This method creates one individual physical brick. */
   public void makeBrick(Vector3f loc, Box box, Material wall_mat, RigidBodyControl brick_phy) {
+      float scaleFactor = 4f;
     /** Create a brick geometry and attach to scene graph. */
     Geometry brick_geo = new Geometry("brick", box);
     brick_geo.setMaterial(wall_mat);
+    brick_geo.scale(scaleFactor); // increase brick size
     this.getRootNode().attachChild(brick_geo);
     /** Position the brick geometry  */
     brick_geo.setLocalTranslation(loc);
@@ -58,10 +61,14 @@ public class SharedConstructors {
     brick_phy = new RigidBodyControl(2f);
     /** Add physical brick to physics space. */
     brick_geo.addControl(brick_phy);
+    
+    // Get collision shape to scale the object's size;
+    CollisionShape brick_shape = brick_phy.getCollisionShape();
+    brick_shape.setScale(brick_shape.getScale().mult(2f));
     this.getBulletAppState().getPhysicsSpace().add(brick_phy);
   }
   // how do I check if the bulletAppState contains the RigidBodyControl?
-  public void constructBrickWall(Box box, Material wall_mat, RigidBodyControl brick_phy) {
+  public void makeBrickWall(Box box, Material wall_mat, RigidBodyControl brick_phy) {
     float startpt = brickLength / 4;
     float height = 0;
     for (int j = 0; j < 15; j++) {

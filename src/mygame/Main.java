@@ -257,10 +257,11 @@ public class Main extends SimpleApplication implements AnimEventListener
         // We want to position the explosion at the tip of the cannon.
         this.ConstructVehicle();
         
-        
+        SharedConstructors constructors = new SharedConstructors(rootNode, bulletAppState);
         
         initMaterials();
-        initWall();
+        //initWall();
+        constructors.makeBrickWall(box, wall_mat, brick_phy);
         initFloor();
     }
 //    private void setUpLight() {
