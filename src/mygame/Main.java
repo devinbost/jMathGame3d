@@ -1069,7 +1069,7 @@ public void onAction(String binding, boolean value, float tpf) {
     Geometry floor_geo = new Geometry("Floor", floor);
     floor_geo.setMaterial(floor_mat);
     floor_geo.setLocalTranslation(0, -5.1f, 0);
-    this.rootNode.attachChild(floor_geo);
+    
     /* Make the floor physical with mass 0.0f! */
     floor_phy = new RigidBodyControl(0.0f);
     floor_geo.addControl(floor_phy);
