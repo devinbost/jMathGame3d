@@ -21,6 +21,8 @@ public class SharedConstructors {
     private static final float brickLength = 0.48f;
     private static final float brickWidth  = 0.24f;
     private static final float brickHeight = 0.12f;
+    private static final float brickMultiplier = 5f;
+    
     private BulletAppState _bulletAppState;
     private Node _rootNode;
     public SharedConstructors(Node rootNode, BulletAppState bulletAppState){
@@ -55,15 +57,18 @@ public class SharedConstructors {
     /** Position the brick geometry  */
     brick_geo.setLocalTranslation(loc);
     /** Make brick physical with a mass > 0.0f. */
-    brick_phy = new RigidBodyControl(2f);
+    brick_phy = new RigidBodyControl(4f);
     //brick_phy.getCollisionShape().setScale(new Vector3f(2,2,2)); // Won't work as this is now a CompoundCollisionShape containing a MeshCollisionShape
     /** Add physical brick to physics space. */
     brick_geo.addControl(brick_phy);
     // You must scale the geometry for the scale change to work.
     brick_geo.getControl(RigidBodyControl.class).getCollisionShape().setScale(new Vector3f(2,2,2)); // Now it should work.
     this.getBulletAppState().getPhysicsSpace().add(brick_phy);
-    this.getBulletAppState().getPhysicsSpace().setAccuracy(1f/60f); // Specifies physics accuracy. The higher the accuracy, the slower the game. Increase value if objects are passing through one another, or bounce oddly.
-    // brick_geo.getControl(RigidBodyControl.class).setCcdMotionThreshold(0.1f); // Do this if needed.
+    
+//    this.getBulletAppState().getPhysicsSpace().setAccuracy(1f/60f); // Specifies physics accuracy. The higher the accuracy, the slower the game. Increase value if objects are passing through one another, or bounce oddly.
+    brick_geo.getControl(RigidBodyControl.class).setCcdMotionThreshold(0.1f); // Do this if needed.
+    //this.getBulletAppState().getPhysicsSpace().setMaxSubSteps(2);
+   
   }
   // how do I check if the bulletAppState contains the RigidBodyControl?
   public void makeBrickWall(Box box, Material wall_mat, RigidBodyControl brick_phy) {
@@ -72,11 +77,11 @@ public class SharedConstructors {
     for (int j = 0; j < 15; j++) {
       for (int i = 0; i < 6; i++) {
         Vector3f vt =
-         new Vector3f(i * brickLength * 2 + startpt, brickHeight + height, 0);
+         new Vector3f(i * brickLength * brickMultiplier * 2 + startpt, brickHeight * brickMultiplier + 40 + height, 0);
         makeBrick(vt, box, wall_mat, brick_phy);
       }
       startpt = -startpt;
-      height += 2 * brickHeight;
+      height += 2 * brickHeight * brickMultiplier;
     }
   }
 }
