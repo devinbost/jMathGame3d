@@ -1,8 +1,0 @@
-<<<<<<< HEAD
-Manifest-Version: 1.0
-X-COMMENT: Main-Class will be added automatically by build
-
-||||||| merged common ancestors
-=======
-X-Comment: Created with jMonkeyPlatform
->>>>>>> Created blank project after merging license file and readme.
