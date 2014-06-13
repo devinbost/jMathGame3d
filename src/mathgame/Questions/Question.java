@@ -125,7 +125,7 @@ public class Question {
         return result;
         // Then, we just want to set the answer to our private field.
         //System.out.println(engine.eval(foo));
-    }
+    } 
 
     public boolean CheckAnswer(double answer){
         // This method allows to check if their answer is correct.
