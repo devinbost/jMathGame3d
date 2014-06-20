@@ -194,7 +194,7 @@ public class Main extends SimpleApplication implements AnimEventListener
         System.out.println("The Main.LoadGameFromScreen() method is getting called here.");
         bulletAppState = new BulletAppState(); // add the BulletAppState object to enable integration with jBullet's physical forces and collisions.
         stateManager.attach(bulletAppState); //  If you ever get confusing physics behaviour, remember to have a look at the collision shapes. Add the following line after the bulletAppState initialization to make the shapes visible:
-        bulletAppState.getPhysicsSpace().enableDebug(assetManager);
+        //bulletAppState.getPhysicsSpace().enableDebug(assetManager);
         guiNode.detachAllChildren(); // be sure to reset guiNode BEFORE we load the crossHairs
          initCrossHairs(); // a "+" in the middle of the screen to help aiming
          initMark();       // a red sphere to mark the hit
@@ -237,9 +237,9 @@ public class Main extends SimpleApplication implements AnimEventListener
         sun.setDirection(new Vector3f(-0.1f, -0.7f, 1.0f));
         rootNode.addLight(sun);
         
-        Spatial elephant = assetManager.loadModel("Models/Elephant/Elephant.mesh.xml"); // be sure to convert to .j3o file format for production. (see instructions here: http://hub.jmonkeyengine.org/wiki/doku.php/jme3:beginner:hello_asset)
-        
-        rootNode.attachChild(elephant);
+//        Spatial elephant = assetManager.loadModel("Models/Elephant/Elephant.mesh.xml"); // be sure to convert to .j3o file format for production. (see instructions here: http://hub.jmonkeyengine.org/wiki/doku.php/jme3:beginner:hello_asset)
+//        
+//        rootNode.attachChild(elephant);
     
         this.ConstructLevel();
         //rootNode.attachChild(gameLevel);
