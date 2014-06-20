@@ -47,3 +47,7 @@ Thumbs.db
 /build/
 /src/Exp4j/exp4j-master/target/
 /dist/
+!/dependencies/mockito-all-1.9.5.jar
+!/dependencies/jscience.jar
+!/dependencies/Exp4j-master.jar
+!/dependencies/charts4j-1.4-SNAPSHOT.jar
