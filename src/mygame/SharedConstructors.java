@@ -13,6 +13,7 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.Box;
+import java.io.Serializable;
 
 /**
  *
@@ -50,34 +51,66 @@ public class SharedConstructors {
 //    public static void setRootNode(){
 //        
 //    }
-    /** This method creates one individual physical brick. */
-public void makeBrick(Vector3f loc, Box box, Material wall_mat, RigidBodyControl brick_phy) {
-    /** Create a brick geometry and attach to scene graph. */
-    Geometry brick_geo = new Geometry("brick", box);
-    brick_geo.scale(4f);
-    brick_geo.setMaterial(wall_mat);
-    this.getRootNode().attachChild(brick_geo);
-    /** Position the brick geometry  */
-    brick_geo.setLocalTranslation(loc);
-    /** Make brick physical with a mass > 0.0f. */
-    CollisionShape brick_collision = CollisionShapeFactory.createBoxShape(brick_geo);
-    brick_phy = new RigidBodyControl(4f);
-    //brick_phy.getCollisionShape().setScale(new Vector3f(2,2,2));
-    brick_phy.setCollisionShape(brick_collision);
-    brick_phy.setFriction(2f);
-    brick_phy.setDamping(.2f, .2f);
-    //brick_phy.getCollisionShape().setScale(new Vector3f(2,2,2)); // Won’t work as this is now a CompoundCollisionShape containing a MeshCollisionShape
-    /** Add physical brick to physics space. */
-    brick_geo.addControl(brick_phy);
-    // You must scale the geometry for the scale change to work.
-    //brick_geo.getControl(RigidBodyControl.class).getCollisionShape().setScale(new Vector3f(2,2,2)); // Now it should work.
-    this.getBulletAppState().getPhysicsSpace().add(brick_phy);
-    //this.getBulletAppState().getPhysicsSpace().add(brick_collision); // can’t add this object to the physics space
-    this.getBulletAppState().getPhysicsSpace().setAccuracy(1f/80f); // Specifies physics accuracy. The higher the accuracy, the slower the game. Increase value if objects are passing through one another, or bounce oddly.
-    brick_geo.getControl(RigidBodyControl.class).setCcdMotionThreshold(0.01f); // Do this if needed.
-    //this.getBulletAppState().getPhysicsSpace().setMaxSubSteps(2);
- 
-  }
+    private class PhysicalBrick implements Serializable{
+        private Geometry brick_geo = null;
+        private RigidBodyControl brick_phy = null;
+        
+        public PhysicalBrick(Vector3f loc, Box box, Material wall_mat){
+            brick_geo = new Geometry("brick", box);
+            brick_geo.scale(4f);
+            brick_geo.setMaterial(wall_mat);
+            /** Position the brick geometry  */
+            brick_geo.setLocalTranslation(loc);
+            /** Make brick physical with a mass > 0.0f. */
+            CollisionShape brick_collision = CollisionShapeFactory.createBoxShape(brick_geo);
+            brick_phy = new RigidBodyControl(4f);
+            //brick_phy.getCollisionShape().setScale(new Vector3f(2,2,2));
+            brick_phy.setCollisionShape(brick_collision);
+            brick_phy.setFriction(2f);
+            brick_phy.setDamping(.2f, .2f);
+            //brick_phy.getCollisionShape().setScale(new Vector3f(2,2,2)); // Won’t work as this is now a CompoundCollisionShape containing a MeshCollisionShape
+            /** Add physical brick to physics space. */
+            brick_geo.addControl(brick_phy);
+            // You must scale the geometry for the scale change to work.
+            
+            brick_geo.getControl(RigidBodyControl.class).setCcdMotionThreshold(0.01f); // Do this if needed.
+            //this.getBulletAppState().getPhysicsSpace().setMaxSubSteps(2);
+        }
+    }
+    public void makePhysicalBrick(Vector3f loc, Box box, Material wall_mat){
+        PhysicalBrick phyBrick = new PhysicalBrick(loc, box, wall_mat);
+        this.getRootNode().attachChild(phyBrick.brick_geo);
+        this.getBulletAppState().getPhysicsSpace().add(phyBrick.brick_phy);
+        this.getBulletAppState().getPhysicsSpace().setAccuracy(1f/80f);// Specifies physics accuracy. The higher the accuracy, the slower the game. Increase value if objects are passing through one another, or bounce oddly.
+    }
+//    /** This method creates one individual physical brick. */
+//public void makeBrick(Vector3f loc, Box box, Material wall_mat, RigidBodyControl brick_phy) {
+//    /** Create a brick geometry and attach to scene graph. */
+//    Geometry brick_geo = new Geometry("brick", box);
+//    brick_geo.scale(4f);
+//    brick_geo.setMaterial(wall_mat);
+//    this.getRootNode().attachChild(brick_geo);
+//    /** Position the brick geometry  */
+//    brick_geo.setLocalTranslation(loc);
+//    /** Make brick physical with a mass > 0.0f. */
+//    CollisionShape brick_collision = CollisionShapeFactory.createBoxShape(brick_geo);
+//    brick_phy = new RigidBodyControl(4f);
+//    //brick_phy.getCollisionShape().setScale(new Vector3f(2,2,2));
+//    brick_phy.setCollisionShape(brick_collision);
+//    brick_phy.setFriction(2f);
+//    brick_phy.setDamping(.2f, .2f);
+//    //brick_phy.getCollisionShape().setScale(new Vector3f(2,2,2)); // Won’t work as this is now a CompoundCollisionShape containing a MeshCollisionShape
+//    /** Add physical brick to physics space. */
+//    brick_geo.addControl(brick_phy);
+//    // You must scale the geometry for the scale change to work.
+//    //brick_geo.getControl(RigidBodyControl.class).getCollisionShape().setScale(new Vector3f(2,2,2)); // Now it should work.
+//    this.getBulletAppState().getPhysicsSpace().add(brick_phy);
+//    //this.getBulletAppState().getPhysicsSpace().add(brick_collision); // can’t add this object to the physics space
+//    this.getBulletAppState().getPhysicsSpace().setAccuracy(1f/80f); // Specifies physics accuracy. The higher the accuracy, the slower the game. Increase value if objects are passing through one another, or bounce oddly.
+//    brick_geo.getControl(RigidBodyControl.class).setCcdMotionThreshold(0.01f); // Do this if needed.
+//    //this.getBulletAppState().getPhysicsSpace().setMaxSubSteps(2);
+// 
+//  }
   // how do I check if the bulletAppState contains the RigidBodyControl?
   public void makeBrickWall(Box box, Material wall_mat, RigidBodyControl brick_phy) {
     float startpt = brickLength / 4;
@@ -86,7 +119,8 @@ public void makeBrick(Vector3f loc, Box box, Material wall_mat, RigidBodyControl
       for (int i = 0; i < 6; i++) {
         Vector3f vt =
          new Vector3f(i * brickLength * brickMultiplier * 2 + startpt, brickHeight * brickMultiplier + 40 + height, 0);
-        makeBrick(vt, box, wall_mat, brick_phy);
+        //makeBrick(vt, box, wall_mat, brick_phy);
+        makePhysicalBrick(vt, box, wall_mat);
       }
       startpt = -startpt;
       height += 2 * brickHeight * brickMultiplier;
