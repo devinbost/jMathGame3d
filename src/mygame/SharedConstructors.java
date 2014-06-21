@@ -14,6 +14,7 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.Box;
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  *
@@ -92,13 +93,26 @@ public class SharedConstructors {
         public String toString(){
             return "This is a physical brick.";
         }
-        public boolean equals(PhysicalBrick brick){
+        @Override
+        public boolean equals(Object other){
+            if (other == null) return false;
+            if (other == this) return true;
+            if (!(other instanceof PhysicalBrick))return false;
+            PhysicalBrick brick = (PhysicalBrick)other;
             if (this._brick_geo == brick._brick_geo && this._brick_phy == brick._brick_phy) {
                 return true;
             }
             else{
                 return false;
             }
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = 3;
+            hash = 97 * hash + Objects.hashCode(this._brick_geo);
+            hash = 97 * hash + Objects.hashCode(this._brick_phy);
+            return hash;
         }
         
     }
