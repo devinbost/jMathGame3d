@@ -70,6 +70,7 @@ public class Main extends SimpleApplication implements AnimEventListener
 ,        ActionListener 
 { // Make this class implement the ActionListener interface to customize the navigational inputs later.
     public Node player;
+    public Node playerNode;
     public Node cannon;
     private Node carNode;
     public Spatial ninja;
@@ -193,7 +194,7 @@ public class Main extends SimpleApplication implements AnimEventListener
         System.out.println("The Main.LoadGameFromScreen() method is getting called here.");
         bulletAppState = new BulletAppState(); // add the BulletAppState object to enable integration with jBullet's physical forces and collisions.
         stateManager.attach(bulletAppState); //  If you ever get confusing physics behaviour, remember to have a look at the collision shapes. Add the following line after the bulletAppState initialization to make the shapes visible:
-        bulletAppState.getPhysicsSpace().enableDebug(assetManager);
+        //bulletAppState.getPhysicsSpace().enableDebug(assetManager);
         guiNode.detachAllChildren(); // be sure to reset guiNode BEFORE we load the crossHairs
          initCrossHairs(); // a "+" in the middle of the screen to help aiming
          initMark();       // a red sphere to mark the hit
@@ -236,9 +237,9 @@ public class Main extends SimpleApplication implements AnimEventListener
         sun.setDirection(new Vector3f(-0.1f, -0.7f, 1.0f));
         rootNode.addLight(sun);
         
-        Spatial elephant = assetManager.loadModel("Models/Elephant/Elephant.mesh.xml"); // be sure to convert to .j3o file format for production. (see instructions here: http://hub.jmonkeyengine.org/wiki/doku.php/jme3:beginner:hello_asset)
-        
-        rootNode.attachChild(elephant);
+//        Spatial elephant = assetManager.loadModel("Models/Elephant/Elephant.mesh.xml"); // be sure to convert to .j3o file format for production. (see instructions here: http://hub.jmonkeyengine.org/wiki/doku.php/jme3:beginner:hello_asset)
+//        
+//        rootNode.attachChild(elephant);
     
         this.ConstructLevel();
         //rootNode.attachChild(gameLevel);
@@ -366,6 +367,7 @@ public class Main extends SimpleApplication implements AnimEventListener
         Vector3f carNodeLocation = carNode.getLocalTranslation();
         System.out.println("carNodeLocation is: (" + carNodeLocation.x + ", " + carNodeLocation.y + ", " +
                 carNodeLocation.z + ")");
+       
 //        carNodeLocation.y = carNodeLocation.y + 4.5f; // Still doesn't do anything.
         barrelTipLocation = carNodeLocation;
         //barrelTipLocation.y += 3f; // doesn't do anything.
@@ -415,7 +417,7 @@ public class Main extends SimpleApplication implements AnimEventListener
     private void ConstructCharacter(){
         Spatial playerSpatial = assetManager.loadModel("Models/Oto/Oto.mesh.xml");
         player =  (Node)playerSpatial;
-        Node playerNode = new Node();
+        playerNode = new Node();
         playerNode.attachChild(player);
         player.move(0,3.5f,0);
         player.setLocalScale(0.5f);
@@ -1124,13 +1126,33 @@ public void onAction(String binding, boolean value, float tpf) {
         ball_geo.addControl(ball_phy);
         bulletAppState.getPhysicsSpace().add(ball_phy);
         /** Accelerate the physcial ball to shoot it. */
+        Vector3f carNodeLocation = carNode.getLocalTranslation();
+        System.out.println("carNodeLocation is: (" + carNodeLocation.x + ", " + carNodeLocation.y + ", " +
+                carNodeLocation.z + ")");
+        // get position vector of target
+        Vector3f playerNodeLocation = playerNode.getLocalTranslation(); // IT WORKS
+        // playerControl.getWalkDirection().normalize(); // doesn't work
+        // playerControl.getViewDirection // doesn't work
+        // player.getLocalTranslation() // doesn't work.
+        //Vector3f playerNodeLocation = playerNode
+        System.out.println("playerNodeLocation is: (" + playerNodeLocation.x + ", " + playerNodeLocation.y + ", " +
+                playerNodeLocation.z + ")");
+        // get difference between the two
+        Vector3f fromCarToPlayerVector = playerNodeLocation.subtract(carNodeLocation);
+        System.out.println("fromCarToPlayerVector is: (" + fromCarToPlayerVector.x + ", " + fromCarToPlayerVector.y + ", " +
+                fromCarToPlayerVector.z + ")");
+        
         //ball_phy.setLinearVelocity(cam.getDirection().mult(25)); // sort of works (not really)
-        //ball_phy.setLinearVelocity(cannonBallOrigin.mult(2)); works better than using cam.
+        //ball_phy.setLinearVelocity(cannonBallOrigin.mult(2)); sort of works better than using cam.
         // Now we just need to figure out the direction.
        // ball_phy.setPhysicsRotation(vehicle.getPhysicsRotation());
-        Vector3f accelerationVector = new Vector3f(vehicle.getPhysicsRotation().mult(Vector3f.UNIT_Z).mult(-20)); // works great!
+        
+        Vector3f accelerationVector = new Vector3f(fromCarToPlayerVector);
+//        Vector3f accelerationVector = new Vector3f(vehicle.getPhysicsRotation().mult(Vector3f.UNIT_Z).mult(-20)); // works great!
+        
+        
         ball_phy.setLinearVelocity(accelerationVector); // works great
-        //ball_phy.setLinearVelocity(vehicle.getPhysicsLocation().mult(2)); // works much better, but lags behind until acceleration occurs
+        //ball_phy.setLinearVelocity(vehicle.getPhysicsLocation().mult(2)); // works a little better, but lags behind until acceleration occurs
         
         // Can I use the physics rotation quaternion?
   }

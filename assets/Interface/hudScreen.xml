@@ -7,24 +7,27 @@
   <useControls filename="nifty-default-controls.xml" />
   <!-- <screen id="hudScreen" controller="mygame.MainScreenController">-->
     <screen id="hudScreen" controller="mygame.MainScreenController">
-        <layer id="background" backgroundColor="#000f" childLayout="center">
+        <!-- <layer id="background" backgroundColor="#000f" childLayout="center">-->
             <!-- <image filename="Interface/hud-frame.png"></image> -->
-            <image filename="Interface/hud-frame.png"  width="100%" height="100%"/>
+            <!--<image filename="Interface/hud-frame.png"  width="100%" height="100%"/>-->
            <!--  <image filename="Interface/hud-frame.png" imageMode="resize:40,490,110,170,40,560,40,270,40,560,40,40" width="100%" height="100%"/>-->
-        </layer>
-        <layer id="foreground" backgroundColor="#0000" childLayout="horizontal">
-            <panel id="panel_left" width="80%" height="100%" childLayout="vertical" backgroundColor="#0f08">  
+       <!--  </layer>-->
+        <layer id="foreground" backgroundColor="#0000" childLayout="vertical">
+            <panel id="panel_left" width="100%" height="5%" childLayout="horizontal" backgroundColor="#0f08">  
               
             </panel>
-            <panel id="panel_right" width="20%" height="100%" childLayout="vertical" backgroundColor="#00f8" >  
-                <panel id="panel_top_right1" width="100%" height="15%" childLayout="center" backgroundColor="#00f8">  
+            <panel id="panel_center" width="100%" height="90%" childLayout="horizontal">  
+              
+            </panel>
+            <panel id="panel_right" width="100%" height="5%" childLayout="horizontal" backgroundColor="#00f8" >  
+                <panel id="panel_top_right1" width="15%" height="100%" childLayout="center" backgroundColor="#00f8">  
                     <control name="label" color="#000" text="123" width="100%" height="100%" />
                 </panel>
-                <panel id="panel_top_right2" width="100%" height="15%" childLayout="center" backgroundColor="#44f8">  
-                    <image filename="Interface/face1.png" valign="center" align="center" height="50%" width="30%" >
-                    </image>  
+                <panel id="panel_top_right2" width="15%" height="100%" childLayout="center" backgroundColor="#44f8">  
+                   <!--  <image filename="Interface/face1.png" valign="center" align="center" height="50%" width="30%" >
+                    </image>  -->
                 </panel>
-                <panel id="panel_bot_right" width="100%" height="70%" valign="center" backgroundColor="#88f8">  
+                <panel id="panel_bot_right" width="70%" height="100%" valign="center" backgroundColor="#88f8">  
                 </panel>
             </panel>
         </layer>
