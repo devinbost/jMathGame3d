@@ -89,4 +89,23 @@ public class LogFileWriter {
             }
         }
     }
+        public void loadLogFile(){
+        try{
+            _inputStream = new ObjectInputStream(new FileInputStream(LOG_FILE));
+            
+        } catch (FileNotFoundException e) {
+            System.out.println("Error:\n FileNotFound when trying to load log file: " + e.getMessage());
+        } catch (IOException e) {
+            System.out.println("Error:\n IO Problem when trying to load log file: " + e.getMessage());
+        } finally {
+            try {
+                if (_outputStream != null) {
+                    _outputStream.flush();
+                    _outputStream.close();
+                }
+            } catch (IOException e) {
+                System.out.println("Error:\n IO Problem when trying to load log file: " + e.getMessage());
+            }
+        }
+    }
 }
