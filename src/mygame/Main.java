@@ -14,6 +14,7 @@ import com.jme3.animation.AnimControl;
 import com.jme3.animation.AnimEventListener;
 import com.jme3.animation.LoopMode;
 import com.jme3.app.SimpleApplication;
+import com.jme3.app.state.AppStateManager;
 import com.jme3.asset.TextureKey;
 import com.jme3.asset.plugins.ZipLocator;
 import com.jme3.bounding.BoundingBox;
@@ -66,6 +67,8 @@ import de.lessvoid.nifty.controls.TextField;
 import de.lessvoid.nifty.controls.label.LabelControl;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.screen.Screen;
+import mathgame.Models.EventTypeEnum;
+import mathgame.Models.ScreenControlDisplayMediationFactory;
  
 /** Sample 1 - how to get started with the most simple JME 3 application.
  * Display a blue 3D cube and view from all sides by
@@ -110,6 +113,7 @@ public class Main extends SimpleApplication implements AnimEventListener
     private VehicleWheel fr, fl, br, bl;
     private Node node_fr, node_fl, node_br, node_bl;
     private float wheelRadius;
+    public Nifty nifty;
     
         /** Prepare Materials */
     Material wall_mat;
@@ -139,6 +143,9 @@ public class Main extends SimpleApplication implements AnimEventListener
         app.start(); // start the game
         
     }
+
+    public Main() {
+    }
     static {
         /** Initialize the cannon ball geometry */
         sphere = new Sphere(32, 32, 0.4f, true, false);
@@ -150,6 +157,9 @@ public class Main extends SimpleApplication implements AnimEventListener
         floor = new Box(10f, 0.1f, 5f);
         floor.scaleTextureCoordinates(new Vector2f(3, 6));
     }
+    public AppStateManager getAppStateManager(){
+        return this.getAppStateManager();
+    }
 //    @Override
     public BulletAppState getBulletAppState(){
         return this.bulletAppState;
@@ -159,7 +169,7 @@ public class Main extends SimpleApplication implements AnimEventListener
         System.out.println("Main.simpleInitApp() is being called here.");
         NiftyJmeDisplay niftyDisplay = new NiftyJmeDisplay(assetManager, inputManager, audioRenderer, guiViewPort);
         /** Create a new NiftyGUI object */
-        Nifty nifty = niftyDisplay.getNifty();
+        nifty = niftyDisplay.getNifty();
         // How do I set  the screen here?
         /** Read your XML and initialize your custom ScreenController */
         MainScreenController screenController = new MainScreenController(this);
@@ -652,6 +662,7 @@ public void onAction(String binding, boolean value, float tpf) {
   if (binding.equals("CharAttack")){
       attack();
       this.triggerExplosion1 = true;
+      
   }
   if (binding.equals("Lefts")) {
       if (value) { steeringValue += .5f; } else { steeringValue += -.5f; }

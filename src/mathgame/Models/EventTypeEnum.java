@@ -13,7 +13,7 @@ package mathgame.Models;
  * This enum is designed to indicate the type of event used (e.g. event used to update a control's display text).
  */
 
-public enum HudEventTypeEnum {
+public enum EventTypeEnum {
     /**
      * This event is when the gamer runs out of time.
      */
@@ -50,5 +50,5 @@ public enum HudEventTypeEnum {
     /**
      * This event indicates when the cannon is fired. Note: If cannonball misses target but the gamer's answer is correct, be sure to record it as correct after a certain amount of time passes (to give sufficient time for the cannonball to hit the target but not make the gamer wait forever due to a graphical or physics bug).
      */
-    CannonFired,
+    CannonFired
 }

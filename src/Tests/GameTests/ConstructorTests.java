@@ -5,6 +5,7 @@
 package Tests.GameTests;
 
 import com.jme3.app.Application;
+import com.jme3.app.state.AppStateManager;
 import com.jme3.asset.AssetKey;
 import com.jme3.asset.AssetManager;
 import com.jme3.asset.DesktopAssetManager;
@@ -16,13 +17,18 @@ import com.jme3.bullet.objects.PhysicsRigidBody;
 import com.jme3.material.Material;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
+import com.jme3.niftygui.NiftyJmeDisplay;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Box;
 import com.jme3.system.JmeSystem;
 import com.jme3.texture.Texture;
+import de.lessvoid.nifty.Nifty;
+import de.lessvoid.nifty.screen.Screen;
 import java.awt.Desktop;
 import java.util.Collection;
+import mathgame.Models.CountdownTimer;
+import mathgame.Models.ScreenControlDisplayMediationFactory;
 import mygame.*;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -33,30 +39,52 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
+import org.mockito.Mockito;
 /**
  *
  * @author devinbost
  */
 public class ConstructorTests {
-   
+//   public class SubMain extends Main{
+//            
+//        }
     public ConstructorTests() {
+        
     }
-//    
-//    @BeforeClass
-//    public static void setUpClass() {
+    
+//    @Test
+//    public void ScreenControlDisplayMediationFactory_UpdatesGuiFromTimer_ReturnsTrue(){
+//        //ScreenControlDisplayMediationFactory factory = new ScreenControlDisplayMediationFactory();
+//        SubMain main = new SubMain();
+//        main.start();
+//        
+////        AppStateManager appState = main.getAppStateManager();
+//        Nifty myNifty = main.nifty;
+//        Screen hudScreen = myNifty.getScreen("hudScreen");
+//        ScreenControlDisplayMediationFactory.Make(EventTypeEnum.CountdownTick, "txtTimer", hudScreen);
 //    }
-//    
-//    @AfterClass
-//    public static void tearDownClass() {
-//    }
-//    
-//    @Before
-//    public void setUp() {
-//    }
-//    
-//    @After
-//    public void tearDown() {
-//    }
+//       @BeforeClass
+    public static void setUpClass() {
+    }
+    
+    @AfterClass
+    public static void tearDownClass() {
+    }
+    
+    @Before
+    public void setUp() {
+    }
+    
+    @After
+    public void tearDown() {
+    }
+    @Test
+    public void CountdownTimer_IsTimerTickWorkingProperly_ReturnsTrue(){
+        CountdownTimer timer = new CountdownTimer(1000);
+        timer.StartCountdown();
+        
+    }
+ 
     // TODO add test methods here.
     // The methods must be annotated with annotation @Test. For example:
     //

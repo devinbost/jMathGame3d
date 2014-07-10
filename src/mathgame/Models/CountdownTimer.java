@@ -20,10 +20,10 @@ public class CountdownTimer {
     private int _delay = 1000;  // milliseconds
     private int _period = 1000; // milliseconds
     private boolean _isTimeRemaining;
-    private List<PropertyChangeListener> listener = new ArrayList<PropertyChangeListener>();
+    private List<PropertyChangeTypedListener> listener = new ArrayList<PropertyChangeTypedListener>();
     
     public CountdownTimer(int totalSeconds){
-        _totalSeconds = totalSeconds;
+        _totalSeconds = totalSeconds * 1000;
         _isTimeRemaining = true;
     }
     public void setCountdownTimeLimit(int seconds){
@@ -46,17 +46,22 @@ public class CountdownTimer {
     public void StartCountdown(){
         this.ResetCountdown();
         // fire event that starts countdown process.
-        _timer = new Timer();
-        _timer.scheduleAtFixedRate(new TimerTask(){
+        _timer = new Timer(false);
+        System.out.println("Timer starting countdown. ");
+        _timer.schedule(new TimerTask(){
             @Override
             public void run(){
-                System.out.println(Tick());
+                System.out.println("Test");
+                Tick();
             }
-        }, _delay, _period);
+        }, 1000);
+        System.out.println("Testing");
+        
     }
     
     public void StopTimer(){
         this._timer.cancel();
+        System.out.println("Timer ending countdown. ");
     }
     public void OutOfTime(){
         // do something like fire an event so we can update the gamer's score.
@@ -65,10 +70,11 @@ public class CountdownTimer {
         this._isTimeRemaining = false;
         // Notify listeners that time ran out.
         this.notifyIsTimeRemainingListeners(this, "_isTimeRemaining", isTimeRemaining, this.getIsTimeRemaining());
+        System.out.println("Timer is out of time. ");
     }
-    private final int Tick() {
-        if (this.getRemainingSeconds() == 1)
-            this.OutOfTime();
+    public int Tick() {
+//        if (this.getRemainingSeconds() == 1)
+//            this.OutOfTime();
         // We need to raise an event to indicate that the value of this.getRemainingSeconds() has changed.
         int priorRemainingSeconds = this.getRemainingSeconds();
         _remainingSeconds--;
@@ -77,18 +83,18 @@ public class CountdownTimer {
     }
     // need to make this observable.
     private void notifyCountdownListeners(Object object, String property, int oldValue, int newValue) {
-        for (PropertyChangeListener name : listener) 
+        for (PropertyChangeTypedListener name : listener) 
         {
-          name.propertyChange(new PropertyChangeTypedEvent(this, property, oldValue, newValue, HudEventTypeEnum.CountdownTick));
+          name.propertyChange(new PropertyChangeTypedEvent(this, property, oldValue, newValue, EventTypeEnum.CountdownTick));
         }
     }
     private void notifyIsTimeRemainingListeners(Object object, String property, boolean oldValue, boolean newValue) {
-        for (PropertyChangeListener name : listener) 
+        for (PropertyChangeTypedListener name : listener) 
         {
-          name.propertyChange(new PropertyChangeEvent(this, property, oldValue, newValue));
+          name.propertyChange(new PropertyChangeTypedEvent(this, property, oldValue, newValue, EventTypeEnum.CountdownOutOfTime));
         }
     }
-    public void addChangeListener(PropertyChangeListener newListener) {
+    public void addChangeListener(PropertyChangeTypedListener newListener) {
         listener.add(newListener);
     }
 }

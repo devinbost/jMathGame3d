@@ -17,6 +17,9 @@ import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.elements.render.TextRenderer;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
+import mathgame.Models.EventTypeEnum;
+import mathgame.Models.ScreenControlDisplayMediation;
+import mathgame.Models.ScreenControlDisplayMediationFactory;
 /**
  *
  * @author devinbost
@@ -120,11 +123,14 @@ public class MainScreenController extends AbstractAppState implements ScreenCont
     }
     public void getScoreText(){
         System.out.println("MainScreenController.getScoreText() is being called here.");
+        // Construct an instance of ScreenControlDisplayMediator here.
         Screen hudScreen = this._nifty.getScreen("hudScreen");
         Element myGuiElement = hudScreen.findElementByName("panel_top_right"); // pass the ID of the element.
         // We're assuming that "panel_top_right" has a text element.
         TextField txtScoreField = hudScreen.findNiftyControl("txtLives", TextField.class);
         String scoreText = txtScoreField.getDisplayedText();
+        ScreenControlDisplayMediation mediation = ScreenControlDisplayMediationFactory.Make(EventTypeEnum.CountdownTick, "txtTimer", hudScreen);
+        System.out.println("MainScreenController.getScoreText() is at the end.");
     }
     /*
      * Add a setter method to this ScreenController that allows us to pass it an interface.
