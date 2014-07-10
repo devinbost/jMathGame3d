@@ -61,6 +61,10 @@ import com.jme3.shadow.BasicShadowRenderer;
 import com.jme3.texture.Texture;
 import com.jme3.texture.Texture.WrapMode;
 import de.lessvoid.nifty.Nifty;
+import de.lessvoid.nifty.controls.Label;
+import de.lessvoid.nifty.controls.TextField;
+import de.lessvoid.nifty.controls.label.LabelControl;
+import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.screen.Screen;
  
 /** Sample 1 - how to get started with the most simple JME 3 application.
@@ -160,6 +164,7 @@ public class Main extends SimpleApplication implements AnimEventListener
         /** Read your XML and initialize your custom ScreenController */
         MainScreenController screenController = new MainScreenController(this);
         stateManager.attach(screenController);
+       
         // [...] boilerplate init nifty omitted
         nifty.fromXml("Interface/startGameScreen.xml", "startGameScreen", screenController); 
         nifty.addXml("Interface/hudScreen.xml");
@@ -169,6 +174,14 @@ public class Main extends SimpleApplication implements AnimEventListener
         this._nifty = nifty;
         System.out.println("In the Main.simpleInitApp() method, nifty is: " + nifty.toString());
         
+         // create method that I can pass {Nifty nifty, String screenID, String elementID} to.
+//        Screen hudScreen = nifty.getScreen("hudScreen");
+//        Element myGuiElement = hudScreen.findElementByName("panel_top_right"); // pass the ID of the element.
+//        // We're assuming that "panel_top_right" has a text element.
+//        TextField txtScoreField = hudScreen.findNiftyControl("txtLives", TextField.class);
+//        String scoreText = txtScoreField.getDisplayedText();
+//        LabelControl txtScore = hudScreen.findNiftyControl("txtScore",LabelControl.class);
+//        txtScore.setText("Updated score!!");
         // Q: How do I determine if "startGame" is the correct string to pass the above method?
         // A: I think this (second parameter) is the ID of the screen in the given file.
         // 
@@ -190,6 +203,7 @@ public class Main extends SimpleApplication implements AnimEventListener
             viewPort.addProcessor(bsr);
         }
     }
+    
     public void LoadGameFromScreen(){
         System.out.println("The Main.LoadGameFromScreen() method is getting called here.");
         bulletAppState = new BulletAppState(); // add the BulletAppState object to enable integration with jBullet's physical forces and collisions.

@@ -12,6 +12,7 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Node;
 import de.lessvoid.nifty.Nifty;
+import de.lessvoid.nifty.controls.TextField;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.elements.render.TextRenderer;
 import de.lessvoid.nifty.screen.Screen;
@@ -32,6 +33,7 @@ public class MainScreenController extends AbstractAppState implements ScreenCont
     private Node localGuiNode = new Node("Start Screen GuiNode");
     private final ColorRGBA backgroundColor = ColorRGBA.Gray;  
     private AppStateManager _stateManager;
+    
     
     @Override
     public void initialize(AppStateManager stateManager, Application app) {
@@ -116,4 +118,18 @@ public class MainScreenController extends AbstractAppState implements ScreenCont
          cleanup();
         System.out.println("MainScreenController.onEndScreen() is being called here.");
     }
+    public void getScoreText(){
+        System.out.println("MainScreenController.getScoreText() is being called here.");
+        Screen hudScreen = this._nifty.getScreen("hudScreen");
+        Element myGuiElement = hudScreen.findElementByName("panel_top_right"); // pass the ID of the element.
+        // We're assuming that "panel_top_right" has a text element.
+        TextField txtScoreField = hudScreen.findNiftyControl("txtLives", TextField.class);
+        String scoreText = txtScoreField.getDisplayedText();
+    }
+    /*
+     * Add a setter method to this ScreenController that allows us to pass it an interface.
+     * Use the interface to pass observers for the timer,
+     * scoreUpdater, levelUpdater, .
+     * 
+     */
 }

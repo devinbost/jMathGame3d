@@ -74,9 +74,10 @@
     -->
     
 </project>
-<project name="MathGame" default="default" basedir=".">
+<!-- <project name="MathGame" default="default" basedir=".">
     <description>Builds, tests, and runs the project MathGame.</description>
     <import file="nbproject/build-impl.xml"/>
+	-->
     <!--
 
     There exist several targets which are by default empty and which can be 
@@ -137,4 +138,4 @@
     nbproject/build-impl.xml file. 
 
     -->
-</project>
+<!-- </project> -->
