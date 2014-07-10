@@ -2,14 +2,12 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package mygame;
+package mathgame.Menus;
 
 /**
  *
  * @author devinbost
  */
-public class PhysicsObjectDirector {
-    public void Build(IBuilder builder){
-        builder.Build();
-    }
+public interface DisplayInfo {
+    
 }

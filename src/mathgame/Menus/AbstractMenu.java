@@ -10,7 +10,7 @@ package mathgame.Menus;
  *
  * @author jessewhite
  */
-public abstract class AbstractMenu {
+public abstract class AbstractMenu implements DisplayInfo, EnterInfo {
       String _contents;
       public AbstractMenu(){
           
