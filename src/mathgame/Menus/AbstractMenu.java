@@ -21,7 +21,9 @@ public abstract class AbstractMenu implements DisplayInfo, EnterInfo {
           // This method must return the contents of this menu.
           return _contents;
       }
-      public abstract void SetContents();
+//      public abstract void SetContents();
+      @Override
+      public abstract void SetControlDisplayText(String textToDisplayOnControl);
 }
 
 /*

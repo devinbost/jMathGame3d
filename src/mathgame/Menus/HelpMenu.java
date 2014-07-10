@@ -18,9 +18,20 @@ public class HelpMenu extends AbstractMenu {
 //        //box with the help menu inside it.
 //        System.out.println("The value inside command is " + command);
 //    }
-    @Override
+    
     public void SetContents() {
-        super._contents = "The value inside the HelpMenu's command text value is: " + command;
+        this.SetControlDisplayText("The value inside the HelpMenu's command text value is: " + command);
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void SetControlDisplayText(String textToDisplayOnControl) {
+        super._contents = textToDisplayOnControl;
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public String GetControlDisplayText() {
+        return super._contents;
     }
 }

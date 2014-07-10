@@ -10,4 +10,6 @@ package mathgame.Menus;
  */
 public interface EnterInfo {
     
+    public void SetControlDisplayText(String textToDisplayOnControl);
+    public void SetContents();
 }

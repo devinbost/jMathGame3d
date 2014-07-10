@@ -19,9 +19,24 @@ public class MainMenu extends AbstractMenu {
 //        System.out.println("The value inside command is " + command);
 //    }
 
-    @Override
+//    @Override
+//    public void SetContents() {
+//        super._contents = "The value inside command is " + command;
+//        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//    }
     public void SetContents() {
-        super._contents = "The value inside command is " + command;
+        this.SetControlDisplayText("The value inside the MainMenu's command text value is: " + command);
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void SetControlDisplayText(String textToDisplayOnControl) {
+        super._contents = textToDisplayOnControl;
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public String GetControlDisplayText() {
+        return super._contents;
     }
 }
