@@ -14,7 +14,7 @@ import java.util.TimerTask;
  * @author devinbost
  */
 public class CountdownTimer implements Runnable{
-    private int _totalSeconds;
+    private int _totalMilliseconds;
     public static int _remainingSeconds;
     private static TimerTask _timerTask = null;
     private static Timer _controlTimer = null;
@@ -24,16 +24,63 @@ public class CountdownTimer implements Runnable{
     private boolean _isTimeRemaining;
     private List<PropertyChangeTypedListener> listener = new ArrayList<PropertyChangeTypedListener>();
     
+    /**
+     * The totalSeconds parameter is used to set the maximum number of seconds that the timer will count down from. 
+     * It converts the seconds into milliseconds, which are used by the CountdownTimerTask to control the timing
+     * of the clock. If you want to set this value to a number less than a second, then it will need to be refactored.
+     * @param totalSeconds 
+     */
     public CountdownTimer(int totalSeconds){
-        _totalSeconds = totalSeconds * 1000;
+        _totalMilliseconds = totalSeconds * 1000;
         _isTimeRemaining = true;
     }
+    /**
+     *  This method gets a Hours:Minutes:Seconds:Milliseconds representation of the remaining time.
+     *  It is given an enum value that represents the granularity of the resulting string. 
+     *  Milliseconds, for example, displays a string with hours:minutes:seconds:milliseconds, whereas
+     *  an enum value of minutes returns a string that only contains hours:minutes.
+     *  This method is useful for displaying the properly formatted value of remaining time (for the
+     *  CountdownTimer's countdown) to the user.
+     * @return time
+     */
+    public String getFormattedTimeRemaining(TimePrecision precision){
+        int milliseconds = this.getRemainingSeconds();
+        long hour, minute, second;
+        String time = "";
+        switch(precision){
+            case Hours:
+                hour = (milliseconds / (1000 * 60 * 60)) % 24;
+                time = String.format("%02d", hour);
+                break;
+            case Minutes:
+                hour = (milliseconds / (1000 * 60 * 60)) % 24;
+                minute = (milliseconds / (1000 * 60)) % 60;
+                time = String.format("%02d:%02d", hour, minute);
+                break;
+            case Seconds:
+                hour = (milliseconds / (1000 * 60 * 60)) % 24;
+                minute = (milliseconds / (1000 * 60)) % 60;
+                second = (milliseconds / 1000) % 60;
+                time = String.format("%02d:%02d:%02d", hour, minute, second);
+                break;
+            case Milliseconds:
+                hour = (milliseconds / (1000 * 60 * 60)) % 24;
+                minute = (milliseconds / (1000 * 60)) % 60;
+                second = (milliseconds / 1000) % 60;
+                time = String.format("%02d:%02d:%02d:%d", hour, minute, second, milliseconds);
+        }
+        return time;
+    }
+    /**
+     * This method is used to set the initial value 
+     * @param seconds 
+     */
     public void setCountdownTimeLimit(int seconds){
-        _totalSeconds = seconds;
-        _remainingSeconds = seconds;
+        _totalMilliseconds = seconds;
+        _remainingSeconds = _totalMilliseconds;
     }
     public int getCountdownTimeLimit(){
-        return _totalSeconds;
+        return _totalMilliseconds;
     }
     public int getRemainingSeconds(){
         return _remainingSeconds;
@@ -52,14 +99,14 @@ public class CountdownTimer implements Runnable{
         int count = 10;
         //_timer = new Timer(false);
         System.out.println("CountdownTimer class's StartCountdown() method is starting countdown.");
-        _runnableTimerTask = new CountdownTimerTask(this, "countdownTimerTask1", this._totalSeconds, _period);
+        _runnableTimerTask = new CountdownTimerTask(this, "countdownTimerTask1", this._totalMilliseconds, _period);
         Thread newThread = new Thread(_runnableTimerTask); // Should this thread be static?
         newThread.start(); // The start method executes the run() method on the runnable interface object.
         // The Run method (in the CountdownTimerTask) must be used to set the frequency of the event if the Timer class will not work.
-        for (int i = 0; i < _totalSeconds; i++) {
+        for (int i = 0; i < _totalMilliseconds; i++) {
             System.out.print(".");
             try{
-                Thread.sleep(_period/10);
+                Thread.sleep(_period/5);
             }
             catch(InterruptedException exc){
                 System.out.println("Main thread in CountdownTimer class was interrupted.");
