@@ -19,7 +19,7 @@ public class CountdownTimer implements Runnable{
     private static TimerTask _timerTask = null;
     private static Timer _controlTimer = null;
     private static CountdownTimerTask _runnableTimerTask = null;
-    private int _delay = 2000;  // milliseconds
+//    private int _delay = 2000;  // milliseconds
     private int _period = 1000; // milliseconds
     private boolean _isTimeRemaining;
     private List<PropertyChangeTypedListener> listener = new ArrayList<PropertyChangeTypedListener>();
@@ -63,6 +63,7 @@ public class CountdownTimer implements Runnable{
             }
             catch(InterruptedException exc){
                 System.out.println("Main thread in CountdownTimer class was interrupted.");
+                
             }
         }
         // Let's first determine if the above code actually runs. If so, then we can try and pass it into the timer.
