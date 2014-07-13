@@ -19,8 +19,8 @@ public class CountdownTimer implements Runnable{
     private static TimerTask _timerTask = null;
     private static Timer _controlTimer = null;
     private static CountdownTimerTask _runnableTimerTask = null;
-    private int _delay = 10;  // milliseconds
-    private int _period = 10; // milliseconds
+    private int _delay = 2000;  // milliseconds
+    private int _period = 1000; // milliseconds
     private boolean _isTimeRemaining;
     private List<PropertyChangeTypedListener> listener = new ArrayList<PropertyChangeTypedListener>();
     
@@ -48,25 +48,25 @@ public class CountdownTimer implements Runnable{
     public void StartCountdown(){
         this.ResetCountdown();
         // fire event that starts countdown process.
-        Timer timer = new Timer("MyTimer", true); // Should timer be static or not?
+        Timer timer = new Timer("MyTimer", false); // Should timer be static or not?
         int count = 10;
         //_timer = new Timer(false);
         System.out.println("CountdownTimer class's StartCountdown() method is starting countdown.");
-        _runnableTimerTask = new CountdownTimerTask(this, "countdownTimerTask1");
+        _runnableTimerTask = new CountdownTimerTask(this, "countdownTimerTask1", this._totalSeconds, _period);
         Thread newThread = new Thread(_runnableTimerTask); // Should this thread be static?
         newThread.start(); // The start method executes the run() method on the runnable interface object.
         // The Run method (in the CountdownTimerTask) must be used to set the frequency of the event if the Timer class will not work.
-        for (int i = 0; i < 50; i++) {
+        for (int i = 0; i < _totalSeconds; i++) {
             System.out.print(".");
             try{
-                Thread.sleep(100);
+                Thread.sleep(_period/10);
             }
             catch(InterruptedException exc){
                 System.out.println("Main thread in CountdownTimer class was interrupted.");
             }
         }
         // Let's first determine if the above code actually runs. If so, then we can try and pass it into the timer.
-//        timer.scheduleAtFixedRate(_timerTask, _delay, _period);
+       // timer.scheduleAtFixedRate(_runnableTimerTask, _delay, _period);
 //        System.out.println("Main thread in CountdownTimer class's StartCountdown() method is ending.");
 //        
 //        _timerTask = new CountdownTimerTask(count, new Runnable(){
