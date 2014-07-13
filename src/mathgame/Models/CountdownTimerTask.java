@@ -80,7 +80,7 @@ public class CountdownTimerTask extends TimerTask {
     @Override
     public void run() {
         System.out.println("The run() method of the CustomTimerTask instance is starting.");
-        try{
+        try{ 
             while(_remainingTime > _oneSecond){ // i.e. when more than one second is remaining.
                 Thread.sleep(_sleepTime);
                 System.out.println("In " + _threadName + ", the CountdownTimerTask instance, _remainingTime was: " + _remainingTime);
