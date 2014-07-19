@@ -6,6 +6,7 @@
  */
 
 package mathgame.UI;
+import java.awt.Color;
 import mathgame.Questions.Question;
 import java.awt.Component;
 import java.util.ArrayList;
@@ -56,7 +57,7 @@ public class GameUI extends javax.swing.JFrame {
         jMenuItemAbout = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
+        getContentPane().setBackground(Color.white);
         jLabel1.setText("Difficulty Level:");
 
         jAnswer.setText("Math Question Answer");
