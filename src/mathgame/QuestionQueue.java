@@ -13,6 +13,11 @@ import java.util.*;
 @author devinbost
  */
 public class QuestionQueue extends AbstractQueue<Question>{
+
+    @Override
+    public boolean add(Question e) {
+        return super.add(e); //To change body of generated methods, choose Tools | Templates.
+    }
     Queue _questions = null;
     QuestionQueue(){
         _questions = new LinkedList();

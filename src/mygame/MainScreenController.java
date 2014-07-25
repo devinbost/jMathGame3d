@@ -18,9 +18,13 @@ import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.elements.render.TextRenderer;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
+import mathgame.Gamer;
 import mathgame.Models.EventTypeEnum;
 import mathgame.Models.ScreenControlDisplayMediation;
 import mathgame.Models.ScreenControlDisplayMediationFactory;
+import mathgame.Models.UnknownControlException;
+import mathgame.QandABot;
+import mathgame.Questions.Question;
 /**
  *
  * @author devinbost
@@ -38,6 +42,9 @@ public class MainScreenController extends AbstractAppState implements ScreenCont
     private final ColorRGBA backgroundColor = ColorRGBA.Gray;  
     private AppStateManager _stateManager;
     private ScreenControlDisplayMediation _mediation;
+    private String _gamerName;
+    private Gamer _Gamer;
+    private QandABot _QandABot = null;
     
     @Override
     public void initialize(AppStateManager stateManager, Application app) {
@@ -101,15 +108,71 @@ public class MainScreenController extends AbstractAppState implements ScreenCont
         //throw new UnsupportedOperationException("Not supported yet.");
         System.out.println("MainScreenController.onStartScreen() is being called here.");
     }
+    /**
+     * This method is invoked when a gamer presses a button on the nifty GUI that invokes the method.
+     * It would also be useful to catch the IllegalArgumentException to display a warning screen rather than crashing the game.
+     * @param nextScreen 
+     */
     public void startGame(String nextScreen){
         // nifty.gotoScreen(nextScreen); // switch to another screen.
         System.out.println("MainScreenController.startGame() is being called here.");
         System.out.println("MainScreenController.startGame() is executing this._gameApplication.start().");
+        // Get Gamer Name text field and set it to a property here. 
        // this.onEndScreen();
         // this._stateManager.detach(this);
         //this._nifty.gotoScreen(nextScreen);  // switch to another screen
+        final Screen startScreen = this._nifty.getScreen("startGameScreen");
+        String controlName = "txtGamerName";
+        TextField txtScoreField = startScreen.findNiftyControl(controlName, TextField.class);
+        if (txtScoreField == null) {
+            throw new UnknownControlException("The unknown control was: " + controlName + " . It was called from MainScreenController.startGame(..).");
+        }
+        _gamerName = txtScoreField.getRealText();
+        if ("".equals(_gamerName)) {
+            throw new IllegalArgumentException("You must enter a name for the gamer!!");
+        }
+        System.out.println("Gamer's name is: " + _gamerName);
+        int difficulty = 0;
+        _Gamer = new Gamer(difficulty, 3, _gamerName);
+        _QandABot = new QandABot(_Gamer);  // we could also queue up the QandABot elsewhere instead.
         this._nifty.gotoScreen(nextScreen);  // switch to another screen
         
+    }
+    /**
+     * This method is used to update the HUD with the next math question.
+     */
+    public void getNextQuestion(){
+        String questionText = "What is " + _QandABot.GetNextQuestion() + " ?";
+        // Set a control to this text.
+        final Screen hudScreen = this._nifty.getScreen("hudScreen");
+        String controlName = "lblNextQuestion";
+        Label lblNextQuestion = hudScreen.findNiftyControl(controlName, Label.class);
+        lblNextQuestion.setText(questionText);
+    }
+    public void checkAnswer(){
+        final Screen hudScreen = this._nifty.getScreen("hudScreen");
+        String controlName = "txtAnswer";
+        TextField txtAnswer = hudScreen.findNiftyControl(controlName, TextField.class);
+        String answerValue = txtAnswer.getRealText();
+        if (answerValue.matches(".*[a-zA-Z]+.*")) {
+            throw new IllegalArgumentException("Error: The answer cannot contain letters! It must be a number (e.g. 14 or 21.59)!");
+        }
+        double userAnswer = Double.parseDouble(answerValue);
+        Question currentQuestion = _QandABot.GetCurrentQuestion();
+        
+        Label lblNextQuestion;
+        if(currentQuestion.CheckAnswer(userAnswer) == true){
+            _Gamer.ScoreUp();
+            lblNextQuestion = hudScreen.findNiftyControl("lblNextQuestion", Label.class);
+            lblNextQuestion.setText("Correct!!!");
+            // Update score field.
+            Label lblScore = hudScreen.findNiftyControl("txtScore", Label.class);
+            lblScore.setText(Integer.toString(_Gamer.GetScore()));
+        }
+        else {
+            lblNextQuestion = hudScreen.findNiftyControl("lblNextQuestion", Label.class);
+            lblNextQuestion.setText("Wrong!!!");
+        }
     }
    public void quitGame() {
     this._gameApplication.stop();
@@ -122,6 +185,11 @@ public class MainScreenController extends AbstractAppState implements ScreenCont
          cleanup();
         System.out.println("MainScreenController.onEndScreen() is being called here.");
     }
+    /**
+     * This method is called from a button on the HUD. We really should move the contents of this method to something more appropriate,
+     * such as when the gamer obtains the next question.
+     * @throws InterruptedException 
+     */
     public void getScoreText() throws InterruptedException{
         System.out.println("MainScreenController.getScoreText() is being called here.");
         // Construct an instance of ScreenControlDisplayMediator here.

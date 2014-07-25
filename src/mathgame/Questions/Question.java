@@ -10,12 +10,14 @@ import javax.script.ScriptEngineManager;
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
 import de.congrace.exp4j.*;
+import java.io.Serializable;
 /**
  *
  * @author devinbost
  */
 
-public class Question {
+public class Question implements Serializable {
+    private static final long serialVersionUID = 2L;
     private double _leftValue = 0; // we put the underscore at the front of these variables as a naming convention to indicate that
     private double _rightValue = 0;  //     they are private fields.
     private double _answer = 0;
@@ -85,6 +87,8 @@ public class Question {
         // This method generates random values for the leftValue and rightValue;
         double min = 0;
         double max = SetMaxValue(digits);
+        _leftValue = 0;
+        _rightValue = 0;
         _leftValue = Math.round(Math.sqrt(Math.random() * (max - min))); // We take the square root to ensure that the value does not exceed our maximum when multiplied.
         _rightValue = Math.round(Math.sqrt(Math.random() * (max - min)));
         // The _leftValue and _rightValue could easily be converted to integers instead of doubles if we don't care about decimal values.

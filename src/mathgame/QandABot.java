@@ -7,7 +7,6 @@
 package mathgame;
 
 import mathgame.Questions.Question;
-import java.util.*;
 
 /**
  *
@@ -39,7 +38,6 @@ public class QandABot {
            // use the gamer's level for the QuestionQueue constructor.
            questionQueue.add(myQuestion);
        }
-       String test;
        _currentQuestion = questionQueue.remove();
        // If level == 0, we create an addition question.
        // If level == 1, we create a subtraction question.
