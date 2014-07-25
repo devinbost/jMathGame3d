@@ -41,7 +41,7 @@ public class QuestionQueue extends AbstractQueue<Question>{
 
     @Override
     public boolean offer(Question e) {
-        _questions.offer(e);
+        //_questions.offer(e);
         return _questions.offer(e);
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
