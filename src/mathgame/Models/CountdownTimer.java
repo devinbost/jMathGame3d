@@ -15,10 +15,10 @@ import java.util.TimerTask;
  */
 public class CountdownTimer implements Runnable{
     private int _totalMilliseconds;
-    public static int _remainingSeconds;
-    private static TimerTask _timerTask = null;
-    private static Timer _controlTimer = null;
-    private static CountdownTimerTask _runnableTimerTask = null;
+    public  int _remainingSeconds;
+//    private  TimerTask _timerTask = null;
+//    private  Timer _controlTimer = null;
+    private  CountdownTimerTask _runnableTimerTask = null;
 //    private int _delay = 2000;  // milliseconds
     private int _period = 1000; // milliseconds
     private boolean _isTimeRemaining;
@@ -33,6 +33,7 @@ public class CountdownTimer implements Runnable{
     public CountdownTimer(int totalSeconds){
         _totalMilliseconds = totalSeconds * 1000;
         _isTimeRemaining = true;
+        System.out.println("CountdownTimer is getting constructed.");
     }
     /**
      *  This method gets a Hours:Minutes:Seconds:Milliseconds representation of the remaining time.

@@ -20,7 +20,7 @@
                     <control id="txtLives" name="textfield" width="100%" text="Lives"></control>
               </panel>
               <panel id="panel_top_mid-right" width="25%" height="100%" childLayout="center" backgroundColor="#009900"> <!-- Dark Green -->
-                  <control id="txtTimer" name="textfield" width="100%" text="Lives"></control>  
+                  <control id="txtTimer" name="label" width="100%" text="Timer"></control>  
                   <!--<control id="txtTimer" name="label" color="#000000" text="Timer" width="100%" height="100%" /> --><!-- Black -->
               </panel>
               <panel id="panel_top_right" width="25%" height="100%" childLayout="center" backgroundColor="#00FFCC"> <!-- Teal -->

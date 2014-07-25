@@ -12,6 +12,7 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Node;
 import de.lessvoid.nifty.Nifty;
+import de.lessvoid.nifty.controls.Label;
 import de.lessvoid.nifty.controls.TextField;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.elements.render.TextRenderer;
@@ -36,7 +37,7 @@ public class MainScreenController extends AbstractAppState implements ScreenCont
     private Node localGuiNode = new Node("Start Screen GuiNode");
     private final ColorRGBA backgroundColor = ColorRGBA.Gray;  
     private AppStateManager _stateManager;
-    
+    private ScreenControlDisplayMediation _mediation;
     
     @Override
     public void initialize(AppStateManager stateManager, Application app) {
@@ -121,16 +122,23 @@ public class MainScreenController extends AbstractAppState implements ScreenCont
          cleanup();
         System.out.println("MainScreenController.onEndScreen() is being called here.");
     }
-    public void getScoreText(){
+    public void getScoreText() throws InterruptedException{
         System.out.println("MainScreenController.getScoreText() is being called here.");
         // Construct an instance of ScreenControlDisplayMediator here.
-        Screen hudScreen = this._nifty.getScreen("hudScreen");
+        final Screen hudScreen = this._nifty.getScreen("hudScreen");
         Element myGuiElement = hudScreen.findElementByName("panel_top_right"); // pass the ID of the element.
         // We're assuming that "panel_top_right" has a text element.
-        TextField txtScoreField = hudScreen.findNiftyControl("txtLives", TextField.class);
-        String scoreText = txtScoreField.getDisplayedText();
-        ScreenControlDisplayMediation mediation = ScreenControlDisplayMediationFactory.Make(EventTypeEnum.CountdownTick, "txtTimer", hudScreen);
+        //Label txtScoreField = hudScreen.findNiftyControl("txtLives", Label.class);
+        //String scoreText = txtScoreField.getDisplayedText();
+        Thread t = new Thread(new Runnable() {
+         public void run()
+         {
+              _mediation = ScreenControlDisplayMediationFactory.Make(EventTypeEnum.CountdownTick, "txtTimer", hudScreen);
+         }
+        });
+        t.start();
         System.out.println("MainScreenController.getScoreText() is at the end.");
+        //Thread.sleep(10000);
     }
     /*
      * Add a setter method to this ScreenController that allows us to pass it an interface.

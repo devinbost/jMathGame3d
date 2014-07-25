@@ -77,7 +77,12 @@ import java.text.SimpleDateFormat;
    public class ScreenControlDisplayMediation implements PropertyChangeTypedListener {
         private IUpdateNiftyGuiControlDisplayText _screenControlMediator;
         private EventTypeEnum _eventType;
-        private CountdownTimer _timer = new CountdownTimer(1000);
+        private CountdownTimer _timer;
+        private CountdownTimerTask _timerTask;
+
+        public CountdownTimer getTimer() {
+            return _timer;
+        }
         public IUpdateNiftyGuiControlDisplayText getScreenControlMediator() {
             return _screenControlMediator;
         }
@@ -85,13 +90,30 @@ import java.text.SimpleDateFormat;
 //        public void setScreenControlMediator(IUpdateNiftyGuiControlDisplayText _screenControlMediator) {
 //            this._screenControlMediator = _screenControlMediator;
 //        }
-       
+       /**
+        * The 
+        * @param screenControlMediator
+        * @param eventType
+        * @param updateControlListener 
+        * This parameter is used to provide the specific type of listener used to update a control.
+        * The factory must determine the specific type of PropertyChangeTypedListener to use.
+        */
         public ScreenControlDisplayMediation(
                 IUpdateNiftyGuiControlDisplayText screenControlMediator, 
-                EventTypeEnum eventType) { // we need to replace this with an observable interface or something.
+                EventTypeEnum eventType,
+                PropertyChangeTypedListener updaterListener) { // we need to replace this with an observable interface or something.
             this._screenControlMediator = screenControlMediator;
             this._eventType = eventType;
-            this._timer.addChangeListener(this);
+            this._timer = new CountdownTimer(1000);
+            this.Subscribe(updaterListener);
+            //this._timer.addChangeListener(updaterListener);
+            this.StartTimer();
+            _timerTask = new CountdownTimerTask(_timer, "timerThread1", 1000, 1000);
+            System.out.println("ScreenControlDisplayMediation is getting constructed.");
+            //this._timer.addChangeListener(this);
+            
+            
+            //this._timer.StartCountdown();
         }
         /** We want to be able to set an enum during construction of this object to ensure that it only pushes
          * updates to the control for ONE specific eventType. (Otherwise, unrelated events will replace the display text for our control.)
@@ -128,6 +150,13 @@ import java.text.SimpleDateFormat;
            
         }
         
+        final public void StartTimer(){
+            _timer.StartCountdown();
+        }
+        final public void Subscribe(PropertyChangeTypedListener newListener ){
+            _timer.addChangeListener(newListener);
+            
+        }
 //        private String _controlElementName;
 //        private NiftyControl _niftyControl;
 //        public String getControlElementName() {
