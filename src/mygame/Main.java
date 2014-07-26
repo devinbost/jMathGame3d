@@ -123,6 +123,7 @@ public class Main extends SimpleApplication implements AnimEventListener
     /** Prepare geometries and physical nodes for bricks and cannon balls. */
     private RigidBodyControl    brick_phy;
     private static final Box    box;
+    private static final Box    beam;
     private RigidBodyControl    ball_phy;
     private static final Sphere sphere;
     private RigidBodyControl    floor_phy;
@@ -148,11 +149,13 @@ public class Main extends SimpleApplication implements AnimEventListener
     }
     static {
         /** Initialize the cannon ball geometry */
-        sphere = new Sphere(32, 32, 0.4f, true, false);
+        sphere = new Sphere(32, 32, .8f, true, false); // was: sphere = new Sphere(32, 32, 0.4f, true, false);
         sphere.setTextureMode(TextureMode.Projected);
         /** Initialize the brick geometry */
         box = new Box(brickLength, brickHeight, brickWidth);
         box.scaleTextureCoordinates(new Vector2f(1f, .5f));
+        beam = new Box(brickLength, brickHeight / 2, brickWidth /5);
+        beam.scaleTextureCoordinates(new Vector2f(1f, .5f)); // was: beam.scaleTextureCoordinates(new Vector2f(1f, .5f));
         /** Initialize the floor geometry */
         floor = new Box(10f, 0.1f, 5f);
         floor.scaleTextureCoordinates(new Vector2f(3, 6));
@@ -287,6 +290,9 @@ public class Main extends SimpleApplication implements AnimEventListener
         initMaterials();
         //initWall();
         constructors.makeBrickWall(box, wall_mat, brick_phy);
+        Vector3f vt =
+         new Vector3f(10, 22, 90);
+        constructors.makePhysicalBeam(vt, beam, wall_mat);
         initFloor();
     }
 //    private void setUpLight() {
@@ -1104,33 +1110,33 @@ public void onAction(String binding, boolean value, float tpf) {
   }
  
   /** This loop builds a wall out of individual bricks. */
-  public void initWall() {
-    float startpt = brickLength / 4;
-    float height = 0;
-    for (int j = 0; j < 15; j++) {
-      for (int i = 0; i < 6; i++) {
-        Vector3f vt =
-         new Vector3f(i * brickLength * 2 + startpt, brickHeight + height, 0);
-        makeBrick(vt);
-      }
-      startpt = -startpt;
-      height += 2 * brickHeight;
-    }
-  }
+//  public void initWall() { // Are we actually using this method or not?
+//    float startpt = brickLength / 4;
+//    float height = 0;
+//    for (int j = 0; j < 15; j++) {
+//      for (int i = 0; i < 6; i++) {
+//        Vector3f vt =
+//         new Vector3f(i * brickLength * 2 + startpt, brickHeight + height, 0);
+//        makeBrick(vt);
+//      }
+//      startpt = -startpt;
+//      height += 2 * brickHeight;
+//    }
+//  }
    /** This method creates one individual physical brick. */
-  public void makeBrick(Vector3f loc) {
-    /** Create a brick geometry and attach to scene graph. */
-    Geometry brick_geo = new Geometry("brick", box);
-    brick_geo.setMaterial(wall_mat);
-    rootNode.attachChild(brick_geo);
-    /** Position the brick geometry  */
-    brick_geo.setLocalTranslation(loc);
-    /** Make brick physical with a mass > 0.0f. */
-    brick_phy = new RigidBodyControl(2f);
-    /** Add physical brick to physics space. */
-    brick_geo.addControl(brick_phy);
-    bulletAppState.getPhysicsSpace().add(brick_phy);
-  }
+//  public void makeBrick(Vector3f loc) {
+//    /** Create a brick geometry and attach to scene graph. */
+//    Geometry brick_geo = new Geometry("brick", box);
+//    brick_geo.setMaterial(wall_mat);
+//    rootNode.attachChild(brick_geo);
+//    /** Position the brick geometry  */
+//    brick_geo.setLocalTranslation(loc);
+//    /** Make brick physical with a mass > 0.0f. */
+//    brick_phy = new RigidBodyControl(2f);
+//    /** Add physical brick to physics space. */
+//    brick_geo.addControl(brick_phy);
+//    bulletAppState.getPhysicsSpace().add(brick_phy);
+//  }
   /** This method creates one individual physical cannon ball.
    * By defaul, the ball is accelerated and flies
    * from the camera position in the camera direction.*/
@@ -1176,7 +1182,7 @@ public void onAction(String binding, boolean value, float tpf) {
 //        Vector3f accelerationVector = new Vector3f(vehicle.getPhysicsRotation().mult(Vector3f.UNIT_Z).mult(-20)); // works great!
         
         
-        ball_phy.setLinearVelocity(accelerationVector); // works great
+        ball_phy.setLinearVelocity(accelerationVector.mult(8)); // works great. this is used to set the velocity of the ball.
         //ball_phy.setLinearVelocity(vehicle.getPhysicsLocation().mult(2)); // works a little better, but lags behind until acceleration occurs
         
         // Can I use the physics rotation quaternion?

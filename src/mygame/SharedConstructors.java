@@ -25,7 +25,7 @@ public class SharedConstructors {
     private static final float brickLength = 0.48f;
     private static final float brickWidth  = 0.24f;
     private static final float brickHeight = 0.12f;
-    private static final float brickMultiplier = 5f;
+    private static final float brickMultiplier = 4f; // was 4f
     
     private BulletAppState _bulletAppState;
     private Node _rootNode;
@@ -52,6 +52,70 @@ public class SharedConstructors {
 //    public static void setRootNode(){
 //        
 //    }
+    private class PhysicalBeam implements Serializable{
+        private Geometry _brick_geo = null;
+        private RigidBodyControl _brick_phy = null;
+         public PhysicalBeam(Vector3f loc, Box box, Material wall_mat){
+             float scaleFactor = 32f;
+            _brick_geo = new Geometry("beam", box);
+            _brick_geo.scale(scaleFactor);
+            _brick_geo.setMaterial(wall_mat);
+            /** Position the brick geometry  */
+            _brick_geo.setLocalTranslation(loc);
+            /** Make brick physical with a mass > 0.0f. */
+            CollisionShape brick_collision = CollisionShapeFactory.createBoxShape(_brick_geo);
+            _brick_phy = new RigidBodyControl(scaleFactor);
+            //brick_phy.getCollisionShape().setScale(new Vector3f(2,2,2));
+            _brick_phy.setCollisionShape(brick_collision);
+            _brick_phy.setFriction(1500f); // was 2 and then 20. 50 works better.
+            _brick_phy.setDamping(1f, 1f); // both were 0.2 then 0.3
+            //brick_phy.getCollisionShape().setScale(new Vector3f(2,2,2)); // Won’t work as this is now a CompoundCollisionShape containing a MeshCollisionShape
+            /** Add physical brick to physics space. */
+            _brick_geo.addControl(_brick_phy);
+            // You must scale the geometry for the scale change to work.
+            
+            _brick_geo.getControl(RigidBodyControl.class).setCcdMotionThreshold(0.01f); // Do this if needed.
+            //this.getBulletAppState().getPhysicsSpace().setMaxSubSteps(2);
+        }
+        public RigidBodyControl getBrick_phy(){
+            return this._brick_phy;
+        }
+        public Geometry getBrick_geo(){
+            return this._brick_geo;
+        }
+        public void setBrick_phy(RigidBodyControl brick_phy){
+            this._brick_phy = brick_phy;
+        }
+        public void setBrick_geo(Geometry brick_geo){
+            this._brick_geo = brick_geo;
+        }
+        @Override
+        public String toString(){
+            return "This is a physical brick.";
+        }
+        @Override
+        public boolean equals(Object other){
+            if (other == null) return false;
+            if (other == this) return true;
+            if (!(other instanceof PhysicalBrick))return false;
+            PhysicalBrick brick = (PhysicalBrick)other;
+            if (this._brick_geo == brick._brick_geo && this._brick_phy == brick._brick_phy) {
+                return true;
+            }
+            else{
+                return false;
+            }
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = 3;
+            hash = 97 * hash + Objects.hashCode(this._brick_geo);
+            hash = 97 * hash + Objects.hashCode(this._brick_phy);
+            return hash;
+        }
+        
+    }
     private class PhysicalBrick implements Serializable{
         private Geometry _brick_geo = null;
         private RigidBodyControl _brick_phy = null;
@@ -67,8 +131,8 @@ public class SharedConstructors {
             _brick_phy = new RigidBodyControl(4f);
             //brick_phy.getCollisionShape().setScale(new Vector3f(2,2,2));
             _brick_phy.setCollisionShape(brick_collision);
-            _brick_phy.setFriction(2f);
-            _brick_phy.setDamping(.2f, .2f);
+            _brick_phy.setFriction(150f); // was 150f.
+            _brick_phy.setDamping(0.5f, 0.5f); // both were 0.2 then 0.3
             //brick_phy.getCollisionShape().setScale(new Vector3f(2,2,2)); // Won’t work as this is now a CompoundCollisionShape containing a MeshCollisionShape
             /** Add physical brick to physics space. */
             _brick_geo.addControl(_brick_phy);
@@ -120,6 +184,13 @@ public class SharedConstructors {
         PhysicalBrick phyBrick = new PhysicalBrick(loc, box, wall_mat);
         this.getRootNode().attachChild(phyBrick.getBrick_geo());
         this.getBulletAppState().getPhysicsSpace().add(phyBrick.getBrick_phy());
+        this.getBulletAppState().getPhysicsSpace().setAccuracy(1f/100f);// Specifies physics accuracy. The higher the accuracy, the slower the game. Increase value if objects are passing through one another, or bounce oddly.
+        // was: this.getBulletAppState().getPhysicsSpace().setAccuracy(1f/80f);//
+    }
+    public void makePhysicalBeam(Vector3f loc, Box box, Material wall_mat){
+        PhysicalBeam phyBrick = new PhysicalBeam(loc, box, wall_mat);
+        this.getRootNode().attachChild(phyBrick.getBrick_geo());
+        this.getBulletAppState().getPhysicsSpace().add(phyBrick.getBrick_phy());
         this.getBulletAppState().getPhysicsSpace().setAccuracy(1f/80f);// Specifies physics accuracy. The higher the accuracy, the slower the game. Increase value if objects are passing through one another, or bounce oddly.
     }
 //    /** This method creates one individual physical brick. */
@@ -153,16 +224,17 @@ public class SharedConstructors {
   // how do I check if the bulletAppState contains the RigidBodyControl?
   public void makeBrickWall(Box box, Material wall_mat, RigidBodyControl brick_phy) {
     float startpt = brickLength / 4;
-    float height = 0;
+    float height = 0; // was 40
+    float zStart = 40; // was 0.
     for (int j = 0; j < 15; j++) {
       for (int i = 0; i < 6; i++) {
         Vector3f vt =
-         new Vector3f(i * brickLength * brickMultiplier * 2 + startpt, brickHeight * brickMultiplier + 40 + height, 0);
+         new Vector3f(i * brickLength * brickMultiplier * 2 + startpt, brickHeight * brickMultiplier + height, zStart);
         //makeBrick(vt, box, wall_mat, brick_phy);
         makePhysicalBrick(vt, box, wall_mat);
       }
       startpt = -startpt;
-      height += 2 * brickHeight * brickMultiplier;
+      height += 2 * brickHeight * brickMultiplier; // was: height += 2 * brickHeight * brickMultiplier;
     }
   }
 }

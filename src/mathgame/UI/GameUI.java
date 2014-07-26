@@ -17,7 +17,7 @@ import mathgame.*;
  */
 public class GameUI extends javax.swing.JFrame {
     Gamer _Gamer = null;
-    //QandABot _QandABot = null;
+    QandABot _QandABot = null;
     /**
      * Creates new form GameUI
      */
@@ -221,8 +221,8 @@ public class GameUI extends javax.swing.JFrame {
         }
         // We need some error handling on the getText method to ensure that the gamer has entered their name!
         String name = jUsername.getText();
-//        _Gamer = new Gamer(difficulty, 3, name);
-       // _QandABot = new QandABot(_Gamer);
+        _Gamer = new Gamer(difficulty, 3, name);
+        _QandABot = new QandABot(_Gamer);
         // set gamer and bot to properties
         // enable answer button when the game is started
         jCheckAnswer.setEnabled(true);
@@ -240,21 +240,21 @@ public class GameUI extends javax.swing.JFrame {
     private void jCheckAnswerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckAnswerActionPerformed
         // TODO add your handling code here:
         double userAnswer = Double.parseDouble(jAnswer.getText());
-//        Question currentQuestion = _QandABot.GetCurrentQuestion();
-//        if(currentQuestion.CheckAnswer(userAnswer) == true){
-//            _Gamer.ScoreUp();
-//            jCorrect.setText("Correct!!!");
-//            jScore.setText(Integer.toString(_Gamer.GetScore()));
-//        }
+        Question currentQuestion = _QandABot.GetCurrentQuestion();
+        if(currentQuestion.CheckAnswer(userAnswer) == true){
+            _Gamer.ScoreUp();
+            jCorrect.setText("Correct!!!");
+            jScore.setText(Integer.toString(_Gamer.GetScore()));
+        }
         
         
     }//GEN-LAST:event_jCheckAnswerActionPerformed
 
     private void jNextQuestionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jNextQuestionActionPerformed
         // TODO add your handling code here:
-//        jQuestion.setText("What is " + _QandABot.GetNextQuestion() + " ?");
-//        // Gets the next question.
-//        jCorrect.setText("Correct?");
+        jQuestion.setText("What is " + _QandABot.GetNextQuestion() + " ?");
+        // Gets the next question.
+        jCorrect.setText("Correct?");
     }//GEN-LAST:event_jNextQuestionActionPerformed
 
     private void jMenuItemHelpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemHelpActionPerformed

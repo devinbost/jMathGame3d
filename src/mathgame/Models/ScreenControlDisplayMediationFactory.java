@@ -33,10 +33,10 @@ public class ScreenControlDisplayMediationFactory {
                             + LabelControl.class.toString() + " . It failed at ScreenControlDisplayMediationFactory.Make(..)");
                 }
             UpdateControlListener listener = new UpdateControlListener(labelControl);
-           
+            
             //System.out.println(" W");
             ScreenControlDisplayMediation mediation = new ScreenControlDisplayMediation(screenControlMediator, eventType, listener);
-           
+            
             mediation.Subscribe(listener);
             return mediation;
         }

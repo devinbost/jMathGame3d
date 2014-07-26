@@ -17,7 +17,7 @@
               <panel id="panel_top_left" width="10%" height="100%" childLayout="center" backgroundColor="#D1A319"> <!-- Gold -->
               </panel>
               <panel id="panel_top_middle" width="25%" height="100%" childLayout="center" backgroundColor="#E65C00"> <!-- Orange -->
-                    <control id="txtLives" name="textfield" width="100%" text="Lives"></control>
+                    <control id="txtLives" name="label" width="100%" text="Lives"></control>
               </panel>
               <panel id="panel_top_mid-right" width="25%" height="100%" childLayout="center" backgroundColor="#009900"> <!-- Dark Green -->
                   <control id="txtTimer" name="label" width="100%" text="Timer"></control>  
