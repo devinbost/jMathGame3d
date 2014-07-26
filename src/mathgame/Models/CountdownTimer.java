@@ -154,7 +154,8 @@ public class CountdownTimer implements Runnable{
         // We need to raise an event to indicate that the value of this.getRemainingSeconds() has changed.
         int priorRemainingSeconds = this.getRemainingSeconds();
         System.out.println("We are executing the Tick() method of the CountdownTimer instance.");
-        _remainingSeconds--;
+//        _remainingSeconds--; // We need to subtract the appropriate amount here.
+        _remainingSeconds -= _runnableTimerTask.getSleepTime(); // gave nullPointerException
         this.notifyCountdownListeners(this, "_remainingSeconds", priorRemainingSeconds, this.getRemainingSeconds());
         return this.getRemainingSeconds();
     }

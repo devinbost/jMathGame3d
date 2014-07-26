@@ -86,6 +86,20 @@ public class Gamer {
                 highScores, 
                 "HighScores: ", JOptionPane.INFORMATION_MESSAGE);
    }
+    public void GamerLoses(){
+        JOptionPane.showMessageDialog(null, 
+                "Congratulations! You have LOST the game!", 
+                "Sorry: ", JOptionPane.INFORMATION_MESSAGE);
+        // Do something about score here. (Check with singleton if high score.)
+        
+        HallOfFame hallOfFame = HallOfFame.getInstance();
+        hallOfFame.addScore(_score, _username);
+        String highScores = hallOfFame.getHighscoreString();
+        JOptionPane.showMessageDialog(null, 
+                "Here are the high scores: \n" +
+                highScores, 
+                "HighScores: ", JOptionPane.INFORMATION_MESSAGE);
+   }
     private int ValidateLevel(int level){
         if (level % 1 == 0) { // if level somehow becomes a float instead.
             level = (int)level; // cast back to int

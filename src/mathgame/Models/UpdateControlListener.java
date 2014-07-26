@@ -27,7 +27,7 @@ public class UpdateControlListener implements PropertyChangeTypedListener {
             _niftyGuiLabelControl.setText(evt.getNewValue().toString());
             
         }
-        
+        // I need something to handle when the timer runs out.
     }
 
     @Override

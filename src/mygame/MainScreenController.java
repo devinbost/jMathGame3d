@@ -45,6 +45,7 @@ public class MainScreenController extends AbstractAppState implements ScreenCont
     private String _gamerName;
     private Gamer _Gamer;
     private QandABot _QandABot = null;
+    private int _lives;
     
     @Override
     public void initialize(AppStateManager stateManager, Application app) {
@@ -82,7 +83,7 @@ public class MainScreenController extends AbstractAppState implements ScreenCont
     public void cleanup() {
         rootNode.detachChild(localRootNode);
         guiNode.detachChild(localGuiNode);
-//        
+//      
         super.cleanup();
         //TODO: clean up what you initialized in the initialize method,
         //e.g. remove all spatials from rootNode
@@ -137,6 +138,7 @@ public class MainScreenController extends AbstractAppState implements ScreenCont
         _QandABot = new QandABot(_Gamer);  // we could also queue up the QandABot elsewhere instead.
         this._nifty.gotoScreen(nextScreen);  // switch to another screen
         
+       
     }
     /**
      * This method is used to update the HUD with the next math question.
@@ -145,9 +147,27 @@ public class MainScreenController extends AbstractAppState implements ScreenCont
         String questionText = "What is " + _QandABot.GetNextQuestion() + " ?";
         // Set a control to this text.
         final Screen hudScreen = this._nifty.getScreen("hudScreen");
+        
+        String control2Name = "lblLives";
+        Label lblLives = hudScreen.findNiftyControl(control2Name, Label.class);
+        if (lblLives == null) {
+            throw new UnknownControlException("The unknown control was: " + control2Name + " . It was called from MainScreenController.startGame(..).");
+        }
+        if ("Lives".equals(lblLives.getText())) { // i.e. if this was the first question.
+            lblLives.setText("5"); // Start with 5 lives.
+        }
+        
+        
         String controlName = "lblNextQuestion";
         Label lblNextQuestion = hudScreen.findNiftyControl(controlName, Label.class);
         lblNextQuestion.setText(questionText);
+        try{
+            this.getScoreText();
+        }
+        catch (InterruptedException ex){
+            System.out.println("The timer has been interrupted.");
+            _mediation.StopTimer();
+        }
     }
     public void checkAnswer(){
         final Screen hudScreen = this._nifty.getScreen("hudScreen");
@@ -168,15 +188,34 @@ public class MainScreenController extends AbstractAppState implements ScreenCont
             // Update score field.
             Label lblScore = hudScreen.findNiftyControl("txtScore", Label.class);
             lblScore.setText(Integer.toString(_Gamer.GetScore()));
+            // we should compute the score from the remaining time here and update the score field.
+            _mediation.StopTimer();
+            
         }
         else {
             lblNextQuestion = hudScreen.findNiftyControl("lblNextQuestion", Label.class);
             lblNextQuestion.setText("Wrong!!!");
+            
+            String control2Name = "lblLives";
+            Label lblLives = hudScreen.findNiftyControl(control2Name, Label.class);
+            if (lblLives == null) {
+                throw new UnknownControlException("The unknown control was: " + control2Name + " . It was called from MainScreenController.startGame(..).");
+            }
+            String livesString = lblLives.getText();
+            int livesInt = Integer.parseInt(livesString);
+            livesInt--;
+            lblLives.setText(Integer.toString(livesInt));
+            if (livesInt < 0) {
+                // game over.
+                this._Gamer.GamerLoses();
+                this.quitGame();
+            }
+            // subtract from lives.
         }
     }
    public void quitGame() {
-    this._gameApplication.stop();
-    cleanup();
+        this._gameApplication.stop();
+        cleanup();
   }
     public void onEndScreen() {
        // throw new UnsupportedOperationException("Not supported yet.");

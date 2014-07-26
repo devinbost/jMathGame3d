@@ -104,11 +104,12 @@ import java.text.SimpleDateFormat;
                 PropertyChangeTypedListener updaterListener) { // we need to replace this with an observable interface or something.
             this._screenControlMediator = screenControlMediator;
             this._eventType = eventType;
-            this._timer = new CountdownTimer(1000);
+            this._timer = new CountdownTimer(1000); // Keep at 1000.
             this.Subscribe(updaterListener);
             //this._timer.addChangeListener(updaterListener);
             this.StartTimer();
-            _timerTask = new CountdownTimerTask(_timer, "timerThread1", 1000, 1000);
+            int availableTime = 1000;
+            _timerTask = new CountdownTimerTask(_timer, "timerThread1", availableTime, 1000);
             System.out.println("ScreenControlDisplayMediation is getting constructed.");
             //this._timer.addChangeListener(this);
             
@@ -152,6 +153,9 @@ import java.text.SimpleDateFormat;
         
         final public void StartTimer(){
             _timer.StartCountdown();
+        }
+        final public void StopTimer(){
+            _timer.StopTimer();
         }
         final public void Subscribe(PropertyChangeTypedListener newListener ){
             _timer.addChangeListener(newListener);

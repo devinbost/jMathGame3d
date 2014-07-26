@@ -44,7 +44,7 @@ public class CountdownTimerTask extends TimerTask {
         _availableTime = availableTime;
         _remainingTime = _availableTime;
         _timer = timer;
-        _timer.Tick();
+//        _timer.Tick();
         _threadName = threadName;
         _sleepTime = sleepTime;
         System.out.println("CustomTimerTask.Tick() was called from the constructor.");
