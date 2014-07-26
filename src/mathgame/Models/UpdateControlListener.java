@@ -24,7 +24,7 @@ public class UpdateControlListener implements PropertyChangeTypedListener {
     public void propertyChange(PropertyChangeTypedEvent evt) {
         if (evt.getEventType() == EventTypeEnum.CountdownTick) {
             // Update text property on the element somehow (from evt.newValue).
-            _niftyGuiLabelControl.setText(evt.getNewValue().toString());
+            _niftyGuiLabelControl.setText(StringFormatters.FormatTimeInMilliseconds(Integer.parseInt(evt.getNewValue().toString())));
             
         }
         // I need something to handle when the timer runs out.

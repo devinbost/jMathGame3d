@@ -5,6 +5,7 @@
 package mathgame.Models;
 
 import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
 
 /**
  *
@@ -17,6 +18,26 @@ public class CountdownTimerTask extends TimerTask {
     private int _remainingTime; // Be sure this is set during construction and updated by the Tick method.
     private final String _threadName;
     private final int _availableTime;
+
+    public int getRemainingSeconds() {
+        return _remainingTime / _oneSecond;
+    }
+    /**
+     * Use StringFormatters.FormatTimeInMilliseconds(..) method instead.
+     * @return
+     * @deprecated
+     */
+    @Deprecated
+     public String getRemainingTimeFormatted() {
+         String formattedTimeString =
+         String.format("%02d:%02d:%02d", 
+        TimeUnit.MILLISECONDS.toHours(_remainingTime),
+        TimeUnit.MILLISECONDS.toMinutes(_remainingTime) -  
+        TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(_remainingTime)), // The change is in this line
+        TimeUnit.MILLISECONDS.toSeconds(_remainingTime) - 
+        TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(_remainingTime)));   
+        return formattedTimeString;
+    }
 
     /**
      * This method is used to get the number of milliseconds that represents one tick. This is generally
@@ -85,9 +106,10 @@ public class CountdownTimerTask extends TimerTask {
                 Thread.sleep(_sleepTime);
                 System.out.println("In " + _threadName + ", the CountdownTimerTask instance, _remainingTime was: " + _remainingTime);
                 int seconds = _timer.Tick();
+//                String formattedSeconds = Integer.toString(seconds/1000);
                 System.out.println("When we call _timer.Tick() from the run() method of the CountdownTimerTask instance, this is the time value it gives us:" + seconds);
                 _remainingTime -= _sleepTime;
-                System.out.println("In " + _threadName + ", the CountdownTimerTask instance, _remainingTime is now: " + _remainingTime);
+                System.out.println("In " + _threadName + ", the CountdownTimerTask instance, _remainingTime is now: " + this.getRemainingTimeFormatted());
             }
              System.out.println("The value of _remainingTime is now: " + _remainingTime + ". "
                      + "\n The CountdownTimerTask's run() method is now coming to an end.");

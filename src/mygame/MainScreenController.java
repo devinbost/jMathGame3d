@@ -46,6 +46,7 @@ public class MainScreenController extends AbstractAppState implements ScreenCont
     private Gamer _Gamer;
     private QandABot _QandABot = null;
     private int _lives;
+    private Thread _mediatedTimerThread = null;
     
     @Override
     public void initialize(AppStateManager stateManager, Application app) {
@@ -83,7 +84,7 @@ public class MainScreenController extends AbstractAppState implements ScreenCont
     public void cleanup() {
         rootNode.detachChild(localRootNode);
         guiNode.detachChild(localGuiNode);
-//      
+       
         super.cleanup();
         //TODO: clean up what you initialized in the initialize method,
         //e.g. remove all spatials from rootNode
@@ -216,12 +217,14 @@ public class MainScreenController extends AbstractAppState implements ScreenCont
    public void quitGame() {
         this._gameApplication.stop();
         cleanup();
+        _mediation.StopTimer();
+        _nifty.exit();
+         System.exit(0);
   }
+    @Override
     public void onEndScreen() {
        // throw new UnsupportedOperationException("Not supported yet.");
-        // app.stop();
-        //this._gameApplication.stop();
-         cleanup();
+        cleanup();
         System.out.println("MainScreenController.onEndScreen() is being called here.");
     }
     /**
@@ -237,13 +240,13 @@ public class MainScreenController extends AbstractAppState implements ScreenCont
         // We're assuming that "panel_top_right" has a text element.
         //Label txtScoreField = hudScreen.findNiftyControl("txtLives", Label.class);
         //String scoreText = txtScoreField.getDisplayedText();
-        Thread t = new Thread(new Runnable() {
+        _mediatedTimerThread = new Thread(new Runnable() {
          public void run()
          {
               _mediation = ScreenControlDisplayMediationFactory.Make(EventTypeEnum.CountdownTick, "txtTimer", hudScreen);
          }
         });
-        t.start();
+        _mediatedTimerThread.start();
         System.out.println("MainScreenController.getScoreText() is at the end.");
         //Thread.sleep(10000);
     }

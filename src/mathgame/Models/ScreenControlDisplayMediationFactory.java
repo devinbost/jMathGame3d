@@ -17,7 +17,7 @@ public class ScreenControlDisplayMediationFactory {
     }
     /** The EventTypeEnum eventType is used to specify which event type will be used to update the control in the specified
      *  screen controller.
-     * 
+     *  
      */
     public static ScreenControlDisplayMediation Make(EventTypeEnum eventType, String controlName, Screen screenController){
         //IUpdateNiftyGuiControlDisplayText screenControlMediator = new TextFieldDisplayTextMediator(controlName, screenController); // e.g. "txtTimer", hudScreen
@@ -28,10 +28,10 @@ public class ScreenControlDisplayMediationFactory {
             // Then construct the desired type of listener after we get the control.
             LabelControl labelControl;
             labelControl = screenController.findControl(controlName, LabelControl.class);
-                if (labelControl == null) {
-                    throw new UnknownControlException(" The control name provided was: " + controlName + " of the type: " 
-                            + LabelControl.class.toString() + " . It failed at ScreenControlDisplayMediationFactory.Make(..)");
-                }
+            if (labelControl == null) {
+                throw new UnknownControlException(" The control name provided was: " + controlName + " of the type: " 
+                        + LabelControl.class.toString() + " . It failed at ScreenControlDisplayMediationFactory.Make(..)");
+            }
             UpdateControlListener listener = new UpdateControlListener(labelControl);
             
             //System.out.println(" W");

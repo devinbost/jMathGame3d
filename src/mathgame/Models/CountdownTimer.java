@@ -41,9 +41,12 @@ public class CountdownTimer implements Runnable{
      *  Milliseconds, for example, displays a string with hours:minutes:seconds:milliseconds, whereas
      *  an enum value of minutes returns a string that only contains hours:minutes.
      *  This method is useful for displaying the properly formatted value of remaining time (for the
-     *  CountdownTimer's countdown) to the user.
+     *  CountdownTimer's countdown) to the user. 
+     * 
+     * Use StringFormatters.FormatTimeInMilliseconds(..) method instead.
      * @return time
      */
+    @Deprecated
     public String getFormattedTimeRemaining(TimePrecision precision){
         int milliseconds = this.getRemainingSeconds();
         long hour, minute, second;
@@ -137,6 +140,7 @@ public class CountdownTimer implements Runnable{
     
     public void StopTimer(){
         this._runnableTimerTask.cancel(); // What should this reference?
+        // Should we raise an event?
         System.out.println("Timer ending countdown. ");
     }
     public void OutOfTime(){
