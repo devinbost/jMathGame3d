@@ -183,8 +183,11 @@ public class MainScreenController extends AbstractAppState implements ScreenCont
         
         Label lblNextQuestion;
         if(currentQuestion.CheckAnswer(userAnswer) == true){
-            _Gamer.ScoreUp();
             lblNextQuestion = hudScreen.findNiftyControl("lblNextQuestion", Label.class);
+            if (!"Correct!!!".equals(lblNextQuestion.getText()) && !"Wrong!!!".equals(lblNextQuestion.getText())) {
+               _Gamer.ScoreUp(); 
+            }
+            
             lblNextQuestion.setText("Correct!!!");
             // Update score field.
             Label lblScore = hudScreen.findNiftyControl("txtScore", Label.class);
