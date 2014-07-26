@@ -252,8 +252,8 @@ public class Main extends SimpleApplication implements AnimEventListener
         //rootNode.attachChild(wall);
         shootables.attachChild(wall);
         
-        BitmapText helloText = ConstructGuiText();// Display a line of text with a default font
-        guiNode.attachChild(helloText);
+//        BitmapText helloText = ConstructGuiText();// Display a line of text with a default font
+//        guiNode.attachChild(helloText);
         
         // Load a model from test_data (OgreXML + material + texture)
         this.ConstructNinja();
@@ -504,14 +504,14 @@ public class Main extends SimpleApplication implements AnimEventListener
         ninja.rotate(0.0f, -3.0f, 0.0f);
         ninja.setLocalTranslation(20.0f, -5.0f, 20.0f);
     }
-    private BitmapText ConstructGuiText(){
-        guiFont = assetManager.loadFont("Interface/Fonts/Default.fnt");
-        BitmapText helloText = new BitmapText(guiFont, false);
-        helloText.setSize(guiFont.getCharSet().getRenderedSize());
-        helloText.setText("Hello World");
-        helloText.setLocalTranslation(300, helloText.getLineHeight(), 0);
-        return helloText;
-    }
+//    private BitmapText ConstructGuiText(){
+//        guiFont = assetManager.loadFont("Interface/Fonts/Default.fnt");
+//        BitmapText helloText = new BitmapText(guiFont, false);
+//        helloText.setSize(guiFont.getCharSet().getRenderedSize());
+//        helloText.setText("Hello World");
+//        helloText.setLocalTranslation(300, helloText.getLineHeight(), 0);
+//        return helloText;
+//    }
     private Geometry ConstructBox(ColorRGBA color){
         Box box1 = new Box(1, 1, 1); // create cube shape
         Geometry blueBox = new Geometry("Box", box1);  // create cube geometry from the shape
