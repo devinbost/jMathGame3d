@@ -104,7 +104,7 @@ import java.text.SimpleDateFormat;
                 PropertyChangeTypedListener updaterListener) { // we need to replace this with an observable interface or something.
             this._screenControlMediator = screenControlMediator;
             this._eventType = eventType;
-            this._timer = new CountdownTimer(30); // Represents number of seconds to countdown from.
+            this._timer = CountdownTimer.getInstance(); // Represents number of seconds to countdown from.
             this.Subscribe(updaterListener);
             //this._timer.addChangeListener(updaterListener);
             this.StartTimer();

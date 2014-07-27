@@ -23,6 +23,7 @@ public class Gamer {
     private String _username = "";
     private String _password;
     private QandABot _qAndABot;
+    private int _totalScore = 0;
     
     // When the game starts, the user will be prompted for the level. That level will be used to construct the Gamer object.
     public Gamer(int level, int digits, String name){
@@ -45,8 +46,12 @@ public class Gamer {
     public void ScoreUp(){
         _score++;
     }
+    public void IncreaseScore(int remainingSeconds){
+        _totalScore+= remainingSeconds;
+    }
     public int GetScore(){
-        return _score;
+//        return _score;
+        return _totalScore;
     }
     public String GetName(){
         return _username;
@@ -56,7 +61,7 @@ public class Gamer {
     }
     public double HighScore(){
         double totalasked = this._qAndABot.GetTotalQuestionsAsked();
-        float percentilescore = (float)_score/(float)totalasked;
+        float percentilescore = (float)this.GetScore()/(float)totalasked;
         if (percentilescore>1 || percentilescore<0){
             System.out.println("\t Error! "
                     + "\n Incorrect input!");
@@ -79,7 +84,7 @@ public class Gamer {
         // Do something about score here. (Check with singleton if high score.)
         
         HallOfFame hallOfFame = HallOfFame.getInstance();
-        hallOfFame.addScore(_score, _username);
+        hallOfFame.addScore(this.GetScore(), _username);
         String highScores = hallOfFame.getHighscoreString();
         JOptionPane.showMessageDialog(null, 
                 "Here are the high scores: \n" +
@@ -93,7 +98,7 @@ public class Gamer {
         // Do something about score here. (Check with singleton if high score.)
         
         HallOfFame hallOfFame = HallOfFame.getInstance();
-        hallOfFame.addScore(_score, _username);
+        hallOfFame.addScore(this.GetScore(), _username);
         String highScores = hallOfFame.getHighscoreString();
         JOptionPane.showMessageDialog(null, 
                 "Here are the high scores: \n" +

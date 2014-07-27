@@ -9,31 +9,44 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+import mathgame.ScoreTracker;
 /**
  *
  * @author devinbost
  */
 public class CountdownTimer implements Runnable{
-    private int _totalMilliseconds;
-    public  int _remainingSeconds;
+    private static volatile int _totalMilliseconds;
+    public  static volatile int _remainingSeconds;
 //    private  TimerTask _timerTask = null;
 //    private  Timer _controlTimer = null;
-    private  CountdownTimerTask _runnableTimerTask = null;
+    private  static volatile CountdownTimerTask _runnableTimerTask = null;
 //    private int _delay = 2000;  // milliseconds
-    private int _period = 1000; // milliseconds
-    private boolean _isTimeRemaining;
-    private List<PropertyChangeTypedListener> listener = new ArrayList<PropertyChangeTypedListener>();
-    
+    private static volatile int _period = 1000; // milliseconds
+    private static volatile boolean _isTimeRemaining;
+    private static volatile List<PropertyChangeTypedListener> listener = new ArrayList<PropertyChangeTypedListener>();
+    private static volatile CountdownTimer instance = null;
+    private static volatile Object mutex = new Object();
+    private static Timer timer = null;
+    private static Thread newThread = null;
     /**
      * The totalSeconds parameter is used to set the maximum number of seconds that the timer will count down from. 
      * It converts the seconds into milliseconds, which are used by the CountdownTimerTask to control the timing
      * of the clock. If you want to set this value to a number less than a second, then it will need to be refactored.
      * @param totalSeconds 
      */
-    public CountdownTimer(int totalSeconds){
+    private CountdownTimer(){
+        int totalSeconds = 30;
         _totalMilliseconds = totalSeconds * 1000;
         _isTimeRemaining = true;
         System.out.println("CountdownTimer is getting constructed.");
+    }
+    public synchronized static CountdownTimer getInstance(){
+        if(instance==null){
+            synchronized (mutex){
+                if(instance==null) instance= new CountdownTimer();
+            }
+        }
+        return instance;
     }
     /**
      *  This method gets a Hours:Minutes:Seconds:Milliseconds representation of the remaining time.
@@ -47,7 +60,7 @@ public class CountdownTimer implements Runnable{
      * @return time
      */
     @Deprecated
-    public String getFormattedTimeRemaining(TimePrecision precision){
+    public synchronized String getFormattedTimeRemaining(TimePrecision precision){
         int milliseconds = this.getRemainingSeconds();
         long hour, minute, second;
         String time = "";
@@ -79,32 +92,40 @@ public class CountdownTimer implements Runnable{
      * This method is used to set the initial value 
      * @param seconds 
      */
-    public void setCountdownTimeLimit(int seconds){
+    public synchronized static void setCountdownTimeLimit(int seconds){
         _totalMilliseconds = seconds;
         _remainingSeconds = _totalMilliseconds;
     }
-    public int getCountdownTimeLimit(){
+    public synchronized int getCountdownTimeLimit(){
         return _totalMilliseconds;
     }
-    public int getRemainingSeconds(){
+    public synchronized static int getRemainingSeconds(){
         return _remainingSeconds;
     }
-    public void ResetCountdown(){
+    public synchronized void ResetCountdown(){
+        this.StopTimer();
         _remainingSeconds = this.getCountdownTimeLimit();
         _isTimeRemaining = true;
     }
-    public boolean getIsTimeRemaining(){
+    public synchronized static boolean getIsTimeRemaining(){
         return _isTimeRemaining;
     }
     public void StartCountdown(){
         this.ResetCountdown();
         // fire event that starts countdown process.
-        Timer timer = new Timer("MyTimer", false); // Should timer be static or not?
+        timer = new Timer("MyTimer", false); // Should timer be static or not?
         int count = 10;
         //_timer = new Timer(false);
         System.out.println("CountdownTimer class's StartCountdown() method is starting countdown.");
-        _runnableTimerTask = new CountdownTimerTask(this, "countdownTimerTask1", this._totalMilliseconds, _period);
-        Thread newThread = new Thread(_runnableTimerTask); // Should this thread be static?
+        if (_runnableTimerTask == null) {
+            _runnableTimerTask = new CountdownTimerTask(this, "countdownTimerTask1", this._totalMilliseconds, _period);
+        }
+        
+        
+        if (newThread == null) {
+            newThread = new Thread(_runnableTimerTask); // Should this thread be static?
+        }
+        
         newThread.start(); // The start method executes the run() method on the runnable interface object.
         // The Run method (in the CountdownTimerTask) must be used to set the frequency of the event if the Timer class will not work.
         for (int i = 0; i < _totalMilliseconds; i++) {
@@ -140,6 +161,8 @@ public class CountdownTimer implements Runnable{
     
     public void StopTimer(){
         this._runnableTimerTask.cancel(); // What should this reference?
+        _runnableTimerTask = null;
+        newThread = null;
         // Should we raise an event?
         System.out.println("Timer ending countdown. ");
     }
@@ -159,7 +182,11 @@ public class CountdownTimer implements Runnable{
         int priorRemainingSeconds = this.getRemainingSeconds();
         System.out.println("We are executing the Tick() method of the CountdownTimer instance.");
 //        _remainingSeconds--; // We need to subtract the appropriate amount here.
+        ScoreTracker.setSharedScore((priorRemainingSeconds + 1) / 1000);
         _remainingSeconds -= _runnableTimerTask.getSleepTime(); // gave nullPointerException
+        //ScoreTracker tracker = ScoreTracker.getInstance();
+        //tracker.setSharedScore(_period);
+        
         this.notifyCountdownListeners(this, "_remainingSeconds", priorRemainingSeconds, this.getRemainingSeconds());
         return this.getRemainingSeconds();
     }
@@ -181,7 +208,7 @@ public class CountdownTimer implements Runnable{
     }
 
     @Override
-    public void run() {
+    public synchronized void run() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

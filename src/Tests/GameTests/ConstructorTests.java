@@ -80,7 +80,7 @@ public class ConstructorTests {
     }
     @Test
     public void CountdownTimer_IsTimerTickWorkingProperly_ReturnsTrue(){
-        CountdownTimer timer = new CountdownTimer(1000);
+        CountdownTimer timer = CountdownTimer.getInstance();
         timer.StartCountdown();
         
     }

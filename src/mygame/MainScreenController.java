@@ -25,6 +25,7 @@ import mathgame.Models.ScreenControlDisplayMediationFactory;
 import mathgame.Models.UnknownControlException;
 import mathgame.QandABot;
 import mathgame.Questions.Question;
+import mathgame.ScoreTracker;
 /**
  *
  * @author devinbost
@@ -197,11 +198,11 @@ public class MainScreenController extends AbstractAppState implements ScreenCont
 
 
         if(currentQuestion.CheckAnswer(userAnswer) == true){
-
+            int score = ScoreTracker.getSharedScore();
             if (!"Correct!!!".equals(lblNextQuestion.getText()) && !"Wrong!!!".equals(lblNextQuestion.getText())) {
-               _Gamer.ScoreUp(); 
+               _Gamer.IncreaseScore(score); 
             }
-
+            
             lblNextQuestion.setText("Correct!!!");
             // Update score field.
             Label lblScore = hudScreen.findNiftyControl("txtScore", Label.class);
