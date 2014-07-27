@@ -145,8 +145,14 @@ public class MainScreenController extends AbstractAppState implements ScreenCont
      * This method is used to update the HUD with the next math question.
      */
     public void getNextQuestion(){
-        String controlName = "lblNextQuestion";
         final Screen hudScreen = this._nifty.getScreen("hudScreen");
+         Label lblGamerName = hudScreen.findNiftyControl("lblName", Label.class);
+        if ("Name".equals(lblGamerName.getText())) {
+            lblGamerName.setText(_gamerName);
+        }
+        
+        String controlName = "lblNextQuestion";
+        
             Label lblNextQuestion = hudScreen.findNiftyControl(controlName, Label.class);
         if ("Correct!!!".equals(lblNextQuestion.getText()) || "Wrong!!!".equals(lblNextQuestion.getText()) || "Question".equals(lblNextQuestion.getText())) {
             // This is to ensure that a person cannot get the next question unless they have answered the previous one (unless
