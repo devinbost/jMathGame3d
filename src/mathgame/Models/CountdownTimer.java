@@ -26,8 +26,8 @@ public class CountdownTimer implements Runnable{
     private static volatile List<PropertyChangeTypedListener> listener = new ArrayList<PropertyChangeTypedListener>();
     private static volatile CountdownTimer instance = null;
     private static volatile Object mutex = new Object();
-    private static Timer timer = null;
-    private static Thread newThread = null;
+    private static volatile Timer timer = null;
+    private static volatile Thread newThread = null;
     /**
      * The totalSeconds parameter is used to set the maximum number of seconds that the timer will count down from. 
      * It converts the seconds into milliseconds, which are used by the CountdownTimerTask to control the timing
@@ -96,14 +96,13 @@ public class CountdownTimer implements Runnable{
         _totalMilliseconds = seconds;
         _remainingSeconds = _totalMilliseconds;
     }
-    public synchronized int getCountdownTimeLimit(){
+    public synchronized static int getCountdownTimeLimit(){
         return _totalMilliseconds;
     }
     public synchronized static int getRemainingSeconds(){
         return _remainingSeconds;
     }
-    public synchronized void ResetCountdown(){
-        this.StopTimer();
+    public void ResetCountdown(){
         _remainingSeconds = this.getCountdownTimeLimit();
         _isTimeRemaining = true;
     }
