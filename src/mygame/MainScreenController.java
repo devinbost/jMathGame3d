@@ -145,33 +145,41 @@ public class MainScreenController extends AbstractAppState implements ScreenCont
      * This method is used to update the HUD with the next math question.
      */
     public void getNextQuestion(){
-        String questionText = "What is " + _QandABot.GetNextQuestion() + " ?";
-        // Set a control to this text.
-        final Screen hudScreen = this._nifty.getScreen("hudScreen");
-        
-        String control2Name = "lblLives";
-        Label lblLives = hudScreen.findNiftyControl(control2Name, Label.class);
-        if (lblLives == null) {
-            throw new UnknownControlException("The unknown control was: " + control2Name + " . It was called from MainScreenController.startGame(..).");
-        }
-        if ("Lives".equals(lblLives.getText())) { // i.e. if this was the first question.
-            lblLives.setText("5"); // Start with 5 lives.
-        }
-        
-        
         String controlName = "lblNextQuestion";
-        Label lblNextQuestion = hudScreen.findNiftyControl(controlName, Label.class);
-        lblNextQuestion.setText(questionText);
-        try{
-            this.getScoreText();
-        }
-        catch (InterruptedException ex){
-            System.out.println("The timer has been interrupted.");
-            _mediation.StopTimer();
+        final Screen hudScreen = this._nifty.getScreen("hudScreen");
+            Label lblNextQuestion = hudScreen.findNiftyControl(controlName, Label.class);
+        if ("Correct!!!".equals(lblNextQuestion.getText()) || "Wrong!!!".equals(lblNextQuestion.getText()) || "Question".equals(lblNextQuestion.getText())) {
+            // This is to ensure that a person cannot get the next question unless they have answered the previous one (unless
+            // no previous answer exists).
+            String questionText = "What is " + _QandABot.GetNextQuestion() + " ?";
+            // Set a control to this text.
+            
+
+            String control2Name = "lblLives";
+            Label lblLives = hudScreen.findNiftyControl(control2Name, Label.class);
+            if (lblLives == null) {
+                throw new UnknownControlException("The unknown control was: " + control2Name + " . It was called from MainScreenController.startGame(..).");
+            }
+            if ("Lives".equals(lblLives.getText())) { // i.e. if this was the first question.
+                lblLives.setText("5"); // Start with 5 lives.
+            }
+
+
+            
+            lblNextQuestion.setText(questionText);
+            try{
+                this.getScoreText();
+            }
+            catch (InterruptedException ex){
+                System.out.println("The timer has been interrupted.");
+                _mediation.StopTimer();
+            }
         }
     }
     public void checkAnswer(){
         final Screen hudScreen = this._nifty.getScreen("hudScreen");
+        Label lblNextQuestion;
+        lblNextQuestion = hudScreen.findNiftyControl("lblNextQuestion", Label.class);
         String controlName = "txtAnswer";
         TextField txtAnswer = hudScreen.findNiftyControl(controlName, TextField.class);
         String answerValue = txtAnswer.getRealText();
@@ -180,26 +188,26 @@ public class MainScreenController extends AbstractAppState implements ScreenCont
         }
         double userAnswer = Double.parseDouble(answerValue);
         Question currentQuestion = _QandABot.GetCurrentQuestion();
-        
-        Label lblNextQuestion;
+
+
         if(currentQuestion.CheckAnswer(userAnswer) == true){
-            lblNextQuestion = hudScreen.findNiftyControl("lblNextQuestion", Label.class);
+
             if (!"Correct!!!".equals(lblNextQuestion.getText()) && !"Wrong!!!".equals(lblNextQuestion.getText())) {
                _Gamer.ScoreUp(); 
             }
-            
+
             lblNextQuestion.setText("Correct!!!");
             // Update score field.
             Label lblScore = hudScreen.findNiftyControl("txtScore", Label.class);
             lblScore.setText(Integer.toString(_Gamer.GetScore()));
             // we should compute the score from the remaining time here and update the score field.
             _mediation.StopTimer();
-            
+
         }
         else {
             lblNextQuestion = hudScreen.findNiftyControl("lblNextQuestion", Label.class);
             lblNextQuestion.setText("Wrong!!!");
-            
+
             String control2Name = "lblLives";
             Label lblLives = hudScreen.findNiftyControl(control2Name, Label.class);
             if (lblLives == null) {
@@ -215,6 +223,7 @@ public class MainScreenController extends AbstractAppState implements ScreenCont
                 this.quitGame();
             }
             // subtract from lives.
+
         }
     }
    public void quitGame() {
